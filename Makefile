@@ -31,9 +31,7 @@ check-tools: ## Print versions of phase-1 host tools
 	@echo "rustc:   $$(rustc --version 2>/dev/null || echo missing)"
 	@echo "forge:   $$(forge --version 2>/dev/null | head -1 || echo missing)"
 	@echo "circom:  $$(circom --version 2>/dev/null | head -1 || echo missing)"
-	@if [ -x model/.venv/bin/ezkl ]; then \
-		echo "ezkl:    $$(model/.venv/bin/ezkl --version 2>/dev/null | head -1)"; \
-	elif [ -x model/.venv/bin/python ]; then \
+	@if [ -x model/.venv/bin/python ]; then \
 		echo "ezkl:    $$(model/.venv/bin/python -c 'import ezkl; print(getattr(ezkl, "__version__", "import-ok"))' 2>/dev/null || echo missing)"; \
 	else \
 		echo "ezkl:    missing (run make install)"; \

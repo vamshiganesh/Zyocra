@@ -24,13 +24,8 @@ if [[ -x "$VENV/bin/python" ]]; then
   source "$VENV/bin/activate"
   EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
   TORCH_VER="$(python -c 'import torch; print(torch.__version__)' 2>/dev/null || echo unknown)"
-  if [[ -x "$VENV/bin/ezkl" ]]; then
-    EZKL_CLI="$("$VENV/bin/ezkl" --version 2>/dev/null | head -1 || true)"
-  else
-    EZKL_CLI="missing"
-  fi
 else
-  EZKL_CLI="missing"
+  :
 fi
 
 NODE_VER="$(node -v 2>/dev/null || echo missing)"
@@ -58,7 +53,7 @@ cat >"$OUT_JSON" <<EOF
     "torch": "$TORCH_VER",
     "ezkl": "$EZKL_VER"
   },
-  "ezkl_cli": "$EZKL_CLI",
+  "ezkl_api": "python import ezkl",
   "benches": {
     "ezkl_prove_ms": null,
     "ezkl_verify_ms": null,
@@ -81,8 +76,7 @@ cat >"$OUT_MD" <<EOF
 - **Forge:** $FORGE_VER
 - **Circom:** $CIRCOM_VER
 - **Torch:** $TORCH_VER
-- **EZKL (python):** $EZKL_VER
-- **EZKL CLI:** $EZKL_CLI
+- **EZKL (python API):** $EZKL_VER
 
 ## Pending timings
 

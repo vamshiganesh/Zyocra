@@ -77,16 +77,9 @@ for mod in ("torch", "onnx", "onnxruntime", "numpy", "ezkl"):
     print(f"  ok  {mod}")
 PY
 
-if have ezkl; then
-  printf '  ok  %-10s %s\n' "ezkl-cli" "$(ezkl --version 2>/dev/null | head -1 || echo present)"
-else
-  # pip package usually exposes a console script on PATH while venv is active
-  if [[ -x "$VENV/bin/ezkl" ]]; then
-    printf '  ok  %-10s %s\n' "ezkl-cli" "$("$VENV/bin/ezkl" --version 2>/dev/null | head -1 || echo present)"
-  else
-    warn "ezkl Python package installed; CLI entrypoint not found on PATH"
-  fi
-fi
+# ezkl pip package exposes a Python API (import ezkl), not a standalone CLI binary.
+EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
+printf '  ok  %-10s python API %s (import ezkl)\n' "ezkl" "$EZKL_VER"
 
 # --- Frontend / contracts placeholders (no scaffold yet) ---
 if [[ -f "$ROOT/frontend/package.json" ]]; then
