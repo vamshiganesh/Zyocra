@@ -193,8 +193,8 @@ Install the missing host package from the sections above, open a new shell, re-r
 Re-run `make install`. The script forces the CPU wheel index:  
 `https://download.pytorch.org/whl/cpu`
 
-**`ezkl` command not found**  
-Activate the venv: `source model/.venv/bin/activate`. The CLI is installed inside `model/.venv/bin/`.
+**`import ezkl` fails**  
+Activate the venv: `source model/.venv/bin/activate`, or re-run `make install`. Use the Python API (`ezkl.prove`, `ezkl.verify`); there is no standalone `ezkl` CLI in the PyPI wheel.
 
 **Foundry can't download solc**  
 `forge` fetches solc versions itself on first build. Needs network once; no paid service.

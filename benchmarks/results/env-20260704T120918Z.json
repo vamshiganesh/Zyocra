@@ -1,0 +1,25 @@
+{
+  "kind": "env_snapshot",
+  "timestamp_utc": "20260704T120918Z",
+  "host": {
+    "node": "v24.10.0",
+    "pnpm": "11.5.1",
+    "python": "Python 3.12.3",
+    "rustc": "rustc 1.94.0 (4a4ef493e 2026-03-02)",
+    "forge": "forge Version: 1.5.1-stable",
+    "circom": "circom compiler 2.2.3"
+  },
+  "python_packages": {
+    "torch": "2.12.1+cpu",
+    "ezkl": "23.0.5"
+  },
+  "ezkl_api": "python import ezkl",
+  "benches": {
+    "ezkl_prove_ms": null,
+    "ezkl_verify_ms": null,
+    "circom_prove_ms": null,
+    "circom_verify_ms": null,
+    "proof_size_bytes": null
+  },
+  "notes": "Timing fields fill in when prover packages and fixtures exist."
+}
