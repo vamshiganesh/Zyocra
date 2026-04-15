@@ -22,7 +22,7 @@ On the current WSL Ubuntu host, these were already present:
 |------|----------|------|
 | PyTorch (CPU) | `model/.venv` | Small quantized model work |
 | ONNX / ONNX Runtime | `model/.venv` | Model export / inference path into EZKL |
-| EZKL | `model/.venv` | Phase-1 zkML baseline proving path |
+| EZKL (Python API) | `model/.venv` | Phase-1 zkML baseline proving path (`import ezkl`) |
 
 ## Phase-1 toolchain decisions
 
@@ -161,9 +161,12 @@ cd contracts && anvil   # local chain, free
 
 # ML / EZKL (venv active)
 source model/.venv/bin/activate
-ezkl --help
-python -c "import torch, onnx, ezkl; print('ok')"
+python -c "import torch, onnx, ezkl; print(ezkl.__version__ if hasattr(ezkl,'__version__') else 'ezkl-ok')"
+# Prove/verify use the Python API (ezkl.prove, ezkl.verify, ...), not a separate CLI binary.
 ```
+
+**Note:** The `ezkl` PyPI package ships a Python API. There is no `ezkl` CLI entrypoint in the wheel. All phase-1 scripts should call it via `python` / `import ezkl`.
+
 
 ## Benchmark outputs
 
