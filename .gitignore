@@ -1,0 +1,68 @@
+# Cursor / editor (local-only; do not publish)
+.cursor/
+.cursor
+
+# Dependencies
+node_modules/
+model/.venv/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.turbo/
+*.tsbuildinfo
+contracts/cache/
+contracts/out/
+contracts/broadcast/
+contracts/lib/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# Python packaging
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Large ML / zk artifacts (keep small fixtures and reports in-repo)
+model/artifacts/
+prover/**/artifacts/
+*.pk
+*.vk
+*.proof
+*.pf
+srs/
+*.ezkl.bin
+
+# Coverage / logs
+coverage/
+htmlcov/
+*.log
+.coverage
+
+# Benchmark binaries (JSON/CSV/MD/SVG/PNG reports are committed intentionally)
+benchmarks/results/**/*.bin
+benchmarks/results/**/*.proof
+benchmarks/results/**/*.pk
+benchmarks/results/**/*.vk

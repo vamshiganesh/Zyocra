@@ -1,0 +1,10 @@
+# Phase-1 ML stack (CPU-only, local-first).
+# Install via: make install
+#
+# torch is installed separately from the official CPU wheel index in
+# scripts/install.sh so WSL setups do not pull a CUDA stack.
+
+onnx
+onnxruntime
+numpy
+ezkl
