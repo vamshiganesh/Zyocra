@@ -50,11 +50,11 @@ pip-wheel-metadata/
 
 # Large ML / zk artifacts (keep small fixtures and reports in-repo)
 ml-base/artifacts/
-circuits-baseline/proofs/**
+circuits-baseline/proofs/*
 !circuits-baseline/proofs/.gitkeep
-circuits-custom/proofs/**
+circuits-custom/proofs/*
 !circuits-custom/proofs/.gitkeep
-circuits-custom/witnesses/**
+circuits-custom/witnesses/*
 !circuits-custom/witnesses/.gitkeep
 *.pk
 *.vk
