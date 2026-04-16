@@ -1,15 +1,26 @@
-# model
+# ml-base
 
-Quantized risk model and LoRA-style adapter exports for Zyocra.
+Quantized DeFi liquidation-risk model, LoRA adapters, and ONNX export for Zyocra.
+
+## Layout
+
+| Path | Purpose |
+|------|---------|
+| `training/` | Small tabular MLP / logistic-style risk model training |
+| `quantization/` | Float32 baseline, fixed-point export, scales, overflow bounds, error analysis |
+| `lora/` | Low-rank adapters framed as \(W' = W + AB\) |
+| `onnx-export/` | Deterministic ONNX graphs for the EZKL baseline path |
+| `requirements.txt` | Python deps (ONNX, EZKL API; PyTorch CPU installed via `make install`) |
+| `.venv/` | Local virtualenv (gitignored) |
 
 ## Local setup
 
 ```bash
 # from repo root
 make install
-source model/.venv/bin/activate
+source ml-base/.venv/bin/activate
 ```
 
-Python dependencies live in `requirements.txt` (PyTorch CPU, ONNX, EZKL Python package).
+Large weights and generated artifacts belong in gitignored paths or outside the repo under `~/projects/zyocra/`.
 
-Large weights and generated artifacts belong in `model/artifacts/` (gitignored) or outside the repo under `~/projects/zyocra/`.
+Milestone 1 implements code under these directories. Placeholders only for now.
