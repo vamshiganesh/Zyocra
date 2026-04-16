@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# benchmark.sh — write a local benchmark summary under benchmarks/results/.
-# Phase-1: environment snapshot + placeholders for prove/verify timings.
-# Full EZKL/Circom benches land with prover packages.
+# benchmark.sh — write a local snapshot under benchmarks/raw-results/.
+# Full EZKL vs Circom metrics land in Milestone 5.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -9,14 +8,14 @@ cd "$ROOT"
 
 info() { printf '==> %s\n' "$*"; }
 
-OUT_DIR="$ROOT/benchmarks/results"
-mkdir -p "$OUT_DIR"
+OUT_DIR="$ROOT/benchmarks/raw-results"
+mkdir -p "$OUT_DIR" "$ROOT/benchmarks/plots"
 
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 OUT_JSON="$OUT_DIR/env-${STAMP}.json"
 OUT_MD="$OUT_DIR/env-${STAMP}.md"
 
-VENV="$ROOT/model/.venv"
+VENV="$ROOT/ml-base/.venv"
 EZKL_VER="not-installed"
 TORCH_VER="not-installed"
 if [[ -x "$VENV/bin/python" ]]; then
@@ -24,8 +23,6 @@ if [[ -x "$VENV/bin/python" ]]; then
   source "$VENV/bin/activate"
   EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
   TORCH_VER="$(python -c 'import torch; print(torch.__version__)' 2>/dev/null || echo unknown)"
-else
-  :
 fi
 
 NODE_VER="$(node -v 2>/dev/null || echo missing)"
@@ -36,7 +33,6 @@ FORGE_VER="$(forge --version 2>/dev/null | head -1 || echo missing)"
 CIRCOM_VER="$(circom --version 2>/dev/null | head -1 || echo missing)"
 
 info "Writing benchmark environment snapshot"
-# JSON is easy to chart later; MD is recruiter-readable in PRs.
 cat >"$OUT_JSON" <<EOF
 {
   "kind": "env_snapshot",
@@ -54,14 +50,26 @@ cat >"$OUT_JSON" <<EOF
     "ezkl": "$EZKL_VER"
   },
   "ezkl_api": "python import ezkl",
-  "benches": {
-    "ezkl_prove_ms": null,
-    "ezkl_verify_ms": null,
-    "circom_prove_ms": null,
-    "circom_verify_ms": null,
-    "proof_size_bytes": null
+  "paths": {
+    "ml_base": "ml-base",
+    "baseline": "circuits-baseline",
+    "custom": "circuits-custom",
+    "contracts": "contracts"
   },
-  "notes": "Timing fields fill in when prover packages and fixtures exist."
+  "benches": {
+    "ezkl_constraint_count": null,
+    "circom_constraint_count": null,
+    "ezkl_prove_ms": null,
+    "circom_prove_ms": null,
+    "ezkl_verify_gas": null,
+    "circom_verify_gas": null,
+    "ezkl_proof_size_bytes": null,
+    "circom_proof_size_bytes": null,
+    "ezkl_peak_rss_bytes": null,
+    "circom_peak_rss_bytes": null,
+    "float_vs_fixed_max_abs_error": null
+  },
+  "notes": "Metric fields fill in at Milestone 5 (see docs/roadmap.md)."
 }
 EOF
 
@@ -78,16 +86,19 @@ cat >"$OUT_MD" <<EOF
 - **Torch:** $TORCH_VER
 - **EZKL (python API):** $EZKL_VER
 
-## Pending timings
+## Pending metrics (Milestone 5)
 
-| Path | Prove (ms) | Verify (ms) | Proof size |
-|------|------------|-------------|------------|
-| EZKL baseline | — | — | — |
-| Circom benchmark | — | — | — |
+| Metric | EZKL baseline | Custom Circom |
+|--------|---------------|---------------|
+| Constraint count | — | — |
+| Prover peak RAM | — | — |
+| Proof generation time | — | — |
+| Verification gas | — | — |
+| Proof size | — | — |
+| Float vs fixed-point error | — | — |
 
-Commit small JSON/MD/SVG/PNG reports under \`benchmarks/results/\`. Keep large proofs out of git.
+Commit small JSON/MD/SVG/PNG under \`benchmarks/raw-results/\` and \`benchmarks/plots/\`. Keep large proofs out of git.
 EOF
 
 info "Wrote $OUT_JSON"
 info "Wrote $OUT_MD"
-echo "Commit these reports when you want history in the repo."

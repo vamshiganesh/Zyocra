@@ -11,19 +11,24 @@ warn() { printf '!!  %s\n' "$*" >&2; }
 status=0
 ran=0
 
-# Shell script syntax check for repo scripts
 if command -v bash >/dev/null 2>&1; then
   info "Checking scripts/*.sh syntax (bash -n)"
-  # bash -n: parse-only syntax check, does not execute
   for f in "$ROOT"/scripts/*.sh; do
     bash -n "$f" || status=1
   done
+  if compgen -G "$ROOT/benchmarks/scripts/*.{sh,py}" >/dev/null 2>&1; then
+    for f in "$ROOT"/benchmarks/scripts/*.{sh,py}; do
+      [[ -f "$f" ]] || continue
+      case "$f" in
+        *.sh) bash -n "$f" || status=1 ;;
+      esac
+    done
+  fi
   ran=1
 fi
 
 if [[ -f "$ROOT/contracts/foundry.toml" ]]; then
   info "Formatting check: forge fmt --check"
-  # forge fmt --check: fail if Solidity is not forge-formatted
   if (cd "$ROOT/contracts" && forge fmt --check); then
     ran=1
   else
@@ -43,12 +48,11 @@ if [[ -f "$ROOT/frontend/package.json" ]]; then
   fi
 fi
 
-VENV="$ROOT/model/.venv"
+VENV="$ROOT/ml-base/.venv"
 if [[ -x "$VENV/bin/python" ]]; then
-  # Optional ruff if installed into the venv later
   if [[ -x "$VENV/bin/ruff" ]]; then
-    info "Running ruff"
-    "$VENV/bin/ruff" check "$ROOT/model" || status=1
+    info "Running ruff on ml-base/"
+    "$VENV/bin/ruff" check "$ROOT/ml-base" || status=1
     ran=1
   else
     info "Skipping Python lint (ruff not installed; optional)"
