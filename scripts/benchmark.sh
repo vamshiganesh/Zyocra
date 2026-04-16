@@ -16,13 +16,12 @@ OUT_JSON="$OUT_DIR/env-${STAMP}.json"
 OUT_MD="$OUT_DIR/env-${STAMP}.md"
 
 VENV="$ROOT/ml-base/.venv"
+PY="$VENV/bin/python"
 EZKL_VER="not-installed"
 TORCH_VER="not-installed"
-if [[ -x "$VENV/bin/python" ]]; then
-  # shellcheck disable=SC1091
-  source "$VENV/bin/activate"
-  EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
-  TORCH_VER="$(python -c 'import torch; print(torch.__version__)' 2>/dev/null || echo unknown)"
+if [[ -x "$PY" ]]; then
+  EZKL_VER="$("$PY" -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
+  TORCH_VER="$("$PY" -c 'import torch; print(torch.__version__)' 2>/dev/null || echo unknown)"
 fi
 
 NODE_VER="$(node -v 2>/dev/null || echo missing)"

@@ -24,12 +24,11 @@ else
 fi
 
 VENV="$ROOT/ml-base/.venv"
-if [[ -x "$VENV/bin/python" ]]; then
+PY="$VENV/bin/python"
+if [[ -x "$PY" ]]; then
   if [[ -d "$ROOT/ml-base/tests" ]] || compgen -G "$ROOT/ml-base/**/test_*.py" >/dev/null 2>&1; then
     info "Running Python tests under ml-base/"
-    # shellcheck disable=SC1091
-    source "$VENV/bin/activate"
-    if (cd "$ROOT/ml-base" && python -m pytest -q); then
+    if (cd "$ROOT/ml-base" && "$PY" -m pytest -q); then
       ran=1
     else
       status=1
@@ -37,9 +36,7 @@ if [[ -x "$VENV/bin/python" ]]; then
     fi
   else
     info "Running Python import smoke check (no ml-base tests yet)"
-    # shellcheck disable=SC1091
-    source "$VENV/bin/activate"
-    if python -c "import torch, onnx, onnxruntime, numpy, ezkl"; then
+    if "$PY" -c "import torch, onnx, onnxruntime, numpy, ezkl"; then
       ran=1
     else
       status=1
