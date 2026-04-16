@@ -2,58 +2,43 @@
 
 Local-first, free toolchain. No paid RPCs, no Docker (yet), no cloud accounts.
 
-## What this machine already had
-
-On the current WSL Ubuntu host, these were already present:
-
-| Tool | Version (observed) | Role |
-|------|--------------------|------|
-| Node.js | v24.x LTS-line | Frontend tooling |
-| pnpm | 11.x | JS package manager (preferred over npm for future monorepo) |
-| Python 3 | 3.12 + `venv` | ML export / EZKL Python API |
-| Rust (`rustc` / `cargo` / `rustup`) | 1.94 | EZKL ecosystem / Circom builds |
-| Foundry (`forge` / `cast` / `anvil`) | 1.5.x | Oracle + mock lending contracts |
-| Circom | 2.2.x | Optional custom-circuit benchmark path |
-| Git, Make, curl | system | Repo + task runner |
-
-**Installed by `make install` (project-local):**
-
-| Tool | Location | Role |
-|------|----------|------|
-| PyTorch (CPU) | `model/.venv` | Small quantized model work |
-| ONNX / ONNX Runtime | `model/.venv` | Model export / inference path into EZKL |
-| EZKL (Python API) | `model/.venv` | Phase-1 zkML baseline proving path (`import ezkl`) |
-
 ## Phase-1 toolchain decisions
 
 | Choice | Decision | Why |
 |--------|----------|-----|
-| JS package manager | **pnpm** | Already installed; cleaner disk use and workspace support when `frontend/` lands |
-| Frontend | **Vite + React** (when scaffolded) | Design-heavy product shell, fast HMR, no SSR/cloud hosting requirement for phase 1 |
-| Contracts | **Foundry** | Local `forge test` / `anvil`; no Infura/Alchemy |
-| ML | **Python venv + PyTorch CPU + ONNX** | Reproducible, free, no CUDA/cloud GPU |
-| zkML baseline | **EZKL** (in venv) | Default prove/verify path |
-| Circom | Present on host; **not required** to start phase 1 | Benchmark path only |
+| JS package manager | **pnpm** | Workspace-friendly when an optional UI lands |
+| Optional UI | **Vite + React** | Design shell only; does not block milestones 1–5 |
+| Contracts | **Foundry** | Local `forge test` / `anvil` |
+| ML | **Python venv + PyTorch CPU + ONNX** in `ml-base/.venv` | Reproducible, free, no CUDA |
+| zkML baseline | **EZKL Python API** (`import ezkl`) | Milestone 2 default path |
+| Custom circuits | **Circom** | Milestone 3; present on host when available |
 | Docker | **Not used yet** | Avoid extra complexity |
 | Git hooks | **None yet** | Keep install lightweight |
 
+## Host tools
+
+| Tool | Role |
+|------|------|
+| Node.js + pnpm | Optional frontend tooling |
+| Python 3 + `venv` | `ml-base` training / export / EZKL API |
+| Rust (`rustc` / `cargo`) | Circom ecosystem builds |
+| Foundry (`forge` / `cast` / `anvil`) | Oracle + consumer contracts |
+| Circom | Custom circuit path (Milestone 3) |
+
+**Installed by `make install` into `ml-base/.venv`:** PyTorch (CPU), ONNX, ONNX Runtime, NumPy, EZKL (Python API).
+
 ## Host install commands (fresh Ubuntu WSL)
 
-Run these only if `make check-tools` reports something missing.
+Run only if `make check-tools` reports something missing.
 
 ### Node.js LTS + pnpm
 
 ```bash
-# Node via NodeSource LTS (or use nvm if you prefer)
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
-
-# Enable corepack and activate pnpm
 sudo corepack enable
 corepack prepare pnpm@latest --activate
-
-node -v
-pnpm -v
+node -v && pnpm -v
 ```
 
 ### Python 3 + venv
@@ -70,39 +55,32 @@ python3 -m venv -h >/dev/null && echo "venv ok"
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source "$HOME/.cargo/env"
-rustc --version
-cargo --version
+rustc --version && cargo --version
 ```
 
 ### Foundry
 
 ```bash
 curl -L https://foundry.paradigm.xyz | bash
-# restart shell or:
 source "$HOME/.bashrc"
 foundryup
-forge --version
-cast --version
-anvil --version
+forge --version && cast --version && anvil --version
 ```
 
-### Circom (optional until benchmark path)
-
-Already optional for phase 1. If needed later:
+### Circom (needed by Milestone 3)
 
 ```bash
-# requires Rust
 cargo install --git https://github.com/iden3/circom.git circom
 circom --version
 ```
 
-`snarkjs` and Powers of Tau artifacts can wait until Circom circuits exist.
+`snarkjs` and Powers of Tau artifacts wait until Circom circuits exist.
 
-### Do not install for phase 1
+### Do not install for default milestones
 
 - Docker / Kubernetes
 - Paid RPC URLs or hosted provers
-- CUDA toolkits (CPU PyTorch is enough for the small model)
+- CUDA toolkits (CPU PyTorch is enough for the small tabular model)
 
 ## Project install (every clone)
 
@@ -115,31 +93,31 @@ make install
 What it does:
 
 1. Checks Node, pnpm, Python, Rust, Foundry are on `PATH`
-2. Creates `model/.venv`
+2. Creates `ml-base/.venv` if needed
 3. Installs **CPU** PyTorch from the official CPU wheel index
 4. Installs `onnx`, `onnxruntime`, `numpy`, `ezkl` into the venv
-5. Skips frontend/contracts package installs until those packages are scaffolded
-6. Ensures `benchmarks/results/` exists
+5. Skips frontend/contracts package installs until those packages are initialized
+6. Ensures `benchmarks/raw-results/` and `benchmarks/plots/` exist
 
-Activate the ML environment when working on model/prover code:
+Activate the ML environment:
 
 ```bash
-source model/.venv/bin/activate
+source ml-base/.venv/bin/activate
 ```
+
+**Note:** The `ezkl` PyPI package exposes a **Python API** (`import ezkl`), not a standalone CLI binary.
 
 ## Exact run commands
 
 | Goal | Command | What it runs |
 |------|---------|--------------|
 | Help | `make help` | Lists targets |
-| Tool versions | `make check-tools` | Prints host + venv tool versions |
+| Tool versions | `make check-tools` | Host + venv versions |
 | Install deps | `make install` | `./scripts/install.sh` |
-| Dev server | `make dev` | `./scripts/dev.sh` → `pnpm dev` in `frontend/` when present |
-| Tests | `make test` | `./scripts/test.sh` (Foundry / Python smoke / frontend) |
-| Lint | `make lint` | `./scripts/lint.sh` (bash -n, forge fmt, pnpm lint, optional ruff) |
-| Benchmark snapshot | `make benchmark` | `./scripts/benchmark.sh` → `benchmarks/results/env-*.json` + `.md` |
-
-Direct script equivalents (same behavior):
+| Dev server | `make dev` | Optional UI when present |
+| Tests | `make test` | Foundry / Python smoke / frontend |
+| Lint | `make lint` | `bash -n`, forge fmt, pnpm lint, optional ruff |
+| Benchmark snapshot | `make benchmark` | `benchmarks/raw-results/env-*.json` + `.md` |
 
 ```bash
 ./scripts/install.sh
@@ -149,55 +127,43 @@ Direct script equivalents (same behavior):
 ./scripts/benchmark.sh
 ```
 
-### After packages are scaffolded (future)
+### After packages are implemented (future)
 
 ```bash
-# Frontend (Vite React, planned)
-cd frontend && pnpm install && pnpm dev
+# ML / EZKL
+source ml-base/.venv/bin/activate
+python -c "import torch, onnx, ezkl; print('ok')"
 
 # Contracts
 cd contracts && forge build && forge test
-cd contracts && anvil   # local chain, free
+cd contracts && anvil
 
-# ML / EZKL (venv active)
-source model/.venv/bin/activate
-python -c "import torch, onnx, ezkl; print(ezkl.__version__ if hasattr(ezkl,'__version__') else 'ezkl-ok')"
-# Prove/verify use the Python API (ezkl.prove, ezkl.verify, ...), not a separate CLI binary.
+# Optional UI
+cd frontend && pnpm install && pnpm dev
 ```
-
-**Note:** The `ezkl` PyPI package ships a Python API. There is no `ezkl` CLI entrypoint in the wheel. All phase-1 scripts should call it via `python` / `import ezkl`.
-
 
 ## Benchmark outputs
 
-- Write reports under `benchmarks/results/`
-- Commit small `*.json`, `*.csv`, `*.md`, `*.svg`, `*.png`
-- Keep large proofs/keys out of git (`*.proof`, `*.pk`, `*.vk`, `*.bin` are ignored)
-- Oversized weights/proofs can live outside the repo: `~/projects/zyocra/` (parent of `Zyocra/`)
+- Commit small reports under `benchmarks/raw-results/` and charts under `benchmarks/plots/`
+- Keep large proofs/keys out of git
+- Oversized weights/proofs may live under `~/projects/zyocra/` (parent of this repo)
 
 ## Local-only vs published
 
 | Path | Published to GitHub? |
 |------|----------------------|
-| `Zyocra/` source, docs, scripts, small benchmark reports | Yes |
-| `Zyocra/.cursor/` | No (gitignored) |
-| `Zyocra/model/.venv/` | No (gitignored) |
+| Source, docs, scripts, small benchmark reports | Yes |
+| `.cursor/` | No (gitignored) |
+| `importantData/` | No (gitignored) |
+| `ml-base/.venv/` | No (gitignored) |
 | Large artifacts under `~/projects/zyocra/` | No (outside repo) |
 
 ## Troubleshooting
 
-**`make install` fails on missing tools**  
-Install the missing host package from the sections above, open a new shell, re-run `make check-tools`.
+**`make install` fails on missing tools** — install from sections above, new shell, `make check-tools`.
 
-**PyTorch wants CUDA**  
-Re-run `make install`. The script forces the CPU wheel index:  
-`https://download.pytorch.org/whl/cpu`
+**PyTorch wants CUDA** — re-run `make install` (CPU wheel index is forced).
 
-**`import ezkl` fails**  
-Activate the venv: `source model/.venv/bin/activate`, or re-run `make install`. Use the Python API (`ezkl.prove`, `ezkl.verify`); there is no standalone `ezkl` CLI in the PyPI wheel.
+**`import ezkl` fails** — `source ml-base/.venv/bin/activate` or `make install`. Use the Python API, not a CLI.
 
-**Foundry can't download solc**  
-`forge` fetches solc versions itself on first build. Needs network once; no paid service.
-
-**WSL memory pressure during pip install**  
-Close other apps; PyTorch wheels are large but one-time. No Docker required.
+**Foundry downloads solc** — one-time network fetch; no paid service.
