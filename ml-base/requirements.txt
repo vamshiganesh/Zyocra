@@ -1,4 +1,4 @@
-# Phase-1 ML stack (CPU-only, local-first).
+# ml-base stack (CPU-only, local-first).
 # Install via: make install
 #
 # torch is installed separately from the official CPU wheel index in
