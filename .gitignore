@@ -66,3 +66,6 @@ benchmarks/results/**/*.bin
 benchmarks/results/**/*.proof
 benchmarks/results/**/*.pk
 benchmarks/results/**/*.vk
+
+#Project Information
+importantData/
