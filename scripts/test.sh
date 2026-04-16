@@ -13,7 +13,6 @@ status=0
 
 if [[ -f "$ROOT/contracts/foundry.toml" ]]; then
   info "Running Foundry tests"
-  # forge test: compile and execute Solidity tests with local EVM (no RPC)
   if (cd "$ROOT/contracts" && forge test); then
     ran=1
   else
@@ -21,24 +20,23 @@ if [[ -f "$ROOT/contracts/foundry.toml" ]]; then
     ran=1
   fi
 else
-  info "Skipping contracts tests (contracts/ not scaffolded yet)"
+  info "Skipping contracts tests (contracts/ not initialized yet)"
 fi
 
-VENV="$ROOT/model/.venv"
+VENV="$ROOT/ml-base/.venv"
 if [[ -x "$VENV/bin/python" ]]; then
-  # Prefer pytest if present; otherwise a trivial import smoke check.
-  if [[ -d "$ROOT/model/tests" ]] || compgen -G "$ROOT/model/**/test_*.py" >/dev/null 2>&1; then
-    info "Running Python tests"
+  if [[ -d "$ROOT/ml-base/tests" ]] || compgen -G "$ROOT/ml-base/**/test_*.py" >/dev/null 2>&1; then
+    info "Running Python tests under ml-base/"
     # shellcheck disable=SC1091
     source "$VENV/bin/activate"
-    if python -m pytest -q; then
+    if (cd "$ROOT/ml-base" && python -m pytest -q); then
       ran=1
     else
       status=1
       ran=1
     fi
   else
-    info "Running Python import smoke check (no tests/ yet)"
+    info "Running Python import smoke check (no ml-base tests yet)"
     # shellcheck disable=SC1091
     source "$VENV/bin/activate"
     if python -c "import torch, onnx, onnxruntime, numpy, ezkl"; then
@@ -49,7 +47,7 @@ if [[ -x "$VENV/bin/python" ]]; then
     fi
   fi
 else
-  warn "model/.venv missing — run: make install"
+  warn "ml-base/.venv missing — run: make install"
   status=1
 fi
 
@@ -58,17 +56,16 @@ if [[ -f "$ROOT/frontend/package.json" ]]; then
   if (cd "$ROOT/frontend" && pnpm test); then
     ran=1
   else
-    # Frontend may not define a test script yet
     warn "frontend test script failed or is not defined"
     status=1
     ran=1
   fi
 else
-  info "Skipping frontend tests (frontend/ not scaffolded yet)"
+  info "Skipping frontend tests (optional UI not present)"
 fi
 
 if [[ "$ran" -eq 0 ]]; then
-  warn "No test suites found. Scaffold packages or run: make install"
+  warn "No test suites found. Run: make install"
   exit 1
 fi
 

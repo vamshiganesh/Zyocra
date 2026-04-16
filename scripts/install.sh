@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# install.sh — verify host toolchain and install phase-1 Python/ML deps.
-# Does not scaffold frontend or contracts apps.
+# install.sh — verify host toolchain and install ML/EZKL deps into ml-base/.venv.
+# Does not implement Milestone 1–5 application code.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -10,9 +10,8 @@ info() { printf '==> %s\n' "$*"; }
 warn() { printf '!!  %s\n' "$*" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
-info "Zyocra phase-1 install (local-first, no cloud)"
+info "Zyocra install (local-first, no cloud)"
 
-# --- Host toolchain checks (install these on the OS if missing) ---
 missing=0
 check() {
   local name="$1"
@@ -34,11 +33,10 @@ check "cargo" cargo --version
 check "forge" forge --version
 check "cast" cast --version
 check "anvil" anvil --version
-# Circom is optional for phase-1 baseline (EZKL is default); report only.
 if have circom; then
   printf '  ok  %-10s %s\n' "circom" "$(circom --version 2>/dev/null | head -1)"
 else
-  printf '  skip %-10s (optional until Circom benchmark path)\n' "circom"
+  printf '  skip %-10s (needed for Milestone 3 — circuits-custom)\n' "circom"
 fi
 
 if [[ "$missing" -ne 0 ]]; then
@@ -46,12 +44,10 @@ if [[ "$missing" -ne 0 ]]; then
   exit 1
 fi
 
-# --- Python venv + ML / EZKL deps ---
-VENV="$ROOT/model/.venv"
-REQ="$ROOT/model/requirements.txt"
+VENV="$ROOT/ml-base/.venv"
+REQ="$ROOT/ml-base/requirements.txt"
 
-info "Creating Python venv at model/.venv (if needed)"
-# python3 -m venv: create an isolated environment so system packages stay untouched
+info "Creating Python venv at ml-base/.venv (if needed)"
 if [[ ! -d "$VENV" ]]; then
   python3 -m venv "$VENV"
 fi
@@ -62,11 +58,10 @@ source "$VENV/bin/activate"
 info "Upgrading pip inside venv"
 python -m pip install --upgrade pip
 
-info "Installing CPU PyTorch wheel index (free, no CUDA/cloud required)"
-# Official CPU wheels avoid pulling a huge CUDA stack on WSL laptops.
+info "Installing CPU PyTorch (free, no CUDA/cloud required)"
 python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
 
-info "Installing remaining model requirements (onnx, onnxruntime, numpy, ezkl)"
+info "Installing ml-base requirements (onnx, onnxruntime, numpy, ezkl)"
 python -m pip install -r "$REQ"
 
 info "Verifying imports"
@@ -77,31 +72,29 @@ for mod in ("torch", "onnx", "onnxruntime", "numpy", "ezkl"):
     print(f"  ok  {mod}")
 PY
 
-# ezkl pip package exposes a Python API (import ezkl), not a standalone CLI binary.
 EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
 printf '  ok  %-10s python API %s (import ezkl)\n' "ezkl" "$EZKL_VER"
 
-# --- Frontend / contracts placeholders (no scaffold yet) ---
 if [[ -f "$ROOT/frontend/package.json" ]]; then
   info "Installing frontend deps with pnpm"
   (cd "$ROOT/frontend" && pnpm install)
 else
-  info "Skipping frontend pnpm install (frontend/ not scaffolded yet)"
+  info "Skipping frontend pnpm install (optional UI not present)"
 fi
 
 if [[ -f "$ROOT/contracts/foundry.toml" ]]; then
   info "Installing Foundry deps"
   (cd "$ROOT/contracts" && forge install)
 else
-  info "Skipping forge install (contracts/ not scaffolded yet)"
+  info "Skipping forge install (contracts/ not initialized yet)"
 fi
 
-info "Ensuring benchmarks/results exists"
-mkdir -p "$ROOT/benchmarks/results"
+info "Ensuring benchmark output dirs exist"
+mkdir -p "$ROOT/benchmarks/raw-results" "$ROOT/benchmarks/plots"
 
 info "Install complete"
 echo
 echo "Activate the ML venv with:"
-echo "  source model/.venv/bin/activate"
+echo "  source ml-base/.venv/bin/activate"
 echo
-echo "Next: see docs/setup.md for run commands (make dev / test / lint / benchmark)."
+echo "Next: docs/setup.md and docs/roadmap.md"
