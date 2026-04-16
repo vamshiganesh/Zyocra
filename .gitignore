@@ -2,9 +2,12 @@
 .cursor/
 .cursor
 
+# Local project notes (do not publish)
+importantData/
+
 # Dependencies
 node_modules/
-model/.venv/
+ml-base/.venv/
 .venv/
 venv/
 __pycache__/
@@ -46,8 +49,13 @@ Thumbs.db
 pip-wheel-metadata/
 
 # Large ML / zk artifacts (keep small fixtures and reports in-repo)
-model/artifacts/
-prover/**/artifacts/
+ml-base/artifacts/
+circuits-baseline/proofs/**
+!circuits-baseline/proofs/.gitkeep
+circuits-custom/proofs/**
+!circuits-custom/proofs/.gitkeep
+circuits-custom/witnesses/**
+!circuits-custom/witnesses/.gitkeep
 *.pk
 *.vk
 *.proof
@@ -62,10 +70,8 @@ htmlcov/
 .coverage
 
 # Benchmark binaries (JSON/CSV/MD/SVG/PNG reports are committed intentionally)
-benchmarks/results/**/*.bin
-benchmarks/results/**/*.proof
-benchmarks/results/**/*.pk
-benchmarks/results/**/*.vk
-
-#Project Information
-importantData/
+benchmarks/raw-results/**/*.bin
+benchmarks/raw-results/**/*.proof
+benchmarks/raw-results/**/*.pk
+benchmarks/raw-results/**/*.vk
+benchmarks/plots/**/*.bin
