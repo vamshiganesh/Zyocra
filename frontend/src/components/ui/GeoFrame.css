@@ -1,0 +1,22 @@
+.geo-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-height: 10rem;
+  border: 1px solid var(--color-line-light);
+  color: var(--color-ink);
+  background-color: var(--color-surface-muted);
+}
+
+.geo-frame__svg {
+  width: min(70%, 9rem);
+  height: auto;
+}
+
+.geo-frame__caption {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  color: var(--color-ink-muted);
+}
