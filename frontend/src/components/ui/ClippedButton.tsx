@@ -13,7 +13,7 @@ type CommonProps = {
 };
 
 type ButtonProps = CommonProps &
-  ButtonHTMLAttributes<HTMLButtonElement> & {
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children"> & {
     to?: undefined;
   };
 
@@ -38,9 +38,17 @@ export function ClippedButton(props: ButtonProps | LinkProps) {
     );
   }
 
-  const buttonProps = props as ButtonProps;
+  const {
+    children: _c,
+    variant: _v,
+    clip: _clip,
+    className: _className,
+    to: _to,
+    ...rest
+  } = props as ButtonProps & { to?: undefined };
+
   return (
-    <button type="button" {...buttonProps} className={classes}>
+    <button type="button" {...rest} className={classes}>
       {children}
     </button>
   );
