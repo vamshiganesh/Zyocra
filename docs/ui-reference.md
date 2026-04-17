@@ -8,7 +8,7 @@ Optional demo shell. Does not block core milestones.
 
 ## Zyocra accent rule
 
-**Replace all orange accents with a refined yellow** (e.g. `#F5C518` or `#FFD000`).
+**Replace all orange accents with a refined muted yellow** (`#C9A84C` — premium/technical, not neon). See `docs/design-system.md`.
 
 Yellow is reserved for:
 

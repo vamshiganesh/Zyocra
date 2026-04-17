@@ -38,7 +38,7 @@ export function ClippedButton(props: ButtonProps | LinkProps) {
     );
   }
 
-  const { to: _to, ...buttonProps } = props as ButtonProps;
+  const buttonProps = props as ButtonProps;
   return (
     <button type="button" {...buttonProps} className={classes}>
       {children}
