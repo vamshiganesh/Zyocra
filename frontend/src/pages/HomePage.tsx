@@ -90,7 +90,7 @@ export function HomePage() {
       </section>
 
       <div className="panel-stack">
-        <ClippedCard clip="tl" id-attr="">
+        <ClippedCard clip="tl">
           <div id="capabilities">
             <SectionHeader
               label="Capabilities"
