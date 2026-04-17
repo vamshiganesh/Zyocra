@@ -1,0 +1,91 @@
+.clip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.clip-btn--clip-br {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--clip-md)),
+    calc(100% - var(--clip-md)) 100%,
+    0 100%
+  );
+}
+
+.clip-btn--clip-bl {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    var(--clip-md) 100%,
+    0 calc(100% - var(--clip-md))
+  );
+}
+
+.clip-btn--clip-tr {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--clip-md)) 0,
+    100% var(--clip-md),
+    100% 100%,
+    0 100%
+  );
+}
+
+.clip-btn--clip-none {
+  clip-path: none;
+}
+
+.clip-btn--accent {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.clip-btn--accent:hover {
+  background: var(--color-accent-hover);
+}
+
+.clip-btn--surface {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.clip-btn--surface:hover {
+  background: var(--color-surface-muted);
+}
+
+.clip-btn--ink {
+  background: var(--color-ink);
+  color: var(--color-fog);
+}
+
+.clip-btn--ink:hover {
+  background: #000;
+}
+
+.clip-btn--ghost {
+  background: transparent;
+  color: var(--color-fog);
+  border-color: var(--color-line-dark);
+}
+
+.clip-btn--ghost:hover {
+  border-color: var(--color-fog-muted);
+}

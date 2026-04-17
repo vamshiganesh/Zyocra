@@ -1,0 +1,40 @@
+.clip-card {
+  position: relative;
+  border: 1px solid var(--color-line-light);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-radius: var(--panel-radius);
+  overflow: hidden;
+}
+
+.clip-card--dark {
+  background: var(--color-canvas-elevated);
+  color: var(--color-fog);
+  border-color: var(--color-line-dark);
+}
+
+.clip-card--padded {
+  padding: var(--space-8);
+}
+
+.clip-card--clip-tl {
+  border-radius: 0 var(--panel-radius) var(--panel-radius) var(--panel-radius);
+  clip-path: polygon(
+    var(--clip-lg) 0,
+    100% 0,
+    100% 100%,
+    0 100%,
+    0 var(--clip-lg)
+  );
+}
+
+.clip-card--clip-br {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--clip-lg)),
+    calc(100% - var(--clip-lg)) 100%,
+    0 100%
+  );
+  border-radius: var(--panel-radius) var(--panel-radius) 0 var(--panel-radius);
+}
