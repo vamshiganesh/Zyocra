@@ -133,7 +133,7 @@
 }
 
 .layer-list__num {
-  font-family: var(--font-mono);
+  font-family: var(--font-serif);
   font-size: var(--text-2xl);
   color: var(--color-accent);
   line-height: 1;

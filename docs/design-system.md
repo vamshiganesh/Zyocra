@@ -68,11 +68,11 @@ Page padding defaults to `--space-10` / `--space-8`. Section stacks use `--space
 | `--text-3xl` | 44px | Large section titles |
 | `--text-4xl` | 56px | Hero / brand |
 
-**Families**
+**Families** (matched to [Dispatch](https://dispatch.framer.website/))
 
-- `--font-sans`: DM Sans — UI, section titles, buttons
-- `--font-serif`: Instrument Serif — hero headlines, stat values, brand wordmark
-- `--font-mono`: JetBrains Mono — indexes, labels, table metrics, tags
+- `--font-sans`: **Geist** (fallback Inter) — UI, section titles, buttons, body
+- `--font-serif`: **LT Remark** — hero headlines, display numbers, brand wordmark
+- `--font-mono`: **IBM Plex Mono** — indexes, labels, table metrics, technical copy
 
 Labels use uppercase + `--tracking-label` (0.06em) via `.mono-label`.
 
