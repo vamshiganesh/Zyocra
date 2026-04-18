@@ -1,3 +1,4 @@
+import { Shell } from "../components/layout/Shell";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
@@ -48,124 +49,128 @@ export function AboutPage() {
   return (
     <div className="page">
       <section className="band band--hero">
-        <div className="hero">
-          <div>
-            <p className="hero__eyebrow mono-label label-dot">About</p>
-            <h1 className="hero__title">A focused team, building with intent.</h1>
-            <p className="hero__body">
-              Zyocra sits at the intersection of zkML engineering, circuit
-              optimization, and on-chain DeFi integration—built as a research-grade
-              benchmark, not a hype dashboard.
-            </p>
-            <div className="hero__actions">
-              <ClippedButton to="/#benchmarks" variant="surface" size="lg">
-                See benchmarks
-              </ClippedButton>
+        <Shell>
+          <div className="hero">
+            <div>
+              <p className="hero__eyebrow mono-label label-dot">About</p>
+              <h1 className="hero__title">A focused team, building with intent.</h1>
+              <p className="hero__body">
+                Zyocra sits at the intersection of zkML engineering, circuit
+                optimization, and on-chain DeFi integration—built as a research-grade
+                benchmark, not a hype dashboard.
+              </p>
+              <div className="hero__actions">
+                <ClippedButton to="/#benchmarks" variant="surface" size="lg">
+                  See benchmarks
+                </ClippedButton>
+              </div>
+            </div>
+            <div className="about-metrics">
+              <div className="about-metric">
+                <p className="about-metric__value">2</p>
+                <p className="about-metric__label">Proving paths</p>
+              </div>
+              <div className="about-metric">
+                <p className="about-metric__value">5</p>
+                <p className="about-metric__label">Milestones</p>
+              </div>
+              <div className="about-metric">
+                <p className="about-metric__value">0</p>
+                <p className="about-metric__label">Paid infra required</p>
+              </div>
             </div>
           </div>
-          <div className="about-metrics">
-            <div className="about-metric">
-              <p className="about-metric__value">2</p>
-              <p className="about-metric__label">Proving paths</p>
-            </div>
-            <div className="about-metric">
-              <p className="about-metric__value">5</p>
-              <p className="about-metric__label">Milestones</p>
-            </div>
-            <div className="about-metric">
-              <p className="about-metric__value">0</p>
-              <p className="about-metric__label">Paid infra required</p>
-            </div>
-          </div>
-        </div>
+        </Shell>
       </section>
 
-      <div className="band band--panels">
-        <div className="panel-stack">
-          <ClippedCard>
-            <div id="values">
-              <SectionHeader
-                label="Our values"
-                title="Principles that guide how we build"
-                description="Engineering discipline for a verifiable LoRA risk oracle."
-              />
-              <div className="layer-list">
-                {values.map((value) => (
-                  <article key={value.num} className="layer-list__item">
-                    <span className="layer-list__num">{value.num}</span>
-                    <h3 className="layer-list__title">{value.title}</h3>
-                    <p className="layer-list__body">{value.body}</p>
-                  </article>
-                ))}
+      <section className="band band--panels">
+        <Shell>
+          <div className="panel-stack">
+            <ClippedCard>
+              <div id="values">
+                <SectionHeader
+                  label="Our values"
+                  title="Principles that guide how we build"
+                  description="Engineering discipline for a verifiable LoRA risk oracle."
+                />
+                <div className="layer-list">
+                  {values.map((value) => (
+                    <article key={value.num} className="layer-list__item">
+                      <span className="layer-list__num">{value.num}</span>
+                      <h3 className="layer-list__title">{value.title}</h3>
+                      <p className="layer-list__body">{value.body}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
-            </div>
-          </ClippedCard>
+            </ClippedCard>
 
-          <ClippedCard>
-            <div id="team">
-              <SectionHeader
-                label="Team"
-                title="People who build what they believe in."
-                description="Placeholder roster for layout parity—roles, not real identities."
-              />
-              <div className="team-grid">
-                {team.map((member) => (
-                  <div key={member.name} className="team-cell">
-                    <div className="team-avatar" aria-hidden="true" />
-                    <div>
-                      <p className="team-name">{member.name}</p>
-                      <p className="team-role">{member.role}</p>
+            <ClippedCard>
+              <div id="team">
+                <SectionHeader
+                  label="Team"
+                  title="People who build what they believe in."
+                  description="Placeholder roster for layout parity—roles, not real identities."
+                />
+                <div className="team-grid">
+                  {team.map((member) => (
+                    <div key={member.name} className="team-cell">
+                      <div className="team-avatar" aria-hidden="true" />
+                      <div>
+                        <p className="team-name">{member.name}</p>
+                        <p className="team-role">{member.role}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-                <div className="team-cell team-cell--empty" aria-hidden="true" />
+                  ))}
+                  <div className="team-cell team-cell--empty" aria-hidden="true" />
+                </div>
               </div>
-            </div>
-          </ClippedCard>
+            </ClippedCard>
 
-          <ClippedCard>
-            <div id="careers">
-              <SectionHeader
-                label="Careers"
-                title="Join the team building structured infrastructure."
-                description="No open roles yet—this section is a static shell."
-              />
-              <div style={{ marginTop: "var(--space-8)" }} className="stack--tight">
-                {[
-                  {
-                    title: "Circuit engineer",
-                    meta: "Research · Remote · Placeholder",
-                  },
-                  {
-                    title: "Protocol engineer",
-                    meta: "Solidity · Remote · Placeholder",
-                  },
-                ].map((role) => (
-                  <div
-                    key={role.title}
-                    style={{
-                      padding: "var(--space-5)",
-                      border: "1px solid var(--color-line-light)",
-                      background: "var(--color-surface-muted)",
-                    }}
-                  >
-                    <p style={{ fontWeight: 700 }}>{role.title}</p>
-                    <p
-                      className="mono-label"
+            <ClippedCard>
+              <div id="careers">
+                <SectionHeader
+                  label="Careers"
+                  title="Join the team building structured infrastructure."
+                  description="No open roles yet—this section is a static shell."
+                />
+                <div style={{ marginTop: "var(--space-8)" }} className="stack--tight">
+                  {[
+                    {
+                      title: "Circuit engineer",
+                      meta: "Research · Remote · Placeholder",
+                    },
+                    {
+                      title: "Protocol engineer",
+                      meta: "Solidity · Remote · Placeholder",
+                    },
+                  ].map((role) => (
+                    <div
+                      key={role.title}
                       style={{
-                        marginTop: "var(--space-2)",
-                        color: "var(--color-ink-muted)",
+                        padding: "var(--space-5)",
+                        border: "1px solid var(--color-line-light)",
+                        background: "var(--color-surface-muted)",
                       }}
                     >
-                      {role.meta}
-                    </p>
-                  </div>
-                ))}
+                      <p style={{ fontWeight: 700 }}>{role.title}</p>
+                      <p
+                        className="mono-label"
+                        style={{
+                          marginTop: "var(--space-2)",
+                          color: "var(--color-ink-muted)",
+                        }}
+                      >
+                        {role.meta}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </ClippedCard>
-        </div>
-      </div>
+            </ClippedCard>
+          </div>
+        </Shell>
+      </section>
     </div>
   );
 }

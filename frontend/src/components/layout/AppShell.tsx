@@ -6,21 +6,27 @@ import { TopNav } from "./TopNav";
 
 export function AppShell() {
   return (
-    <div className="app-shell">
-      <div className="app-shell__logo">
-        <LogoMark />
-      </div>
-      <div className="app-shell__topnav">
-        <TopNav />
-      </div>
-      <aside className="app-shell__rail">
+    <>
+      <header className="band band--header">
+        <div className="shell shell--header">
+          <div className="shell__logo">
+            <LogoMark />
+          </div>
+          <div className="shell__topnav">
+            <TopNav />
+          </div>
+        </div>
+      </header>
+
+      <aside className="site-rail" aria-label="Section">
         <LeftRail />
       </aside>
-      <main className="app-shell__main">
+
+      <main className="site-main">
         <div id="top" tabIndex={-1} />
         <Outlet />
         <SiteFooter />
       </main>
-    </div>
+    </>
   );
 }

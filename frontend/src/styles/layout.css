@@ -1,68 +1,101 @@
 /*
- * Wide centered shell (Dispatch-style):
- * - Balanced empty space on left AND right when the viewport is wide
- * - Shell is wide enough to breathe (not a squeezed card)
- * - Document scrolls → scrollbar stays on the browser’s right edge
+ * Full-viewport section bands (bg + horizontal rules edge-to-edge).
+ * Centered wide shell for content, with vertical rules on shell edges.
+ * Document scroll → scrollbar on the browser’s right.
  */
 
-.app-shell {
-  --shell-max: 92rem; /* ~1472px — roomy, not cramped */
+.band {
+  width: 100%;
+  border-bottom: 1px solid var(--color-line-dark);
+}
 
+.band--header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--color-canvas-2);
+}
+
+.band--hero {
+  background: var(--color-canvas);
+}
+
+.band--panels {
+  background: var(--color-canvas-2);
+}
+
+.band--footer {
+  background: var(--color-canvas-3);
+  border-bottom: 0;
+}
+
+.band--footer-legal {
+  background: #0a0a0a;
+  border-bottom: 0;
+}
+
+/* Centered content frame */
+.shell {
+  --shell-max: 92rem;
   width: min(100%, var(--shell-max));
   margin-inline: auto;
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: var(--rail-width) minmax(0, 1fr);
-  grid-template-rows: var(--topnav-height) auto;
-  grid-template-areas:
-    "logo topnav"
-    "rail main";
-  background: var(--color-canvas);
   border-left: 1px solid var(--color-line-dark);
   border-right: 1px solid var(--color-line-dark);
 }
 
-.app-shell__logo {
-  grid-area: logo;
-  position: sticky;
-  top: 0;
-  z-index: 30;
+.shell--header {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  height: var(--topnav-height);
+}
+
+.shell__logo {
   display: flex;
   align-items: stretch;
-  height: var(--topnav-height);
   border-right: 1px solid var(--color-line-dark);
-  border-bottom: 1px solid var(--color-line-dark);
   background: var(--color-rail);
 }
 
-.app-shell__topnav {
-  grid-area: topnav;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  height: var(--topnav-height);
-  border-bottom: 1px solid var(--color-line-dark);
-  background: var(--color-canvas-2);
+.shell__topnav {
+  min-width: 0;
 }
 
-.app-shell__rail {
-  grid-area: rail;
-  position: sticky;
+.shell--split {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  min-height: 0;
+}
+
+/* Spacer under fixed rail — keeps vertical rule + alignment */
+.shell__rail-slot {
+  border-right: 1px solid var(--color-line-dark);
+  min-height: 100%;
+}
+
+.shell__main {
+  min-width: 0;
+}
+
+/* Fixed section rail, aligned to shell’s left column; transparent so band colors show */
+.site-rail {
+  position: fixed;
   top: var(--topnav-height);
-  z-index: 20;
-  align-self: start;
+  left: max(0px, calc((100vw - min(100vw, 92rem)) / 2));
+  z-index: 30;
+  width: var(--rail-width);
   height: calc(100vh - var(--topnav-height));
   height: calc(100dvh - var(--topnav-height));
   overflow: auto;
-  border-right: 1px solid var(--color-line-dark);
-  background: var(--color-rail);
+  background: transparent;
+  pointer-events: none;
 }
 
-.app-shell__main {
-  grid-area: main;
+.site-rail .left-rail {
+  pointer-events: auto;
+}
+
+.site-main {
   min-width: 0;
-  background: var(--color-canvas);
-  /* Window scrolls — do not put overflow:auto here */
 }
 
 #top {
@@ -71,36 +104,20 @@
   overflow: hidden;
 }
 
-/* Content uses the full main column width inside the centered shell */
 .page {
   width: 100%;
-  max-width: none;
   margin: 0;
   padding: 0;
 }
 
-.page--wide {
-  max-width: none;
+.band--hero .shell__main,
+.band--panels .shell__main {
+  padding: var(--page-pad-y) var(--page-pad-x);
 }
 
-/* Horizontal bands: tone shift + structural line */
-.band {
-  width: 100%;
-  border-bottom: 1px solid var(--color-line-dark);
-}
-
-.band--hero {
-  background: var(--color-canvas);
-  padding: var(--page-pad-y) var(--page-pad-x) var(--space-16);
-}
-
-.band--panels {
-  background: var(--color-canvas-2);
-  padding: var(--space-12) var(--page-pad-x) var(--space-16);
-}
-
-.band--muted {
-  background: var(--color-canvas-3);
+.band--panels .shell__main {
+  padding-top: var(--space-12);
+  padding-bottom: var(--space-16);
 }
 
 .stack {
@@ -130,38 +147,29 @@
 }
 
 @media (max-width: 960px) {
-  .app-shell {
-    width: 100%;
-    border-left: 0;
-    border-right: 0;
+  .shell--header,
+  .shell--split {
     grid-template-columns: 1fr;
-    grid-template-rows: var(--topnav-height) auto auto;
-    grid-template-areas:
-      "topnav"
-      "rail"
-      "main";
   }
 
-  .app-shell__logo {
+  .shell__logo,
+  .shell__rail-slot,
+  .site-rail {
     display: none;
   }
 
-  .app-shell__rail {
-    position: relative;
-    top: 0;
-    height: auto;
+  .shell {
+    border-left: 0;
     border-right: 0;
-    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .band--hero .shell__main,
+  .band--panels .shell__main {
+    padding: var(--space-8) var(--space-4);
   }
 
   .grid-2,
   .grid-3 {
     grid-template-columns: 1fr;
-  }
-
-  .band--hero,
-  .band--panels {
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
   }
 }
