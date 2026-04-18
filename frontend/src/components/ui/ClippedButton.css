@@ -1,11 +1,11 @@
 /* Diagonal chamfer: top-left + bottom-right cut, TR/BL stay square.
-   Hover: vertical text roll with slight skew (Dispatch-style). */
+   Hover: vertical text roll — duplicate line is fully clipped until hover. */
 
 .clip-btn {
   --btn-chamfer: 0.7rem;
-  --btn-roll: 1.15em;
+  --btn-roll: 1em;
   --btn-ease: cubic-bezier(0.65, 0, 0.35, 1);
-  --btn-duration: 0.48s;
+  --btn-duration: 0.45s;
 
   position: relative;
   display: inline-flex;
@@ -22,6 +22,7 @@
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   text-decoration: none;
+  line-height: 1;
   cursor: pointer;
   clip-path: polygon(
     var(--btn-chamfer) 0,
@@ -35,16 +36,18 @@
     color var(--duration-fast) var(--ease-out);
 }
 
+/* Mask: only one line visible at rest. overflow must clip the duplicate. */
 .clip-btn__label {
   display: block;
   overflow: hidden;
   height: var(--btn-roll);
   line-height: var(--btn-roll);
+  contain: paint;
 }
 
 .clip-btn__roll {
-  display: flex;
-  flex-direction: column;
+  display: block;
+  transform: translate3d(0, 0, 0);
   transition: transform var(--btn-duration) var(--btn-ease);
   will-change: transform;
 }
@@ -53,41 +56,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 var(--btn-roll);
   height: var(--btn-roll);
+  line-height: var(--btn-roll);
   white-space: nowrap;
-  transform-origin: center center;
+  overflow: hidden;
+  transform: none;
+  opacity: 1;
+  transform-origin: 50% 50%;
   transition:
     transform var(--btn-duration) var(--btn-ease),
-    opacity var(--btn-duration) var(--btn-ease);
+    opacity calc(var(--btn-duration) * 0.85) var(--btn-ease);
 }
 
-/* Resting: primary line flat; duplicate sits below, pre-skewed */
-.clip-btn__line:nth-child(1) {
-  transform: skewY(0deg);
+/* Resting: no skew, no fade — second line sits fully below the mask */
+.clip-btn__line:nth-child(1),
+.clip-btn__line:nth-child(2) {
+  transform: none;
   opacity: 1;
 }
 
-.clip-btn__line:nth-child(2) {
-  transform: skewY(10deg);
-  opacity: 0.4;
-}
-
-/* Hover / focus: roll up one line; exiting line skews, entering line settles */
+/* Hover / focus: roll exactly one line height; skew only while moving */
 .clip-btn:hover .clip-btn__roll,
 .clip-btn:focus-visible .clip-btn__roll {
-  transform: translateY(calc(-1 * var(--btn-roll)));
+  transform: translate3d(0, calc(-1 * var(--btn-roll)), 0);
 }
 
 .clip-btn:hover .clip-btn__line:nth-child(1),
 .clip-btn:focus-visible .clip-btn__line:nth-child(1) {
-  transform: skewY(-10deg);
+  transform: skewY(-8deg);
   opacity: 0.35;
 }
 
 .clip-btn:hover .clip-btn__line:nth-child(2),
 .clip-btn:focus-visible .clip-btn__line:nth-child(2) {
   transform: skewY(0deg);
+  opacity: 1;
+}
+
+/* Entering line starts skewed only once the roll begins (hover), not at rest */
+.clip-btn:not(:hover):not(:focus-visible) .clip-btn__line:nth-child(2) {
+  transform: none;
   opacity: 1;
 }
 
