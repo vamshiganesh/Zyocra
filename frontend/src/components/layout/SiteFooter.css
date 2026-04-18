@@ -1,7 +1,7 @@
 .site-footer {
-  margin-top: var(--space-16);
+  margin-top: 0;
   border-top: 1px solid var(--color-line-dark);
-  background: var(--color-canvas);
+  background: var(--color-canvas-3);
   color: var(--color-fog);
 }
 
@@ -173,7 +173,7 @@
 .site-footer__banner {
   --banner-chamfer: 1.25rem;
   position: relative;
-  margin: var(--space-6) var(--space-6) 0;
+  margin: var(--space-6) var(--page-pad-x) 0;
   padding: var(--space-8) var(--space-8) 0;
   background: var(--color-accent);
   color: var(--color-accent-ink);
@@ -289,9 +289,9 @@
   justify-content: space-between;
   gap: var(--space-4);
   margin-top: var(--space-6);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-4) var(--page-pad-x);
   border-top: 1px solid var(--color-line-dark);
-  background: #0c0c0c;
+  background: #0a0a0a;
   font-size: var(--text-xs);
   color: var(--color-fog-muted);
 }

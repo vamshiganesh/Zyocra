@@ -129,13 +129,22 @@ Do **not** use rounded rectangles for content cards or buttons.
 | `PricingTable` | Three-plan comparison shell |
 | `GeoFrame` | Line-art geometric illustration frame |
 
-## Canvas
+## Canvas & sections
 
-Solid `--color-canvas` only — no full-page blueprint grid. Structural hairlines may separate footer/nav regions; they are not a background grid.
+No full-page blueprint grid. Use solid dark tones with **slight section shifts**:
+
+| Token | Role |
+|-------|------|
+| `--color-canvas` (`#111`) | Hero / base |
+| `--color-canvas-2` (`#161616`) | Panel band, top nav |
+| `--color-canvas-3` (`#1b1b1b`) | Footer upper |
+| `#0a0a0a` | Legal bar |
+
+Structural **horizontal and vertical hairlines** (`--color-line-dark`) separate logo, rail, nav, bands, and footer columns.
 
 ## Shell layout
 
-App column is centered with a max width (`--shell-max`). Side gutters use `1fr` / `1.65fr` so extra viewport width prefers the **right** side.
+Full-width shell. Sticky logo / top nav / left rail. **Document scroll** — scrollbar on the browser’s right edge. Page content uses full main-column width with generous `--page-pad-x` / `--page-pad-y` (not a narrow centered card).
 
 ## Do / don’t
 

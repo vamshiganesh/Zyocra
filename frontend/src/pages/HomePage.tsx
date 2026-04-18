@@ -59,36 +59,39 @@ const features = [
 
 export function HomePage() {
   return (
-    <div className="page page--wide stack--loose">
-      <section className="hero">
-        <div>
-          <p className="hero__eyebrow mono-label label-dot">
-            Ready to ship verifiable risk
-          </p>
-          <h1 className="hero__title">Prove risk scores. Update collateral.</h1>
-          <p className="hero__body">
-            Zyocra is a local-first zkML oracle for LoRA-adapted liquidation-risk
-            inference—benchmarking EZKL-generated circuits against hand-optimized
-            Circom, with on-chain verification in a mock lending protocol.
-          </p>
-          <div className="hero__actions" id="get-started">
-            <ClippedButton to="/updates" variant="surface" size="lg">
-              View updates
-            </ClippedButton>
-            <ClippedButton to="/about" variant="ghost" size="lg">
-              About the project
-            </ClippedButton>
+    <div className="page">
+      <section className="band band--hero">
+        <div className="hero">
+          <div>
+            <p className="hero__eyebrow mono-label label-dot">
+              Ready to ship verifiable risk
+            </p>
+            <h1 className="hero__title">Prove risk scores. Update collateral.</h1>
+            <p className="hero__body">
+              Zyocra is a local-first zkML oracle for LoRA-adapted liquidation-risk
+              inference—benchmarking EZKL-generated circuits against hand-optimized
+              Circom, with on-chain verification in a mock lending protocol.
+            </p>
+            <div className="hero__actions" id="get-started">
+              <ClippedButton to="/updates" variant="surface" size="lg">
+                View updates
+              </ClippedButton>
+              <ClippedButton to="/about" variant="ghost" size="lg">
+                About the project
+              </ClippedButton>
+            </div>
           </div>
-        </div>
-        <div className="hero__aside hatch-dark">
-          <svg className="hero__aside-svg" viewBox="0 0 240 160" fill="none" aria-hidden="true">
-            <path d="M10 130C50 40 90 40 130 130C170 220 210 40 230 80" stroke="currentColor" strokeWidth="1" />
-            <path d="M10 100C50 10 90 10 130 100C170 190 210 10 230 50" stroke="currentColor" strokeWidth="1" />
-            <path d="M10 70C50 -20 90 -20 130 70C170 160 210 -20 230 20" stroke="currentColor" strokeWidth="1" />
-          </svg>
+          <div className="hero__aside hatch-dark">
+            <svg className="hero__aside-svg" viewBox="0 0 240 160" fill="none" aria-hidden="true">
+              <path d="M10 130C50 40 90 40 130 130C170 220 210 40 230 80" stroke="currentColor" strokeWidth="1" />
+              <path d="M10 100C50 10 90 10 130 100C170 190 210 10 230 50" stroke="currentColor" strokeWidth="1" />
+              <path d="M10 70C50 -20 90 -20 130 70C170 160 210 -20 230 20" stroke="currentColor" strokeWidth="1" />
+            </svg>
+          </div>
         </div>
       </section>
 
+      <div className="band band--panels">
       <div className="panel-stack">
         <ClippedCard>
           <div id="capabilities">
@@ -213,6 +216,7 @@ export function HomePage() {
             </div>
           </div>
         </ClippedCard>
+      </div>
       </div>
     </div>
   );

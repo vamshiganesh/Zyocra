@@ -1,11 +1,8 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(14rem, 0.8fr);
-  gap: var(--space-10);
+  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.85fr);
+  gap: clamp(var(--space-8), 4vw, var(--space-16));
   align-items: end;
-  padding: var(--space-12) 0 var(--space-16);
-  border-bottom: 1px solid var(--color-line-dark);
-  margin-bottom: var(--space-10);
 }
 
 .hero__eyebrow {
@@ -293,10 +290,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  border-left: 1px solid var(--color-line-dark);
+  padding-left: var(--space-6);
 }
 
 .about-metric {
   border: 1px solid var(--color-line-dark);
+  background: var(--color-canvas-elevated);
   padding: var(--space-5);
 }
 

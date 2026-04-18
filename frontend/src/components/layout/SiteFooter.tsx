@@ -26,16 +26,8 @@ const badges = [
 ];
 
 function scrollToTop() {
-  const main = document.getElementById("main-scroll");
-  const top = document.getElementById("top");
-
-  if (main instanceof HTMLElement) {
-    main.scrollTo({ top: 0, behavior: "smooth" });
-  } else {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  top?.focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  document.getElementById("top")?.focus({ preventScroll: true });
 }
 
 export function SiteFooter() {
