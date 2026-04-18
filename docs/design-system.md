@@ -131,20 +131,23 @@ Do **not** use rounded rectangles for content cards or buttons.
 
 ## Canvas & sections
 
-No full-page blueprint grid. Use solid dark tones with **slight section shifts**:
+**Full-viewport bands:** when a section tone changes, the background and its horizontal rule run **edge-to-edge** (including left/right margins outside the content frame).
 
 | Token | Role |
 |-------|------|
-| `--color-canvas` (`#111`) | Hero / base |
-| `--color-canvas-2` (`#161616`) | Panel band, top nav |
-| `--color-canvas-3` (`#1b1b1b`) | Footer upper |
-| `#0a0a0a` | Legal bar |
+| `--color-canvas` (`#111`) | Hero band |
+| `--color-canvas-2` (`#161616`) | Panels band, header band |
+| `--color-canvas-3` (`#1b1b1b`) | Footer band |
+| `#0a0a0a` | Legal band |
 
-Structural **horizontal and vertical hairlines** (`--color-line-dark`) separate logo, rail, nav, bands, and footer columns.
+## Lines (design pattern)
+
+- **Horizontal:** full-width rules between bands (`border-bottom` on `.band`)
+- **Vertical:** shell left/right edges; rail column; hero text | graphic; footer CTA | links; internal card grids
 
 ## Shell layout
 
-Wide **centered** shell (`max-width: 92rem`, `margin-inline: auto`) with hairline left/right edges. Equal empty canvas on both sides when the viewport is wider. Sticky logo / top nav / left rail. **Document scroll** — scrollbar on the browser’s right edge. Content fills the shell’s main column (not a second, narrower card inside).
+Centered content frame (`.shell`, `max-width: 92rem`) sits **inside** full-width bands. Equal side margins inherit the band color. Fixed section rail aligns to the shell’s left column (transparent, so band colors show through). **Document scroll** — scrollbar on the browser’s right edge.
 
 ## Do / don’t
 

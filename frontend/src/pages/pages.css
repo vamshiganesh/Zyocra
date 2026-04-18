@@ -36,12 +36,18 @@
 
 .hero__aside {
   border: 1px solid var(--color-line-dark);
+  border-left: 1px solid var(--color-line-dark);
   background: var(--color-canvas-elevated);
   min-height: 14rem;
   display: grid;
   place-items: center;
   color: var(--color-fog-muted);
   padding: var(--space-6);
+}
+
+.hero > div:first-child:not(:only-child) {
+  padding-right: var(--space-8);
+  border-right: 1px solid var(--color-line-dark);
 }
 
 .hero__aside-svg {
