@@ -228,28 +228,57 @@
 }
 
 .site-footer__wordmark {
-  margin: var(--space-6) 0 0;
+  position: relative;
+  margin: var(--space-4) 0 0;
   font-family: var(--font-serif);
-  font-size: clamp(4.5rem, 16vw, 11rem);
+  font-size: clamp(5.5rem, 22vw, 14rem);
   font-weight: 400;
-  line-height: 0.78;
-  letter-spacing: -0.04em;
+  line-height: 0.72;
+  letter-spacing: -0.045em;
+  transform: translateY(0.1em);
+  user-select: none;
+}
+
+/* Solid ink for most of the letterforms */
+.site-footer__wordmark-solid {
+  display: block;
   color: var(--color-accent-ink);
-  /* Stipple / halftone texture on the wordmark */
+}
+
+/* Dotted texture only on the lower portion (Dispatch-style fade) */
+.site-footer__wordmark-stipple {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-color: var(--color-accent-ink);
   background-image: radial-gradient(
     circle,
-    var(--color-accent-ink) 0.45px,
-    rgba(20, 20, 20, 0.55) 0.55px,
-    transparent 0.85px
+    var(--color-accent) 0.55px,
+    transparent 0.65px
   );
   background-size: 3px 3px;
-  background-color: var(--color-accent-ink);
+  background-position: center bottom;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  transform: translateY(0.08em);
-  user-select: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 48%,
+    rgba(0, 0, 0, 0.35) 62%,
+    #000 82%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 48%,
+    rgba(0, 0, 0, 0.35) 62%,
+    #000 82%,
+    #000 100%
+  );
+  pointer-events: none;
 }
 
 /* —— Legal bar —— */

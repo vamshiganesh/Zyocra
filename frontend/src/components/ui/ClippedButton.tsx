@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import "./ClippedButton.css";
 
 type Variant = "accent" | "surface" | "ink" | "ghost";
+type Size = "sm" | "md" | "lg";
 
 type CommonProps = {
   children: ReactNode;
   variant?: Variant;
+  size?: Size;
   className?: string;
 };
 
@@ -33,8 +35,14 @@ function ButtonLabel({ children }: { children: ReactNode }) {
 }
 
 export function ClippedButton(props: ButtonProps | LinkProps) {
-  const { children, variant = "accent", className = "" } = props;
-  const classes = `clip-btn clip-btn--${variant} ${className}`.trim();
+  const {
+    children,
+    variant = "accent",
+    size = "md",
+    className = "",
+  } = props;
+  const classes =
+    `clip-btn clip-btn--${variant} clip-btn--${size} ${className}`.trim();
 
   if ("to" in props && props.to) {
     return (
@@ -47,6 +55,7 @@ export function ClippedButton(props: ButtonProps | LinkProps) {
   const {
     children: _c,
     variant: _v,
+    size: _s,
     className: _className,
     to: _to,
     type = "button",

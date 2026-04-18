@@ -129,9 +129,13 @@ Do **not** use rounded rectangles for content cards or buttons.
 | `PricingTable` | Three-plan comparison shell |
 | `GeoFrame` | Line-art geometric illustration frame |
 
-## Grid overlay
+## Canvas
 
-Body background uses a fixed 48px line grid on `--color-canvas` for the industrial blueprint feel. Content cards sit above it as calm beige surfaces.
+Solid `--color-canvas` only — no full-page blueprint grid. Structural hairlines may separate footer/nav regions; they are not a background grid.
+
+## Shell layout
+
+App column is centered with a max width (`--shell-max`). Side gutters use `1fr` / `1.65fr` so extra viewport width prefers the **right** side.
 
 ## Do / don’t
 

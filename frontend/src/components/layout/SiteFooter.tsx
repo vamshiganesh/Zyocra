@@ -26,12 +26,16 @@ const badges = [
 ];
 
 function scrollToTop() {
-  const main = document.querySelector(".app-shell__main");
+  const main = document.getElementById("main-scroll");
+  const top = document.getElementById("top");
+
   if (main instanceof HTMLElement) {
     main.scrollTo({ top: 0, behavior: "smooth" });
-    return;
+  } else {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  top?.focus({ preventScroll: true });
 }
 
 export function SiteFooter() {
@@ -102,7 +106,7 @@ export function SiteFooter() {
             Connect your feature pipeline, set quantization policy, and let
             Zyocra attest epoch risk while your protocol stays in control.
           </p>
-          <ClippedButton to="/#get-started" variant="surface">
+          <ClippedButton to="/#get-started" variant="surface" size="lg">
             Get Started
           </ClippedButton>
         </div>
@@ -178,7 +182,10 @@ export function SiteFooter() {
           </p>
         </div>
         <p className="site-footer__wordmark" aria-label="Zyocra">
-          Zyocra
+          <span className="site-footer__wordmark-solid">Zyocra</span>
+          <span className="site-footer__wordmark-stipple" aria-hidden="true">
+            Zyocra
+          </span>
         </p>
       </div>
 

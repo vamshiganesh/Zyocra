@@ -57,7 +57,7 @@ export function AboutPage() {
             benchmark, not a hype dashboard.
           </p>
           <div className="hero__actions">
-            <ClippedButton to="/#benchmarks" variant="surface">
+            <ClippedButton to="/#benchmarks" variant="surface" size="lg">
               See benchmarks
             </ClippedButton>
           </div>

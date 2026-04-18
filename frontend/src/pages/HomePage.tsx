@@ -72,10 +72,10 @@ export function HomePage() {
             Circom, with on-chain verification in a mock lending protocol.
           </p>
           <div className="hero__actions" id="get-started">
-            <ClippedButton to="/updates" variant="surface">
+            <ClippedButton to="/updates" variant="surface" size="lg">
               View updates
             </ClippedButton>
-            <ClippedButton to="/about" variant="ghost">
+            <ClippedButton to="/about" variant="ghost" size="lg">
               About the project
             </ClippedButton>
           </div>

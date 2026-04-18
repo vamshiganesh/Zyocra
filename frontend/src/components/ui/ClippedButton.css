@@ -11,13 +11,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.85rem;
-  padding: 0.85rem 2.1rem;
   border: 0;
   background: var(--color-surface);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -34,6 +31,29 @@
   );
   transition: background var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
+}
+
+.clip-btn--sm {
+  --btn-chamfer: 0.55rem;
+  min-height: 2.5rem;
+  padding: 0.65rem 1.35rem;
+  font-size: var(--text-xs);
+}
+
+.clip-btn--md {
+  --btn-chamfer: 0.7rem;
+  min-height: 3rem;
+  padding: 0.9rem 2.25rem;
+  font-size: var(--text-xs);
+}
+
+.clip-btn--lg {
+  --btn-chamfer: 0.95rem;
+  min-height: 3.75rem;
+  min-width: 16rem;
+  padding: 1.15rem 3.25rem;
+  font-size: var(--text-sm);
+  letter-spacing: 0.08em;
 }
 
 /* Strict one-line viewport — nothing from the duplicate may paint at rest */
