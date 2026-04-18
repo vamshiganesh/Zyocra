@@ -34,7 +34,6 @@ export function PricingTable({ plans }: Props) {
             <p className="pricing__desc">{plan.description}</p>
             <ClippedButton
               variant={plan.featured ? "ink" : "surface"}
-              clip="br"
               className="pricing__cta"
             >
               {plan.cta}

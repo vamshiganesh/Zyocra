@@ -26,7 +26,7 @@ export function TopNav() {
           </NavLink>
         ))}
       </div>
-      <ClippedButton to="/#get-started" variant="accent" clip="bl">
+      <ClippedButton to="/#get-started" variant="accent">
         Get Started
       </ClippedButton>
     </nav>

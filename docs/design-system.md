@@ -100,12 +100,18 @@ Cards and framed panels use **45° chamfers on all four corners** — never `bor
 - 1px border follows the chamfer (border ring layer + fill layer)
 - Optional L-shaped **corner brackets** outside the panel (crop-mark style)
 
-**Single-corner clips** (buttons / logo / footer band):
+**Buttons** (`ClippedButton`):
 
-- Logo / accent CTA: bottom-right or bottom-left chamfer only
-- Footer brand band: bottom-right chamfer on accent fill
+- Diagonal chamfer: **top-left + bottom-right** cut at 45°; top-right and bottom-left stay square
+- Flat fill (beige / accent / ink); no heavy border or shadow
+- **Hover:** vertical text roll — label translates up one line; exiting line skews (`skewY(-10deg)`), entering line settles from `skewY(10deg)` to flat (Dispatch-style slot roll)
+- Respects `prefers-reduced-motion`
 
-Do **not** use rounded rectangles for content cards.
+**Logo / footer band:**
+
+- Logo cell and footer brand band may use a single-corner chamfer on brand chrome
+
+Do **not** use rounded rectangles for content cards or buttons.
 
 ## Layout primitives
 

@@ -1,64 +1,104 @@
+/* Diagonal chamfer: top-left + bottom-right cut, TR/BL stay square.
+   Hover: vertical text roll with slight skew (Dispatch-style). */
+
 .clip-btn {
+  --btn-chamfer: 0.7rem;
+  --btn-roll: 1.15em;
+  --btn-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --btn-duration: 0.48s;
+
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
-  min-height: 2.75rem;
-  padding: 0.7rem 1.25rem;
-  border: 1px solid transparent;
+  min-height: 2.85rem;
+  padding: 0.85rem 2.1rem;
+  border: 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
+  clip-path: polygon(
+    var(--btn-chamfer) 0,
+    100% 0,
+    100% calc(100% - var(--btn-chamfer)),
+    calc(100% - var(--btn-chamfer)) 100%,
+    0 100%,
+    0 var(--btn-chamfer)
+  );
+  transition: background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.clip-btn__label {
+  display: block;
+  overflow: hidden;
+  height: var(--btn-roll);
+  line-height: var(--btn-roll);
+}
+
+.clip-btn__roll {
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--btn-duration) var(--btn-ease);
+  will-change: transform;
+}
+
+.clip-btn__line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 var(--btn-roll);
+  height: var(--btn-roll);
+  white-space: nowrap;
+  transform-origin: center center;
   transition:
-    background var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    transform var(--btn-duration) var(--btn-ease),
+    opacity var(--btn-duration) var(--btn-ease);
 }
 
-.clip-btn--clip-br {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - var(--clip-md)),
-    calc(100% - var(--clip-md)) 100%,
-    0 100%
-  );
+/* Resting: primary line flat; duplicate sits below, pre-skewed */
+.clip-btn__line:nth-child(1) {
+  transform: skewY(0deg);
+  opacity: 1;
 }
 
-.clip-btn--clip-bl {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 100%,
-    var(--clip-md) 100%,
-    0 calc(100% - var(--clip-md))
-  );
+.clip-btn__line:nth-child(2) {
+  transform: skewY(10deg);
+  opacity: 0.4;
 }
 
-.clip-btn--clip-tr {
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--clip-md)) 0,
-    100% var(--clip-md),
-    100% 100%,
-    0 100%
-  );
+/* Hover / focus: roll up one line; exiting line skews, entering line settles */
+.clip-btn:hover .clip-btn__roll,
+.clip-btn:focus-visible .clip-btn__roll {
+  transform: translateY(calc(-1 * var(--btn-roll)));
 }
 
-.clip-btn--clip-none {
-  clip-path: none;
+.clip-btn:hover .clip-btn__line:nth-child(1),
+.clip-btn:focus-visible .clip-btn__line:nth-child(1) {
+  transform: skewY(-10deg);
+  opacity: 0.35;
 }
 
+.clip-btn:hover .clip-btn__line:nth-child(2),
+.clip-btn:focus-visible .clip-btn__line:nth-child(2) {
+  transform: skewY(0deg);
+  opacity: 1;
+}
+
+/* Variants — shape and motion are shared */
 .clip-btn--accent {
   background: var(--color-accent);
   color: var(--color-accent-ink);
 }
 
-.clip-btn--accent:hover {
+.clip-btn--accent:hover,
+.clip-btn--accent:focus-visible {
   background: var(--color-accent-hover);
 }
 
@@ -67,7 +107,8 @@
   color: var(--color-ink);
 }
 
-.clip-btn--surface:hover {
+.clip-btn--surface:hover,
+.clip-btn--surface:focus-visible {
   background: var(--color-surface-muted);
 }
 
@@ -76,16 +117,39 @@
   color: var(--color-fog);
 }
 
-.clip-btn--ink:hover {
+.clip-btn--ink:hover,
+.clip-btn--ink:focus-visible {
   background: #000;
 }
 
 .clip-btn--ghost {
   background: transparent;
   color: var(--color-fog);
-  border-color: var(--color-line-dark);
+  box-shadow: inset 0 0 0 1px var(--color-line-dark);
 }
 
-.clip-btn--ghost:hover {
-  border-color: var(--color-fog-muted);
+.clip-btn--ghost:hover,
+.clip-btn--ghost:focus-visible {
+  background: rgba(232, 227, 213, 0.06);
+  box-shadow: inset 0 0 0 1px var(--color-fog-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clip-btn__roll,
+  .clip-btn__line {
+    transition: none;
+  }
+
+  .clip-btn:hover .clip-btn__roll,
+  .clip-btn:focus-visible .clip-btn__roll {
+    transform: none;
+  }
+
+  .clip-btn:hover .clip-btn__line:nth-child(1),
+  .clip-btn:focus-visible .clip-btn__line:nth-child(1),
+  .clip-btn:hover .clip-btn__line:nth-child(2),
+  .clip-btn:focus-visible .clip-btn__line:nth-child(2) {
+    transform: none;
+    opacity: 1;
+  }
 }

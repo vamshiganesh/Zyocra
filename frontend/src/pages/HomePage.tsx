@@ -72,10 +72,10 @@ export function HomePage() {
             Circom, with on-chain verification in a mock lending protocol.
           </p>
           <div className="hero__actions" id="get-started">
-            <ClippedButton to="/updates" variant="surface" clip="br">
+            <ClippedButton to="/updates" variant="surface">
               View updates
             </ClippedButton>
-            <ClippedButton to="/about" variant="ghost" clip="br">
+            <ClippedButton to="/about" variant="ghost">
               About the project
             </ClippedButton>
           </div>
@@ -226,7 +226,7 @@ export function HomePage() {
             Zyocra attest epoch risk while your protocol stays in control.
           </p>
         </div>
-        <ClippedButton to="/#get-started" variant="surface" clip="br">
+        <ClippedButton to="/#get-started" variant="surface">
           Get started
         </ClippedButton>
       </section>
