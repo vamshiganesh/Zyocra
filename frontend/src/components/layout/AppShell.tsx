@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { LeftRail } from "./LeftRail";
 import { LogoMark } from "./LogoMark";
+import { SiteFooter } from "./SiteFooter";
 import { TopNav } from "./TopNav";
 
 export function AppShell() {
@@ -17,6 +18,7 @@ export function AppShell() {
       </aside>
       <main className="app-shell__main">
         <Outlet />
+        <SiteFooter />
       </main>
     </div>
   );

@@ -214,35 +214,6 @@ export function HomePage() {
           </div>
         </ClippedCard>
       </div>
-
-      <section className="footer-cta">
-        <div>
-          <p className="mono-label label-dot" style={{ color: "var(--color-fog-muted)" }}>
-            Ready to ship support for risk ops
-          </p>
-          <h2 className="footer-cta__title">Prove scores. Trigger parameters.</h2>
-          <p className="footer-cta__body">
-            Connect your feature pipeline, set quantization policy, and let
-            Zyocra attest epoch risk while your protocol stays in control.
-          </p>
-        </div>
-        <ClippedButton to="/#get-started" variant="surface">
-          Get started
-        </ClippedButton>
-      </section>
-
-      <section className="footer-band" aria-label="Brand">
-        <div className="footer-band__stat">
-          Active
-          <br />
-          Oracle status
-        </div>
-        <p className="footer-band__copy">
-          Zyocra is an AI-assisted zkML operator for support of DeFi risk
-          controls—proofs off-chain, parameters on-chain.
-        </p>
-        <div className="footer-band__brand">Zyocra</div>
-      </section>
     </div>
   );
 }
