@@ -86,20 +86,26 @@ Labels use uppercase + `--tracking-label` (0.06em) via `.mono-label`.
 
 ## Corner geometry
 
+Cards and framed panels use **45° chamfers on all four corners** — never `border-radius` rounding.
+
 | Token | Value | Use |
 |-------|-------|-----|
-| `--panel-radius` | `1rem` | Soft rounded cream cards |
 | `--clip-sm` | `10px` | Small clips |
-| `--clip-md` | `14px` | Buttons, logo |
-| `--clip-lg` | `18px` | Cards, footer band |
+| `--clip-md` | `14px` | Buttons, logo (single-corner chamfer) |
+| `--clip-lg` | `16px` | Cards — all four corners |
 
-**Clip patterns** (via `clip-path` polygons):
+**Card pattern** (`ClippedCard`):
 
-- Logo / accent CTA: bottom-right or bottom-left chamfer
-- `ClippedCard` optional top-left or bottom-right notch
+- Outer/inner `clip-path` octagon so each corner is cut at 45°
+- 1px border follows the chamfer (border ring layer + fill layer)
+- Optional L-shaped **corner brackets** outside the panel (crop-mark style)
+
+**Single-corner clips** (buttons / logo / footer band):
+
+- Logo / accent CTA: bottom-right or bottom-left chamfer only
 - Footer brand band: bottom-right chamfer on accent fill
 
-Prefer **asymmetric clips on interactive/brand chrome**, and **rounded cream panels** for large content surfaces—matching the Dispatch mix of industrial clips and calm cards.
+Do **not** use rounded rectangles for content cards.
 
 ## Layout primitives
 

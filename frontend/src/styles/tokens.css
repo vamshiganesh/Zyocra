@@ -66,10 +66,10 @@
   --rail-width: 11.5rem;
   --topnav-height: 3.5rem;
   --content-max: 72rem;
-  --panel-radius: 1rem;
+  /* 45° chamfer sizes — cards use --clip-lg on all four corners (not rounded) */
   --clip-sm: 10px;
   --clip-md: 14px;
-  --clip-lg: 18px;
+  --clip-lg: 16px;
 
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

@@ -20,7 +20,7 @@ export function BlogPage() {
         </div>
       </section>
 
-      <ClippedCard clip="tl">
+      <ClippedCard>
         <div id="insights">
           <SectionHeader
             label="Insights"

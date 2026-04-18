@@ -1,40 +1,106 @@
+/* Four-corner 45° chamfer (not rounded). Outer shell holds brackets;
+   panel uses a 1px border ring via outer/inner clip-path layers. */
+
 .clip-card {
+  --card-chamfer: var(--clip-lg);
+  --card-border: 1px;
   position: relative;
-  border: 1px solid var(--color-line-light);
+}
+
+.clip-card--brackets {
+  padding: 0.45rem;
+}
+
+.clip-card__brackets {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.clip-card__bracket {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-color: var(--color-ink-faint);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0.7;
+}
+
+.clip-card--dark .clip-card__bracket {
+  border-color: var(--color-fog-faint);
+}
+
+.clip-card__bracket--tl {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.clip-card__bracket--tr {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.clip-card__bracket--br {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.clip-card__bracket--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+/* Border color layer (chamfered) */
+.clip-card__panel {
+  position: relative;
+  background: var(--color-line-light-strong);
+  clip-path: polygon(
+    var(--card-chamfer) 0,
+    calc(100% - var(--card-chamfer)) 0,
+    100% var(--card-chamfer),
+    100% calc(100% - var(--card-chamfer)),
+    calc(100% - var(--card-chamfer)) 100%,
+    var(--card-chamfer) 100%,
+    0 calc(100% - var(--card-chamfer)),
+    0 var(--card-chamfer)
+  );
+}
+
+.clip-card--dark .clip-card__panel {
+  background: var(--color-line-dark);
+}
+
+/* Fill inset by 1px so the chamfered border reads on all edges */
+.clip-card__panel-fill {
   background: var(--color-surface);
   color: var(--color-ink);
-  border-radius: var(--panel-radius);
-  overflow: hidden;
+  clip-path: polygon(
+    var(--card-chamfer) var(--card-border),
+    calc(100% - var(--card-chamfer)) var(--card-border),
+    calc(100% - var(--card-border)) var(--card-chamfer),
+    calc(100% - var(--card-border)) calc(100% - var(--card-chamfer)),
+    calc(100% - var(--card-chamfer)) calc(100% - var(--card-border)),
+    var(--card-chamfer) calc(100% - var(--card-border)),
+    var(--card-border) calc(100% - var(--card-chamfer)),
+    var(--card-border) var(--card-chamfer)
+  );
 }
 
-.clip-card--dark {
+.clip-card--dark .clip-card__panel-fill {
   background: var(--color-canvas-elevated);
   color: var(--color-fog);
-  border-color: var(--color-line-dark);
 }
 
-.clip-card--padded {
+.clip-card__panel--padded .clip-card__panel-fill {
   padding: var(--space-8);
-}
-
-.clip-card--clip-tl {
-  border-radius: 0 var(--panel-radius) var(--panel-radius) var(--panel-radius);
-  clip-path: polygon(
-    var(--clip-lg) 0,
-    100% 0,
-    100% 100%,
-    0 100%,
-    0 var(--clip-lg)
-  );
-}
-
-.clip-card--clip-br {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - var(--clip-lg)),
-    calc(100% - var(--clip-lg)) 100%,
-    0 100%
-  );
-  border-radius: var(--panel-radius) var(--panel-radius) 0 var(--panel-radius);
 }

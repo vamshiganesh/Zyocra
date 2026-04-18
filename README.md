@@ -83,6 +83,7 @@ Zyocra/
 |------|--------|
 | Monorepo layout + docs | Done |
 | Local toolchain (`make install`) | Done |
+| UI shell + design system | Done (static pages, no backend) |
 | Milestone 1 — ML + quantization | Not started |
 | Milestone 2 — EZKL baseline | Not started |
 | Milestone 3 — Custom Circom | Not started |

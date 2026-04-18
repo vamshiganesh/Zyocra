@@ -22,7 +22,7 @@ export function UpdatesPage() {
 
       <div className="panel-stack" id="changelog">
         {changelog.map((entry) => (
-          <ClippedCard key={entry.version} clip="tl">
+          <ClippedCard key={entry.version}>
             <div className="changelog__meta">
               <span className="changelog__version">{entry.version}</span>
               <span className="changelog__date">{entry.date}</span>
