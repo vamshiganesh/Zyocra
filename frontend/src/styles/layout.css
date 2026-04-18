@@ -1,18 +1,25 @@
 /*
- * Full-width shell. Document scrolls (scrollbar on the browser’s right edge).
- * Logo / nav / rail stay sticky; main content has room to breathe.
+ * Wide centered shell (Dispatch-style):
+ * - Balanced empty space on left AND right when the viewport is wide
+ * - Shell is wide enough to breathe (not a squeezed card)
+ * - Document scrolls → scrollbar stays on the browser’s right edge
  */
 
 .app-shell {
+  --shell-max: 92rem; /* ~1472px — roomy, not cramped */
+
+  width: min(100%, var(--shell-max));
+  margin-inline: auto;
+  min-height: 100vh;
   display: grid;
   grid-template-columns: var(--rail-width) minmax(0, 1fr);
   grid-template-rows: var(--topnav-height) auto;
   grid-template-areas:
     "logo topnav"
     "rail main";
-  width: 100%;
-  min-height: 100vh;
   background: var(--color-canvas);
+  border-left: 1px solid var(--color-line-dark);
+  border-right: 1px solid var(--color-line-dark);
 }
 
 .app-shell__logo {
@@ -55,7 +62,7 @@
   grid-area: main;
   min-width: 0;
   background: var(--color-canvas);
-  /* No overflow:auto — page uses the window scrollbar on the right */
+  /* Window scrolls — do not put overflow:auto here */
 }
 
 #top {
@@ -64,7 +71,7 @@
   overflow: hidden;
 }
 
-/* Page fills the main column; padding only — not a narrow centered card */
+/* Content uses the full main column width inside the centered shell */
 .page {
   width: 100%;
   max-width: none;
@@ -76,7 +83,7 @@
   max-width: none;
 }
 
-/* Horizontal bands with slight tone shifts + structural lines */
+/* Horizontal bands: tone shift + structural line */
 .band {
   width: 100%;
   border-bottom: 1px solid var(--color-line-dark);
@@ -124,6 +131,9 @@
 
 @media (max-width: 960px) {
   .app-shell {
+    width: 100%;
+    border-left: 0;
+    border-right: 0;
     grid-template-columns: 1fr;
     grid-template-rows: var(--topnav-height) auto auto;
     grid-template-areas:

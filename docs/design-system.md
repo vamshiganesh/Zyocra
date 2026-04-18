@@ -144,7 +144,7 @@ Structural **horizontal and vertical hairlines** (`--color-line-dark`) separate 
 
 ## Shell layout
 
-Full-width shell. Sticky logo / top nav / left rail. **Document scroll** — scrollbar on the browser’s right edge. Page content uses full main-column width with generous `--page-pad-x` / `--page-pad-y` (not a narrow centered card).
+Wide **centered** shell (`max-width: 92rem`, `margin-inline: auto`) with hairline left/right edges. Equal empty canvas on both sides when the viewport is wider. Sticky logo / top nav / left rail. **Document scroll** — scrollbar on the browser’s right edge. Content fills the shell’s main column (not a second, narrower card inside).
 
 ## Do / don’t
 
