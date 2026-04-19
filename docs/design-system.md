@@ -70,9 +70,11 @@ Page padding defaults to `--space-10` / `--space-8`. Section stacks use `--space
 
 **Families** (matched to [Dispatch](https://dispatch.framer.website/))
 
-- `--font-sans`: **Geist** (fallback Inter) — UI, section titles, buttons, body
-- `--font-serif`: **LT Remark** — hero headlines, display numbers, brand wordmark
+- `--font-sans`: **Geist** (fallback Inter) — UI, body, buttons, **hero title**, **footer CTA title**
+- `--font-serif`: **LT Remark** — **footer brand wordmark** (“Zyocra”) and select display numerals
 - `--font-mono`: **IBM Plex Mono** — indexes, labels, table metrics, technical copy
+
+Hero / footer CTA metrics (from Dispatch): Geist, weight 400, `letter-spacing: -0.05em`; hero `line-height: 1`, footer CTA `line-height: 1.2`.
 
 Labels use uppercase + `--tracking-label` (0.06em) via `.mono-label`.
 

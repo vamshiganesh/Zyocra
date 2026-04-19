@@ -11,13 +11,14 @@
 }
 
 .hero__title {
-  font-family: var(--font-serif);
-  font-size: clamp(2.5rem, 6vw, var(--text-4xl));
+  /* Dispatch hero: Geist, ~72–80px, tracking -0.05em, line-height 1 */
+  font-family: var(--font-sans);
+  font-size: clamp(2.75rem, 6.5vw, 5rem);
   font-weight: 400;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
+  line-height: 1;
+  letter-spacing: -0.05em;
   color: var(--color-fog);
-  max-width: 14ch;
+  max-width: 12ch;
 }
 
 .hero__body {
