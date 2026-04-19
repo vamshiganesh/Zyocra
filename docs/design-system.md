@@ -8,11 +8,11 @@ Implementation lives in `frontend/src/styles/tokens.css` and reusable components
 
 | Token | Value | Use |
 |-------|-------|-----|
-| `--color-accent` | `#C9A84C` | Logo block, primary CTAs, active metric emphasis, FAQ/changelog tags, footer brand band, value numbers |
-| `--color-accent-hover` | `#D4B45C` | Hover on accent controls |
-| `--color-accent-pressed` | `#B3963F` | Pressed state |
+| `--color-accent` | `#D4B041` | Logo block, primary CTAs, active metric emphasis, FAQ/changelog tags, footer brand band, value numbers |
+| `--color-accent-hover` | `#E0BD4F` | Hover on accent controls |
+| `--color-accent-pressed` | `#BFA035` | Pressed state |
 | `--color-accent-ink` | `#141414` | Text/icons on accent surfaces |
-| `--color-accent-soft` | `rgba(201, 168, 76, 0.14)` | Soft highlight fills (reserved) |
+| `--color-accent-soft` | `rgba(212, 176, 65, 0.14)` | Soft highlight fills (reserved) |
 
 **Rules**
 

@@ -17,12 +17,12 @@
   --color-fog-muted: #9a958a;
   --color-fog-faint: #5c5a54;
 
-  /* Accent — premium muted technical yellow (not neon) */
-  --color-accent: #c9a84c;
-  --color-accent-hover: #d4b45c;
-  --color-accent-pressed: #b3963f;
+  /* Accent — premium technical yellow (slightly brighter, not neon) */
+  --color-accent: #d4b041;
+  --color-accent-hover: #e0bd4f;
+  --color-accent-pressed: #bfa035;
   --color-accent-ink: #141414;
-  --color-accent-soft: rgba(201, 168, 76, 0.14);
+  --color-accent-soft: rgba(212, 176, 65, 0.14);
 
   /* Borders / structural lines */
   --color-line-dark: rgba(232, 227, 213, 0.14);
