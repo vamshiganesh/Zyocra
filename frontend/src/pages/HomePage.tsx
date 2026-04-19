@@ -1,9 +1,5 @@
 import { Shell } from "../components/layout/Shell";
 import { BenchmarkPanel } from "../components/ui/BenchmarkPanel";
-import {
-  BlueprintCell,
-  BlueprintGrid,
-} from "../components/ui/BlueprintGrid";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { FaqAccordion } from "../components/ui/FaqAccordion";
@@ -101,151 +97,121 @@ export function HomePage() {
       <section className="band band--panels">
         <Shell>
       <div className="panel-stack">
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="capabilities">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="Capabilities"
-                title="Four layers that connect, adapt, prove, and act."
-                description="A compact tabular risk model with LoRA adapters, dual proving paths, and a consumer that only trusts verified scores."
-              />
-            </div>
-            <BlueprintGrid cols={2}>
+            <SectionHeader
+              label="Capabilities"
+              title="Four layers that connect, adapt, prove, and act."
+              description="A compact tabular risk model with LoRA adapters, dual proving paths, and a consumer that only trusts verified scores."
+            />
+            <div className="layer-list">
               {layers.map((layer) => (
-                <BlueprintCell key={layer.num}>
-                  <article className="layer-list__item">
-                    <span className="layer-list__num">{layer.num}</span>
-                    <h3 className="layer-list__title">{layer.title}</h3>
-                    <p className="layer-list__body">{layer.body}</p>
-                  </article>
-                </BlueprintCell>
+                <article key={layer.num} className="layer-list__item">
+                  <span className="layer-list__num">{layer.num}</span>
+                  <h3 className="layer-list__title">{layer.title}</h3>
+                  <p className="layer-list__body">{layer.body}</p>
+                </article>
               ))}
-            </BlueprintGrid>
+            </div>
           </div>
         </ClippedCard>
 
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="numbers">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="Numbers"
-                title="The performance behind the proofs"
-                description="Placeholder tiles for epoch throughput, coverage, and accuracy—wired to real benchmarks later."
+            <SectionHeader
+              label="Numbers"
+              title="The performance behind the proofs"
+              description="Placeholder tiles for epoch throughput, coverage, and accuracy—wired to real benchmarks later."
+            />
+            <div className="stats-grid">
+              <StatTile
+                label="Weekly scores"
+                value="1,231"
+                detail="Epoch risk evaluations (placeholder)"
+              />
+              <StatTile
+                label="Resolution growth"
+                value="+65.5%"
+                detail="Gated by approvals (placeholder)"
+                accent
+              />
+              <StatTile
+                label="Ops throughput"
+                value="139%"
+                detail="Relative agent capacity (placeholder)"
+              />
+              <StatTile
+                label="Agent mode"
+                value="72%"
+                detail="Automated path share (placeholder)"
+              />
+              <StatTile
+                label="Coverage growth"
+                value="+247%"
+                detail="Processes automated (placeholder)"
+                accent
+              />
+              <StatTile
+                label="Automation coverage"
+                value="69%"
+                detail="With policies + proofs (placeholder)"
               />
             </div>
-            <BlueprintGrid cols={3}>
-              <BlueprintCell>
-                <StatTile
-                  label="Weekly scores"
-                  value="1,231"
-                  detail="Epoch risk evaluations (placeholder)"
-                />
-              </BlueprintCell>
-              <BlueprintCell>
-                <StatTile
-                  label="Resolution growth"
-                  value="+65.5%"
-                  detail="Gated by approvals (placeholder)"
-                  accent
-                />
-              </BlueprintCell>
-              <BlueprintCell>
-                <StatTile
-                  label="Ops throughput"
-                  value="139%"
-                  detail="Relative agent capacity (placeholder)"
-                />
-              </BlueprintCell>
-              <BlueprintCell>
-                <StatTile
-                  label="Agent mode"
-                  value="72%"
-                  detail="Automated path share (placeholder)"
-                />
-              </BlueprintCell>
-              <BlueprintCell>
-                <StatTile
-                  label="Coverage growth"
-                  value="+247%"
-                  detail="Processes automated (placeholder)"
-                  accent
-                />
-              </BlueprintCell>
-              <BlueprintCell>
-                <StatTile
-                  label="Automation coverage"
-                  value="69%"
-                  detail="With policies + proofs (placeholder)"
-                />
-              </BlueprintCell>
-            </BlueprintGrid>
           </div>
         </ClippedCard>
 
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="features">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="Features"
-                title="Core systems that power every epoch"
-                description="Context, policy, and action surfaces for a verifiable risk oracle—not a trading bot."
-              />
-            </div>
-            <BlueprintGrid cols={3}>
+            <SectionHeader
+              label="Features"
+              title="Core systems that power every epoch"
+              description="Context, policy, and action surfaces for a verifiable risk oracle—not a trading bot."
+            />
+            <div className="feature-grid">
               {features.map((feature) => (
-                <BlueprintCell key={feature.index}>
-                  <article className="feature-card">
-                    <div className="feature-card__meta">
-                      <h3 className="feature-card__title">{feature.title}</h3>
-                      <span className="feature-card__index">{feature.index}</span>
-                    </div>
-                    <GeoFrame variant={feature.variant} />
-                    <p className="feature-card__body">{feature.body}</p>
-                  </article>
-                </BlueprintCell>
+                <article key={feature.index} className="feature-card">
+                  <div className="feature-card__meta">
+                    <h3 className="feature-card__title">{feature.title}</h3>
+                    <span className="feature-card__index">{feature.index}</span>
+                  </div>
+                  <GeoFrame variant={feature.variant} />
+                  <p className="feature-card__body">{feature.body}</p>
+                </article>
               ))}
-            </BlueprintGrid>
+            </div>
           </div>
         </ClippedCard>
 
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="benchmarks">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="Benchmarks"
-                title="Compiler path vs hand-optimized LoRA circuit"
-                description="Apples-to-apples metrics are the primary research artifact. Values fill in at Milestone 5."
-              />
-            </div>
+            <SectionHeader
+              label="Benchmarks"
+              title="Compiler path vs hand-optimized LoRA circuit"
+              description="Apples-to-apples metrics are the primary research artifact. Values fill in at Milestone 5."
+            />
             <BenchmarkPanel rows={benchmarkRows} />
           </div>
         </ClippedCard>
 
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="pricing">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="Pricing"
-                title="Simple plans that scale with research"
-                description="Shell only—Zyocra is open research infrastructure first. Plans illustrate layout parity."
-              />
-            </div>
+            <SectionHeader
+              label="Pricing"
+              title="Simple plans that scale with research"
+              description="Shell only—Zyocra is open research infrastructure first. Plans illustrate layout parity."
+            />
             <PricingTable plans={pricingPlans} />
           </div>
         </ClippedCard>
 
-        <ClippedCard padded={false}>
+        <ClippedCard>
           <div id="faq">
-            <div className="clip-card__block-header">
-              <SectionHeader
-                label="FAQ"
-                title="Frequently asked questions"
-                description="What is proven, what is not, and how the consumer behaves."
-              />
-            </div>
-            <div className="card-block__body">
-              <FaqAccordion items={faqItems} />
-            </div>
+            <SectionHeader
+              label="FAQ"
+              title="Frequently asked questions"
+              description="What is proven, what is not, and how the consumer behaves."
+            />
+            <FaqAccordion items={faqItems} />
           </div>
         </ClippedCard>
       </div>

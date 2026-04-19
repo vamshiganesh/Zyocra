@@ -1,16 +1,15 @@
 .faq {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid rgba(20, 20, 20, 0.16);
+  margin-top: var(--space-6);
 }
 
 .faq__item {
-  border-bottom: 1px solid rgba(20, 20, 20, 0.12);
-  padding: 0 var(--space-8);
+  border-top: 1px solid rgba(20, 20, 20, 0.12);
 }
 
 .faq__item:last-child {
-  border-bottom: 0;
+  border-bottom: 1px solid rgba(20, 20, 20, 0.12);
 }
 
 .faq__trigger {
@@ -19,7 +18,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: var(--space-5) 0;
+  padding: 1.15rem 0;
   border: 0;
   background: transparent;
   text-align: left;
@@ -44,7 +43,7 @@
 }
 
 .faq__answer {
-  padding: 0 0 var(--space-5);
+  padding: 0 0 1.15rem;
   max-width: 46rem;
   font-family: var(--font-sans);
   font-size: var(--text-sm);

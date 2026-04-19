@@ -3,7 +3,6 @@
 .clip-card {
   --card-chamfer: var(--clip-lg);
   --card-border: 1px;
-  --card-line: rgba(20, 20, 20, 0.16);
   position: relative;
 }
 
@@ -61,7 +60,7 @@
 
 .clip-card__panel {
   position: relative;
-  background: var(--card-line);
+  background: rgba(20, 20, 20, 0.16);
   clip-path: polygon(
     var(--card-chamfer) 0,
     calc(100% - var(--card-chamfer)) 0,
@@ -99,10 +98,5 @@
 }
 
 .clip-card__panel--padded .clip-card__panel-fill {
-  padding: var(--space-8) var(--space-8) var(--space-6);
-}
-
-/* Unpadded cards: header padded, blueprint grids flush to edges */
-.clip-card__block-header {
-  padding: var(--space-8) var(--space-8) var(--space-6);
+  padding: var(--space-10) var(--space-10) var(--space-10);
 }

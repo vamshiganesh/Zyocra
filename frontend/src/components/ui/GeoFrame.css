@@ -2,20 +2,20 @@
   position: relative;
   display: grid;
   place-items: center;
-  aspect-ratio: 1.05;
-  min-height: 11rem;
+  aspect-ratio: 1;
+  min-height: 10rem;
   border: 1px solid rgba(20, 20, 20, 0.14);
   color: var(--color-ink);
   background-color: var(--color-surface-muted);
   background-image: radial-gradient(
-    rgba(20, 20, 20, 0.14) 0.7px,
+    rgba(20, 20, 20, 0.12) 0.7px,
     transparent 0.8px
   );
-  background-size: 9px 9px;
+  background-size: 10px 10px;
 }
 
 .geo-frame__svg {
-  width: min(62%, 8.5rem);
+  width: min(70%, 9rem);
   height: auto;
 }
 
