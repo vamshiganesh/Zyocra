@@ -1,6 +1,6 @@
 # Design system
 
-Dispatch-inspired industrial product shell for Zyocra. Orange from the reference is replaced with a **premium, muted technical yellow**.
+Dispatch-inspired industrial product shell for Zyocra. Orange from the reference is replaced with a **saturated technical amber-yellow** that pops against dark and beige surfaces the same way Dispatch orange does.
 
 Implementation lives in `frontend/src/styles/tokens.css` and reusable components under `frontend/src/components/`.
 
@@ -12,7 +12,8 @@ Implementation lives in `frontend/src/styles/tokens.css` and reusable components
 | `--color-accent-hover` | `#E0BD4F` | Hover on accent controls |
 | `--color-accent-pressed` | `#BFA035` | Pressed state |
 | `--color-accent-ink` | `#141414` | Text/icons on accent surfaces |
-| `--color-accent-soft` | `rgba(212, 176, 65, 0.14)` | Soft highlight fills (reserved) |
+| `--color-accent-soft` | `rgba(235, 165, 14, 0.14)` | Soft highlight fills (reserved) |
+| `--accent-hatch` | diagonal ink stripes | Layered over solid accent fills (logo, CTAs, footer band) |
 
 **Rules**
 

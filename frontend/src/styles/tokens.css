@@ -17,10 +17,10 @@
   --color-fog-muted: #9a958a;
   --color-fog-faint: #5c5a54;
 
-  /* Accent — premium technical yellow (slightly brighter, not neon) */
-  --color-accent: #d4b041;
-  --color-accent-hover: #e0bd4f;
-  --color-accent-pressed: #bfa035;
+  /* Accent — saturated technical amber-yellow (Dispatch-level pop, not neon lemon) */
+  --color-accent: #eba50e;
+  --color-accent-hover: #f5b318;
+  --color-accent-pressed: #c88f08;
   --color-accent-ink: #141414;
   --color-accent-soft: rgba(212, 176, 65, 0.14);
 

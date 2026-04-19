@@ -118,7 +118,7 @@
 
 .clip-btn--accent:hover,
 .clip-btn--accent:focus-visible {
-  background: var(--color-accent-hover);
+  background-color: var(--color-accent-hover);
 }
 
 .clip-btn--surface {
