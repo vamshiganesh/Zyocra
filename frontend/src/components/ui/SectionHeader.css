@@ -1,13 +1,20 @@
 .section-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .section-header__hatch {
-  height: 0.7rem;
-  border-top: 1px solid var(--color-line-light);
-  border-bottom: 1px solid var(--color-line-light);
+  height: 0.55rem;
+  border-top: 1px solid var(--color-line-light-strong);
+  border-bottom: 1px solid var(--color-line-light-strong);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 2px,
+    rgba(20, 20, 20, 0.1) 2px,
+    rgba(20, 20, 20, 0.1) 3px
+  );
 }
 
 .section-header--dark .section-header__hatch {
@@ -23,27 +30,30 @@
 
 .section-header__row {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(12rem, 0.8fr);
-  gap: var(--space-8);
-  align-items: end;
+  grid-template-columns: minmax(0, 1.45fr) minmax(11rem, 0.7fr);
+  gap: var(--space-10);
+  align-items: start;
 }
 
 .section-header__label {
-  color: var(--color-ink-muted);
-  margin-bottom: var(--space-3);
+  color: var(--color-ink);
+  margin-bottom: var(--space-4);
+  font-weight: 500;
 }
 
 .section-header--dark .section-header__label {
   color: var(--color-fog-muted);
 }
 
+/* Dispatch card headings: Geist, medium weight, tight tracking */
 .section-header__title {
   font-family: var(--font-sans);
-  font-size: clamp(var(--text-2xl), 3vw, var(--text-3xl));
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
+  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
   color: var(--color-ink);
+  max-width: 18ch;
 }
 
 .section-header--dark .section-header__title {
@@ -51,10 +61,13 @@
 }
 
 .section-header__desc {
+  font-family: var(--font-sans);
   font-size: var(--text-sm);
-  line-height: var(--leading-body);
+  font-weight: 400;
+  line-height: 1.5;
   color: var(--color-ink-muted);
-  max-width: 28rem;
+  max-width: 22rem;
+  padding-top: 0.15rem;
 }
 
 .section-header--dark .section-header__desc {
@@ -64,5 +77,10 @@
 @media (max-width: 800px) {
   .section-header__row {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .section-header__title {
+    max-width: none;
   }
 }

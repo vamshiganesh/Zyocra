@@ -1,14 +1,14 @@
-/* Four-corner 45° chamfer (not rounded). Outer shell holds brackets;
-   panel uses a 1px border ring via outer/inner clip-path layers. */
+/* Four-corner 45° chamfer + outer crop-mark brackets */
 
 .clip-card {
   --card-chamfer: var(--clip-lg);
   --card-border: 1px;
+  --card-line: rgba(20, 20, 20, 0.16);
   position: relative;
 }
 
 .clip-card--brackets {
-  padding: 0.45rem;
+  padding: 0.5rem;
 }
 
 .clip-card__brackets {
@@ -20,12 +20,11 @@
 
 .clip-card__bracket {
   position: absolute;
-  width: 0.7rem;
-  height: 0.7rem;
-  border-color: var(--color-ink-faint);
+  width: 0.65rem;
+  height: 0.65rem;
+  border-color: rgba(232, 227, 213, 0.55);
   border-style: solid;
   border-width: 0;
-  opacity: 0.7;
 }
 
 .clip-card--dark .clip-card__bracket {
@@ -60,10 +59,9 @@
   border-left-width: 1px;
 }
 
-/* Border color layer (chamfered) */
 .clip-card__panel {
   position: relative;
-  background: var(--color-line-light-strong);
+  background: var(--card-line);
   clip-path: polygon(
     var(--card-chamfer) 0,
     calc(100% - var(--card-chamfer)) 0,
@@ -80,7 +78,6 @@
   background: var(--color-line-dark);
 }
 
-/* Fill inset by 1px so the chamfered border reads on all edges */
 .clip-card__panel-fill {
   background: var(--color-surface);
   color: var(--color-ink);
@@ -102,5 +99,10 @@
 }
 
 .clip-card__panel--padded .clip-card__panel-fill {
-  padding: var(--space-8);
+  padding: var(--space-8) var(--space-8) var(--space-6);
+}
+
+/* Unpadded cards: header padded, blueprint grids flush to edges */
+.clip-card__block-header {
+  padding: var(--space-8) var(--space-8) var(--space-6);
 }
