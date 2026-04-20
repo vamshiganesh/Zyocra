@@ -3,6 +3,7 @@
 
 .clip-btn {
   --btn-chamfer: 0.7rem;
+  --btn-border: 1px;
   --btn-roll: 1em;
   --btn-ease: cubic-bezier(0.65, 0, 0.35, 1);
   --btn-duration: 0.45s;
@@ -59,6 +60,7 @@
 /* Strict one-line viewport — nothing from the duplicate may paint at rest */
 .clip-btn__label {
   position: relative;
+  z-index: 1;
   display: block;
   width: max-content;
   max-width: 100%;
@@ -142,15 +144,48 @@
 }
 
 .clip-btn--ghost {
+  --btn-ghost-cutout: var(--color-canvas);
   background: transparent;
   color: var(--color-fog);
-  box-shadow: inset 0 0 0 1px var(--color-line-dark);
+  box-shadow: none;
 }
 
-.clip-btn--ghost:hover,
-.clip-btn--ghost:focus-visible {
+/* Inset polygon ring — inset box-shadow + clip-path leaves gaps on chamfer corners */
+.clip-btn--ghost::before,
+.clip-btn--ghost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.clip-btn--ghost::before {
+  background: var(--color-line-dark);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.clip-btn--ghost::after {
+  background: var(--btn-ghost-cutout);
+  clip-path: polygon(
+    calc(var(--btn-chamfer) + var(--btn-border)) var(--btn-border),
+    calc(100% - var(--btn-border)) var(--btn-border),
+    calc(100% - var(--btn-border)) calc(100% - var(--btn-chamfer) - var(--btn-border)),
+    calc(100% - var(--btn-chamfer) - var(--btn-border)) calc(100% - var(--btn-border)),
+    var(--btn-border) calc(100% - var(--btn-border)),
+    var(--btn-border) calc(var(--btn-chamfer) + var(--btn-border))
+  );
+  transition: background var(--duration-fast) var(--ease-out);
+}
+
+.clip-btn--ghost:hover::before,
+.clip-btn--ghost:focus-visible::before {
+  background: var(--color-fog-muted);
+}
+
+.clip-btn--ghost:hover::after,
+.clip-btn--ghost:focus-visible::after {
   background: rgba(232, 227, 213, 0.06);
-  box-shadow: inset 0 0 0 1px var(--color-fog-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
