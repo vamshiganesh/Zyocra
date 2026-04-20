@@ -185,7 +185,9 @@
 
 .clip-btn--ghost:hover::after,
 .clip-btn--ghost:focus-visible::after {
-  background: rgba(232, 227, 213, 0.06);
+  background:
+    linear-gradient(rgba(232, 227, 213, 0.06), rgba(232, 227, 213, 0.06)),
+    var(--btn-ghost-cutout);
 }
 
 @media (prefers-reduced-motion: reduce) {
