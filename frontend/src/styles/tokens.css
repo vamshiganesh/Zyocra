@@ -74,6 +74,12 @@
   --clip-md: 14px;
   --clip-lg: 16px;
 
+  /* Scrollbar — yellow thumb, no track, no arrow buttons */
+  --scrollbar-size: 8px;
+  --scrollbar-thumb: var(--color-accent);
+  --scrollbar-thumb-hover: var(--color-accent-hover);
+  --scrollbar-track: transparent;
+
   /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-fast: 140ms;

@@ -1,0 +1,136 @@
+/*
+ * Zyocra custom scrollbar
+ *
+ * Dedicated stylesheet so WebKit (Chrome, Edge, Safari) and Firefox each get
+ * complete rules. Partial / inline scrollbar CSS often falls back to the OS
+ * default (white track, arrow buttons on Windows).
+ *
+ * Apply to the document root and every overflow scroll container.
+ */
+
+html {
+  color-scheme: dark;
+}
+
+@supports (scrollbar-color: auto) {
+  html,
+  body,
+  .site-rail,
+  .bench-panel__table-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+}
+
+html,
+body,
+.site-rail,
+.bench-panel__table-wrap,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.site-rail::-webkit-scrollbar,
+.bench-panel__table-wrap::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+  background: transparent;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.site-rail::-webkit-scrollbar-track,
+.bench-panel__table-wrap::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+html::-webkit-scrollbar-track-piece,
+body::-webkit-scrollbar-track-piece,
+.site-rail::-webkit-scrollbar-track-piece,
+.bench-panel__table-wrap::-webkit-scrollbar-track-piece,
+*::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.site-rail::-webkit-scrollbar-thumb,
+.bench-panel__table-wrap::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: none;
+  border-radius: 0;
+  min-height: 2.5rem;
+  min-width: 2.5rem;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+.site-rail::-webkit-scrollbar-thumb:hover,
+.bench-panel__table-wrap::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active,
+.site-rail::-webkit-scrollbar-thumb:active,
+.bench-panel__table-wrap::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-accent-pressed);
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+.site-rail::-webkit-scrollbar-corner,
+.bench-panel__table-wrap::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Remove up/down (and left/right) arrow buttons — Windows classic scrollbar */
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+.site-rail::-webkit-scrollbar-button,
+.bench-panel__table-wrap::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button:single-button,
+body::-webkit-scrollbar-button:single-button,
+*::-webkit-scrollbar-button:single-button,
+html::-webkit-scrollbar-button:single-button:vertical:decrement,
+html::-webkit-scrollbar-button:single-button:vertical:increment,
+html::-webkit-scrollbar-button:single-button:horizontal:decrement,
+html::-webkit-scrollbar-button:single-button:horizontal:increment,
+body::-webkit-scrollbar-button:single-button:vertical:decrement,
+body::-webkit-scrollbar-button:single-button:vertical:increment,
+body::-webkit-scrollbar-button:single-button:horizontal:decrement,
+body::-webkit-scrollbar-button:single-button:horizontal:increment,
+*::-webkit-scrollbar-button:single-button:vertical:decrement,
+*::-webkit-scrollbar-button:single-button:vertical:increment,
+*::-webkit-scrollbar-button:single-button:horizontal:decrement,
+*::-webkit-scrollbar-button:single-button:horizontal:increment,
+html::-webkit-scrollbar-button:vertical:start:decrement,
+html::-webkit-scrollbar-button:vertical:end:increment,
+html::-webkit-scrollbar-button:horizontal:start:decrement,
+html::-webkit-scrollbar-button:horizontal:end:increment,
+body::-webkit-scrollbar-button:vertical:start:decrement,
+body::-webkit-scrollbar-button:vertical:end:increment,
+body::-webkit-scrollbar-button:horizontal:start:decrement,
+body::-webkit-scrollbar-button:horizontal:end:increment,
+*::-webkit-scrollbar-button:vertical:start:decrement,
+*::-webkit-scrollbar-button:vertical:end:increment,
+*::-webkit-scrollbar-button:horizontal:start:decrement,
+*::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: none;
+}
