@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      overlayscrollbars:
+        specifier: ^2.16.0
+        version: 2.16.0
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -411,6 +414,9 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  overlayscrollbars@2.16.0:
+    resolution: {integrity: sha512-N03oje/q7j93D0aLZtoCdsDSYLmhheSsv8H7oSLE7HhdV9P/bmCURtLV/KbPye7P/bpfyt/obSfDpGUYoJ0OWg==}
+
   oxlint@1.72.0:
     resolution: {integrity: sha512-1rhdZIP/EvoI91ABIwNU5Q8+bWf8mjrS5UzIOZld4d4bXxJvtlUhlQvaoTogIGin/qdErMOrwaIJvCSIAKTLhA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -754,6 +760,8 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.32.0
 
   nanoid@3.3.15: {}
+
+  overlayscrollbars@2.16.0: {}
 
   oxlint@1.72.0:
     optionalDependencies:
