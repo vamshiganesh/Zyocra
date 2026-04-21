@@ -3,11 +3,11 @@ import { ClippedButton } from "../ui/ClippedButton";
 import "./SiteFooter.css";
 
 const pages = [
-  { to: "/", label: "Homepage" },
-  { to: "/about", label: "About" },
+  { to: "/", label: "Overview" },
+  { to: "/epoch", label: "Epoch explorer" },
+  { to: "/benchmarks", label: "Benchmarks" },
+  { to: "/threat-model", label: "Threat model" },
   { to: "/updates", label: "Updates" },
-  { to: "/#get-started", label: "Waitlist" },
-  { to: "/blog", label: "Blog" },
 ];
 
 const social = [

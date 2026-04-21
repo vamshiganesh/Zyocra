@@ -101,6 +101,8 @@ export const changelog = [
     version: "0.1.0",
     date: "Jul 4, 2026",
     items: [
+      { tag: "NEW", text: "Screen architecture: 10 product routes from overview through changelog." },
+      { tag: "NEW", text: "Pipeline flow navigation (epoch → inputs → prove → verify → score → impact)." },
       { tag: "NEW", text: "UI shell and design system (Dispatch-inspired, yellow accent)." },
       { tag: "NEW", text: "Monorepo layout for ml-base, circuits, contracts, benchmarks." },
       { tag: "NOTE", text: "Prove/verify pipelines not connected to the UI yet." },

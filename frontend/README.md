@@ -2,7 +2,7 @@
 
 Dispatch-inspired product shell for Zyocra (Vite + React + TypeScript).
 
-Static pages only—no backend or proof pipeline wiring.
+Static product screens—no backend or proof pipeline wiring yet.
 
 ## Commands
 
@@ -22,11 +22,14 @@ pnpm lint
 
 ```text
 src/
+  config/screens.ts    Route metadata and section anchors
   components/layout/   AppShell, TopNav, LeftRail, LogoMark
-  components/ui/       Buttons, cards, stats, benchmark, FAQ, pricing
-  pages/               Home, About, Updates, Blog
-  styles/              tokens, global, layout
-  data/placeholders.ts Zyocra-relevant static copy
+  components/product/  Hero, flow nav, data grids, epoch table
+  components/ui/       Buttons, cards, stats, benchmark panels
+  pages/               10 product screens (overview → changelog)
+  data/                placeholders.ts, product-placeholders.ts
+  styles/              tokens, global, layout, scrollbar
 ```
 
-Design tokens and usage: [`docs/design-system.md`](../docs/design-system.md).
+Screen architecture: [`docs/screens.md`](../docs/screens.md).  
+Design tokens: [`docs/design-system.md`](../docs/design-system.md).

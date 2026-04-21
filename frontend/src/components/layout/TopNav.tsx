@@ -3,10 +3,11 @@ import { ClippedButton } from "../ui/ClippedButton";
 import "./TopNav.css";
 
 const links = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
+  { to: "/", label: "Overview", end: true },
+  { to: "/epoch", label: "Epoch" },
+  { to: "/benchmarks", label: "Benchmarks" },
+  { to: "/threat-model", label: "Threat model" },
   { to: "/updates", label: "Updates" },
-  { to: "/blog", label: "Blog" },
 ];
 
 export function TopNav() {
@@ -17,7 +18,7 @@ export function TopNav() {
           <NavLink
             key={link.to}
             to={link.to}
-            end={link.to === "/"}
+            end={link.end}
             className={({ isActive }) =>
               `top-nav__link${isActive ? " is-active" : ""}`
             }
@@ -26,8 +27,8 @@ export function TopNav() {
           </NavLink>
         ))}
       </div>
-      <ClippedButton to="/#get-started" variant="accent" size="sm">
-        Get Started
+      <ClippedButton to="/epoch" variant="accent" size="sm">
+        Run epoch
       </ClippedButton>
     </nav>
   );

@@ -1,4 +1,5 @@
 import { Shell } from "../components/layout/Shell";
+import { ProductHero } from "../components/product/ProductHero";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { changelog } from "../data/placeholders";
@@ -9,19 +10,12 @@ export function UpdatesPage() {
     <div className="page">
       <section className="band band--hero">
         <Shell>
-          <div className="hero">
-            <div>
-              <p className="hero__eyebrow mono-label label-dot">Changelog</p>
-              <h1 className="hero__title">What&apos;s new in Zyocra.</h1>
-              <p className="hero__body">
-                Static release notes for the product shell. Pipeline and circuit
-                updates will land here as milestones ship.
-              </p>
-            </div>
-            <div className="hero__aside hatch-dark">
-              <p className="mono-label">zyocra://updates</p>
-            </div>
-          </div>
+          <ProductHero
+            eyebrow="Release notes"
+            title="Milestone and circuit updates."
+            body="Versioned changes across ml-base, circuits-baseline, circuits-custom, contracts, and benchmarks."
+            aside={<p className="mono-label">zyocra://updates</p>}
+          />
         </Shell>
       </section>
 
@@ -36,8 +30,8 @@ export function UpdatesPage() {
                 </div>
                 <SectionHeader
                   label="Release"
-                  title="UI shell and monorepo foundation"
-                  description="No backend wiring yet—design system and static pages only."
+                  title="Product shell and screen architecture"
+                  description="Screen routes and placeholder data—no prover or contract wiring yet."
                 />
                 <div className="changelog">
                   {entry.items.map((item) => (

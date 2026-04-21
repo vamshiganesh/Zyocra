@@ -5,6 +5,7 @@ import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
+import { StatTile } from "../components/ui/StatTile";
 import { impactFields } from "../data/product-placeholders";
 import "./pages.css";
 
@@ -63,23 +64,9 @@ export function ProtocolImpactPage() {
                   description="Collateral factor reduced from 0.80 → 0.72; borrow spread +45 bps."
                 />
                 <div className="stats-grid">
-                  <article className="stat-tile">
-                    <span className="stat-tile__label">Collateral factor Δ</span>
-                    <span className="stat-tile__value" style={{ color: "var(--color-accent)" }}>
-                      −0.08
-                    </span>
-                    <span className="stat-tile__detail">0.80 → 0.72</span>
-                  </article>
-                  <article className="stat-tile">
-                    <span className="stat-tile__label">Borrow spread</span>
-                    <span className="stat-tile__value">+45 bps</span>
-                    <span className="stat-tile__detail">Applied on next borrow</span>
-                  </article>
-                  <article className="stat-tile">
-                    <span className="stat-tile__label">New borrow</span>
-                    <span className="stat-tile__value">Allowed</span>
-                    <span className="stat-tile__detail">HIGH would freeze</span>
-                  </article>
+                  <StatTile label="Collateral factor Δ" value="−0.08" detail="0.80 → 0.72" accent />
+                  <StatTile label="Borrow spread" value="+45 bps" detail="Applied on next borrow" />
+                  <StatTile label="New borrow" value="Allowed" detail="HIGH would freeze" />
                 </div>
               </div>
             </ClippedCard>
