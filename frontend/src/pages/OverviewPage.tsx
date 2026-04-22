@@ -3,50 +3,36 @@ import { ProductHero } from "../components/product/ProductHero";
 import { PipelineStrip } from "../components/product/PipelineStrip";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
+import { FaqAccordion } from "../components/ui/FaqAccordion";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { StatTile } from "../components/ui/StatTile";
+import {
+  headlineMetrics,
+  overviewCopy,
+  systemLayers,
+} from "../data/content";
 import { flowSteps } from "../data/product-placeholders";
+import { faqItems } from "../data/placeholders";
 import "./pages.css";
 
-const systemLayers = [
-  {
-    num: "01",
-    title: "ml-base",
-    body: "Quantized tabular risk model, LoRA adapters, ONNX export, float vs fixed-point eval.",
-  },
-  {
-    num: "02",
-    title: "circuits-baseline",
-    body: "EZKL compile → setup → proof → generated EVM verifier from ONNX graph.",
-  },
-  {
-    num: "03",
-    title: "circuits-custom",
-    body: "Hand-optimized Circom for W′ = W + AB and selected inference subgraph.",
-  },
-  {
-    num: "04",
-    title: "contracts",
-    body: "Oracle stores commitments and verified scores; consumer adjusts collateral parameters.",
-  },
-];
-
 export function OverviewPage() {
+  const c = overviewCopy;
+
   return (
     <div className="page">
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="Zyocra oracle"
-            title="Prove risk scores. Update collateral."
-            body="Local-first zkML oracle for LoRA-adapted liquidation-risk inference—dual proving paths, on-chain verification, and a mock lending consumer."
+            eyebrow={c.hero.eyebrow}
+            title={c.hero.title}
+            body={c.hero.body}
             actions={
               <>
                 <ClippedButton to="/epoch" variant="accent" size="lg">
-                  Open epoch explorer
+                  {c.hero.ctaPrimary}
                 </ClippedButton>
                 <ClippedButton to="/benchmarks" variant="ghost" size="lg">
-                  View benchmarks
+                  {c.hero.ctaSecondary}
                 </ClippedButton>
               </>
             }
@@ -67,9 +53,9 @@ export function OverviewPage() {
             <ClippedCard>
               <div id="flow">
                 <SectionHeader
-                  label="Epoch flow"
-                  title="Six screens from epoch selection to protocol impact"
-                  description="Follow the pipeline in order or jump to any step. All values are placeholder until Milestone wiring."
+                  label={c.flow.label}
+                  title={c.flow.title}
+                  description={c.flow.description}
                 />
                 <PipelineStrip />
               </div>
@@ -78,9 +64,9 @@ export function OverviewPage() {
             <ClippedCard>
               <div id="system">
                 <SectionHeader
-                  label="System"
-                  title="Monorepo layers"
-                  description="Research-grade layout aligned with ml-base, dual circuit paths, and Foundry contracts."
+                  label={c.system.label}
+                  title={c.system.title}
+                  description={c.system.description}
                 />
                 <div className="layer-list">
                   {systemLayers.map((layer) => (
@@ -97,17 +83,20 @@ export function OverviewPage() {
             <ClippedCard>
               <div id="metrics">
                 <SectionHeader
-                  label="Headline metrics"
-                  title="Benchmark targets (Milestone 5)"
-                  description="Primary evidence table compares EZKL baseline against Circom LoRA path."
+                  label={c.metrics.label}
+                  title={c.metrics.title}
+                  description={c.metrics.description}
                 />
                 <div className="stats-grid">
-                  <StatTile label="Constraint count" value="—" detail="EZKL vs Circom" />
-                  <StatTile label="Prover peak RAM" value="—" detail="Same machine spec" accent />
-                  <StatTile label="Proof time" value="—" detail="End-to-end prover" />
-                  <StatTile label="Verify gas" value="—" detail="Foundry snapshot" />
-                  <StatTile label="Proof size" value="—" detail="Bytes on disk" accent />
-                  <StatTile label="Quant error" value="—" detail="Float vs fixed-point" />
+                  {headlineMetrics.map((m) => (
+                    <StatTile
+                      key={m.label}
+                      label={m.label}
+                      value={m.value}
+                      detail={m.detail}
+                      accent={m.accent}
+                    />
+                  ))}
                 </div>
               </div>
             </ClippedCard>
@@ -115,18 +104,29 @@ export function OverviewPage() {
             <ClippedCard>
               <div id="entry">
                 <SectionHeader
-                  label="Start epoch"
-                  title="Run the demo pipeline"
-                  description="Begin at Model Epoch Explorer with epoch-2026-041 placeholder data."
+                  label={c.entry.label}
+                  title={c.entry.title}
+                  description={c.entry.description}
                 />
                 <div className="hero__actions" style={{ marginTop: "var(--space-6)" }}>
                   <ClippedButton to={flowSteps[0].path} variant="accent" size="md">
-                    Start at epoch
+                    Start pipeline
                   </ClippedButton>
                   <ClippedButton to="/threat-model" variant="surface" size="md">
-                    Read threat model
+                    Threat model
                   </ClippedButton>
                 </div>
+              </div>
+            </ClippedCard>
+
+            <ClippedCard>
+              <div id="faq">
+                <SectionHeader
+                  label={c.faq.label}
+                  title={c.faq.title}
+                  description={c.faq.description}
+                />
+                <FaqAccordion items={faqItems} />
               </div>
             </ClippedCard>
           </div>
