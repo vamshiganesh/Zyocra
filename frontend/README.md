@@ -32,4 +32,5 @@ src/
 ```
 
 Screen architecture: [`docs/screens.md`](../docs/screens.md).  
+Product copy: [`docs/messaging.md`](../docs/messaging.md).  
 Design tokens: [`docs/design-system.md`](../docs/design-system.md).
