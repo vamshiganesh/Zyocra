@@ -1,4 +1,6 @@
 import { Shell } from "../components/layout/Shell";
+import { screenBySlug } from "../config/screens";
+import { benchmarkArtifacts, benchmarkMethodology } from "../data/content";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
@@ -7,12 +9,7 @@ import { SectionHeader } from "../components/ui/SectionHeader";
 import { benchmarkRows } from "../data/placeholders";
 import "./pages.css";
 
-const methodology = [
-  "Same machine spec documented in benchmarks/scripts/README.",
-  "Same model family, quantization level, and public input policy.",
-  "Same input batch: single borrower vector for epoch-2026-041.",
-  "Gas measured via Foundry gas snapshot on local Anvil.",
-];
+const screen = screenBySlug("benchmarks")!;
 
 export function BenchmarkComparisonPage() {
   return (
@@ -20,12 +17,12 @@ export function BenchmarkComparisonPage() {
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="Research artifact"
-            title="EZKL baseline vs Circom LoRA path."
-            body="Apples-to-apples comparison on constraint count, prover RAM, proof time, verification gas, proof size, and quantization error."
+            eyebrow={screen.eyebrow}
+            title={screen.headline}
+            body={screen.lede}
             actions={
               <ClippedButton to="/epoch" variant="accent" size="lg">
-                Run demo epoch
+                Replay epoch demo
               </ClippedButton>
             }
             aside={<p className="mono-label">benchmarks/raw-results/</p>}
@@ -40,8 +37,8 @@ export function BenchmarkComparisonPage() {
               <div id="comparison">
                 <SectionHeader
                   label="Comparison"
-                  title="Headline benchmark table"
-                  description="Values populate at Milestone 5. Structure matches technical report."
+                  title="EZKL baseline vs Circom LoRA"
+                  description="Central evidence for hiring review—populate at Milestone 5 on one documented host."
                 />
                 <BenchmarkPanel rows={benchmarkRows} />
               </div>
@@ -52,10 +49,10 @@ export function BenchmarkComparisonPage() {
                 <SectionHeader
                   label="Methodology"
                   title="Reproducibility constraints"
-                  description="Without explicit methodology the repo reads as a demo—not an engineering study."
+                  description="Without these, results are anecdotal. Each constraint is recorded in the technical report."
                 />
                 <ul className="assumption-list">
-                  {methodology.map((item) => (
+                  {benchmarkMethodology.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -65,15 +62,16 @@ export function BenchmarkComparisonPage() {
             <ClippedCard>
               <div id="raw">
                 <SectionHeader
-                  label="Raw results"
-                  title="Artifact paths"
-                  description="Committed JSON + plots under benchmarks/ after benchmark runs."
+                  label="Artifacts"
+                  title="Committed outputs"
+                  description="Raw JSON and plots checked into benchmarks/ after each benchmark run."
                 />
                 <ul className="assumption-list">
-                  <li>benchmarks/raw-results/ezkl-epoch-2026-041.json</li>
-                  <li>benchmarks/raw-results/circom-epoch-2026-041.json</li>
-                  <li>benchmarks/plots/constraints-diff.svg</li>
-                  <li>benchmarks/plots/gas-verify.svg</li>
+                  {benchmarkArtifacts.map((path) => (
+                    <li key={path}>
+                      <code>{path}</code>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </ClippedCard>

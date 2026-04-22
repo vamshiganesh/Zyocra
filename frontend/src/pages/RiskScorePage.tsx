@@ -1,4 +1,6 @@
 import { Shell } from "../components/layout/Shell";
+import { screenBySlug } from "../config/screens";
+import { bucketThresholds } from "../data/content";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
 import { FlowNav } from "../components/product/FlowNav";
 import { ProductHero } from "../components/product/ProductHero";
@@ -9,12 +11,7 @@ import { StatTile } from "../components/ui/StatTile";
 import { scoreOutput } from "../data/product-placeholders";
 import "./pages.css";
 
-const bucketThresholds = [
-  { label: "LOW", range: "0.00 – 0.55", action: "Standard collateral factor" },
-  { label: "MEDIUM", range: "0.55 – 0.80", action: "Reduced CF + borrow spread" },
-  { label: "HIGH", range: "0.80 – 0.92", action: "Freeze new borrows" },
-  { label: "CRITICAL", range: "> 0.92", action: "Delayed mitigation flag" },
-];
+const screen = screenBySlug("score")!;
 
 export function RiskScorePage() {
   return (
@@ -22,15 +19,15 @@ export function RiskScorePage() {
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="Oracle output"
-            title="Verified liquidation-risk score."
-            body="Fixed-point score and risk bucket after successful on-chain verification."
+            eyebrow={screen.eyebrow}
+            title={screen.headline}
+            body={screen.lede}
             actions={
               <ClippedButton to="/impact" variant="accent" size="lg">
-                See protocol impact
+                Protocol impact
               </ClippedButton>
             }
-            aside={<p className="mono-label">bucket: MEDIUM</p>}
+            aside={<p className="mono-label">risk bucket · MEDIUM</p>}
           />
         </Shell>
       </section>
@@ -41,9 +38,9 @@ export function RiskScorePage() {
             <ClippedCard>
               <div id="score">
                 <SectionHeader
-                  label="Score output"
-                  title="epoch-2026-041 · borrower 0x9c4f…88a1"
-                  description="Compared against float32 reference from ml-base evaluation harness."
+                  label="Score"
+                  title="Verified output · epoch-2026-041"
+                  description="Oracle-emitted score after verifier admission. Float reference from ml-base on identical features."
                 />
                 <DataFieldGrid fields={scoreOutput} columns={3} />
               </div>
@@ -54,8 +51,8 @@ export function RiskScorePage() {
               <div id="bucket">
                 <SectionHeader
                   label="Risk bucket"
-                  title="Consumer mapping thresholds"
-                  description="Mock lending consumer maps buckets to collateral parameters—not liquidations."
+                  title="Consumer threshold map"
+                  description="Discrete bands drive collateral factor and spread—documented in MockLendingConsumer, not inferred at runtime."
                 />
                 <div className="layer-list">
                   {bucketThresholds.map((row) => (
@@ -72,14 +69,14 @@ export function RiskScorePage() {
             <ClippedCard>
               <div id="accuracy">
                 <SectionHeader
-                  label="Quantization drift"
+                  label="Quant drift"
                   title="Float vs fixed-point"
-                  description="Error analysis axis for benchmark table and technical report."
+                  description="Score error is reported alongside circuit size—precision and cost are coupled in zkML."
                 />
                 <div className="stats-grid">
-                  <StatTile label="Float ref" value="0.739" detail="PyTorch eval" />
-                  <StatTile label="Fixed Q8.8" value="0.742" detail="Circuit arithmetic" accent />
-                  <StatTile label="Abs error" value="0.003" detail="Within tolerance" />
+                  <StatTile label="Float reference" value="0.739" detail="ml-base PyTorch eval" />
+                  <StatTile label="Fixed Q8.8" value="0.742" detail="Verified circuit output" accent />
+                  <StatTile label="Absolute error" value="0.003" detail="Within export tolerance" />
                 </div>
               </div>
             </ClippedCard>
