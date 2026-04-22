@@ -1,4 +1,5 @@
 import { Shell } from "../components/layout/Shell";
+import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
 import { FlowNav } from "../components/product/FlowNav";
 import { PlaceholderPanel } from "../components/product/PlaceholderPanel";
@@ -9,12 +10,34 @@ import { SectionHeader } from "../components/ui/SectionHeader";
 import { publicInputFields, verifyFields } from "../data/product-placeholders";
 import "./pages.css";
 
+const screen = screenBySlug("verify")!;
+
 const txSimFields = [
-  { label: "from", value: "0xf39F…2266", mono: true },
-  { label: "to", value: "RiskOracleV1", mono: true },
-  { label: "calldata_size", value: "— bytes", mono: true },
-  { label: "estimated_gas", value: "—", mono: true },
-  { label: "result", value: "verify() → true (simulated)", mono: true },
+  {
+    label: "Caller",
+    value: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    mono: true,
+    description: "Foundry default deployer for local simulation.",
+  },
+  {
+    label: "Target",
+    value: "RiskOracle.submitScore",
+    mono: true,
+    description: "Oracle entrypoint after standalone verify() passes.",
+  },
+  {
+    label: "Gas used",
+    value: "—",
+    mono: true,
+    description: "Total gas for verify + oracle write path in integration test.",
+    hint: "gas_report",
+  },
+  {
+    label: "Result",
+    value: "verify() → true",
+    mono: true,
+    description: "Simulated verifier outcome for attached proof bytes.",
+  },
 ];
 
 export function ProofVerificationPage() {
@@ -23,15 +46,15 @@ export function ProofVerificationPage() {
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="On-chain verifier"
-            title="Verify the proof on EVM."
-            body="Submit proof bytes and public inputs to the deployed Solidity verifier via Foundry / Anvil."
+            eyebrow={screen.eyebrow}
+            title={screen.headline}
+            body={screen.lede}
             actions={
               <ClippedButton to="/score" variant="accent" size="lg">
-                View risk score
+                View score
               </ClippedButton>
             }
-            aside={<p className="mono-label">chain: anvil-local</p>}
+            aside={<p className="mono-label">verifier status · simulated pass</p>}
           />
         </Shell>
       </section>
@@ -44,7 +67,7 @@ export function ProofVerificationPage() {
                 <SectionHeader
                   label="Verifier"
                   title="RiskScoreVerifierV1"
-                  description="Oracle rejects submissions when proof does not verify against expected verifier and commitments."
+                  description="Gas used here is the primary on-chain cost metric in the benchmark table."
                 />
                 <DataFieldGrid fields={verifyFields} columns={2} />
               </div>
@@ -55,8 +78,8 @@ export function ProofVerificationPage() {
               <div id="public-inputs">
                 <SectionHeader
                   label="Public inputs"
-                  title="Verifier input set"
-                  description="Must match values committed in epoch-2026-041 and exported from ml-base."
+                  title="Calldata public signal set"
+                  description="Must match epoch commitments and borrower feature hash at verification time."
                 />
                 <DataFieldGrid fields={publicInputFields} columns={2} />
               </div>
@@ -65,11 +88,11 @@ export function ProofVerificationPage() {
             <ClippedCard>
               <div id="simulation">
                 <SectionHeader
-                  label="Tx simulation"
+                  label="Simulation"
                   title="Foundry dry-run"
-                  description="Gas and revert reason before oracle submission. Not broadcast in shell mode."
+                  description="No broadcast in demo shell—confirms verifier and public inputs align before oracle wiring."
                 />
-                <PlaceholderPanel label="Simulation" title="submitScore()" status="ready">
+                <PlaceholderPanel label="Verifier status" title="Simulated pass" status="verified">
                   <DataFieldGrid fields={txSimFields} columns={2} />
                 </PlaceholderPanel>
               </div>
