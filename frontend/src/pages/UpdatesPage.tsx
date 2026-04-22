@@ -1,9 +1,12 @@
 import { Shell } from "../components/layout/Shell";
+import { screenBySlug } from "../config/screens";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { changelog } from "../data/placeholders";
 import "./pages.css";
+
+const screen = screenBySlug("updates")!;
 
 export function UpdatesPage() {
   return (
@@ -11,9 +14,9 @@ export function UpdatesPage() {
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="Release notes"
-            title="Milestone and circuit updates."
-            body="Versioned changes across ml-base, circuits-baseline, circuits-custom, contracts, and benchmarks."
+            eyebrow={screen.eyebrow}
+            title={screen.headline}
+            body={screen.lede}
             aside={<p className="mono-label">zyocra://updates</p>}
           />
         </Shell>
@@ -30,8 +33,8 @@ export function UpdatesPage() {
                 </div>
                 <SectionHeader
                   label="Release"
-                  title="Product shell and screen architecture"
-                  description="Screen routes and placeholder data—no prover or contract wiring yet."
+                  title={entry.title}
+                  description={entry.description}
                 />
                 <div className="changelog">
                   {entry.items.map((item) => (

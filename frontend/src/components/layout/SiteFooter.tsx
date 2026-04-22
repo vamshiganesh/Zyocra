@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { footerCopy } from "../../data/content";
 import { ClippedButton } from "../ui/ClippedButton";
 import "./SiteFooter.css";
 
@@ -87,7 +88,7 @@ export function SiteFooter() {
             <div className="site-footer__cta">
               <div className="site-footer__status">
                 <p className="mono-label label-dot site-footer__status-label">
-                  Ready to ship verifiable risk
+                  {footerCopy.status}
                 </p>
                 <span
                   className="site-footer__status-hatch hatch-dark"
@@ -95,16 +96,16 @@ export function SiteFooter() {
                 />
               </div>
               <h2 className="site-footer__headline">
-                Prove scores.
-                <br />
-                Trigger parameters.
+                {footerCopy.headline.split("\n").map((line, i) => (
+                  <span key={line}>
+                    {i > 0 ? <br /> : null}
+                    {line}
+                  </span>
+                ))}
               </h2>
-              <p className="site-footer__lede">
-                Connect your feature pipeline, set quantization policy, and let
-                Zyocra attest epoch risk while your protocol stays in control.
-              </p>
-              <ClippedButton to="/#get-started" variant="surface" size="lg">
-                Get Started
+              <p className="site-footer__lede">{footerCopy.lede}</p>
+              <ClippedButton to="/epoch" variant="surface" size="lg">
+                {footerCopy.cta}
               </ClippedButton>
             </div>
 

@@ -1,4 +1,5 @@
 import { Shell } from "../components/layout/Shell";
+import { screenBySlug } from "../config/screens";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
@@ -10,15 +11,11 @@ import {
 } from "../data/product-placeholders";
 import "./pages.css";
 
-function ProseList({
-  items,
-  dark = false,
-}: {
-  items: { title: string; body: string }[];
-  dark?: boolean;
-}) {
+const screen = screenBySlug("threat-model")!;
+
+function ProseList({ items }: { items: { title: string; body: string }[] }) {
   return (
-    <div className={`prose-list${dark ? " prose-list--dark" : ""}`}>
+    <div className="prose-list">
       {items.map((item) => (
         <article key={item.title} className="prose-list__item">
           <h3>{item.title}</h3>
@@ -35,12 +32,12 @@ export function ThreatModelPage() {
       <section className="band band--hero">
         <Shell>
           <ProductHero
-            eyebrow="Security scope"
-            title="Guarantees and explicit non-guarantees."
-            body="What the proof system attests, what the oracle enforces on-chain, and what remains outside scope."
+            eyebrow={screen.eyebrow}
+            title={screen.headline}
+            body={screen.lede}
             actions={
               <ClippedButton to="/epoch" variant="accent" size="lg">
-                Start demo pipeline
+                Run pipeline demo
               </ClippedButton>
             }
             aside={<p className="mono-label">docs/threat-model.md</p>}
@@ -55,8 +52,8 @@ export function ThreatModelPage() {
               <div id="guarantees">
                 <SectionHeader
                   label="Guarantees"
-                  title="What Zyocra proves"
-                  description="Strong claims limited to correct inference under declared artifacts."
+                  title="Cryptographic and on-chain bounds"
+                  description="Claims limited to correct inference under committed artifacts—not economic optimality."
                 />
                 <ProseList items={guaranteeItems} />
               </div>
@@ -66,8 +63,8 @@ export function ThreatModelPage() {
               <div id="non-guarantees">
                 <SectionHeader
                   label="Non-guarantees"
-                  title="Out of scope"
-                  description="DeFi risk literature separates proof correctness from market-level oracle security."
+                  title="Explicitly out of scope"
+                  description="Separates proof correctness from DeFi market risk and oracle manipulation literature."
                 />
                 <ProseList items={nonGuaranteeItems} />
               </div>
@@ -77,8 +74,8 @@ export function ThreatModelPage() {
               <div id="assumptions">
                 <SectionHeader
                   label="Assumptions"
-                  title="Trusted setup and artifact alignment"
-                  description="Violations break correctness even when contracts behave as specified."
+                  title="Operational dependencies"
+                  description="Failure of any assumption breaks end-to-end security even if contracts match spec."
                 />
                 <ul className="assumption-list">
                   {assumptionItems.map((item) => (
