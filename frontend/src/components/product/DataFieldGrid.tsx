@@ -12,6 +12,9 @@ export function DataFieldGrid({ fields, columns = 2 }: Props) {
       {fields.map((field) => (
         <div key={field.label} className="data-grid__item">
           <dt className="data-grid__label mono-label">{field.label}</dt>
+          {field.description ? (
+            <dd className="data-grid__desc">{field.description}</dd>
+          ) : null}
           <dd
             className={`data-grid__value${field.mono ? " data-grid__value--mono" : ""}`}
           >

@@ -12,7 +12,6 @@ export type Screen = {
   eyebrow: string;
   headline: string;
   lede: string;
-  /** Ordered pipeline step (undefined for non-pipeline screens). */
   pipelineStep?: number;
   sections: ScreenSection[];
 };
@@ -23,14 +22,15 @@ export const SCREENS: Screen[] = [
     slug: "overview",
     title: "Overview",
     shortLabel: "Overview",
-    eyebrow: "Zyocra oracle",
-    headline: "Prove risk scores. Update collateral.",
-    lede: "Local-first zkML oracle for LoRA-adapted liquidation-risk inference—dual proving paths, on-chain verification, and a mock lending consumer.",
+    eyebrow: "Verifiable risk oracle",
+    headline: "Prove inference. Publish score. Adjust collateral.",
+    lede: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
     sections: [
-      { id: "flow", label: "Epoch flow", index: "01" },
-      { id: "system", label: "System", index: "02" },
-      { id: "metrics", label: "Headline metrics", index: "03" },
-      { id: "entry", label: "Start epoch", index: "04" },
+      { id: "flow", label: "Pipeline", index: "01" },
+      { id: "system", label: "Stack", index: "02" },
+      { id: "metrics", label: "Benchmarks", index: "03" },
+      { id: "entry", label: "Demo", index: "04" },
+      { id: "faq", label: "FAQ", index: "05" },
     ],
   },
   {
@@ -39,8 +39,8 @@ export const SCREENS: Screen[] = [
     title: "Model Epoch Explorer",
     shortLabel: "Epoch",
     eyebrow: "Epoch registry",
-    headline: "Select the scoring epoch.",
-    lede: "Each epoch binds a model hash, adapter commitments, quantization profile, and verifier deployment. Pick an epoch to inspect inputs and replay the prove→verify path.",
+    headline: "Commitments for the active scoring window.",
+    lede: "Each epoch locks model hash, adapter hash, quantization profile, and verifier deployments before any borrower score is admitted.",
     pipelineStep: 1,
     sections: [
       { id: "active", label: "Active epoch", index: "01" },
@@ -54,11 +54,11 @@ export const SCREENS: Screen[] = [
     title: "Input Summary",
     shortLabel: "Inputs",
     eyebrow: "Feature vector",
-    headline: "Borrower features for epoch scoring.",
-    lede: "Deterministic tabular inputs exported from the ml-base pipeline—collateralization, utilization, volatility proxies, and wallet behavior summaries.",
+    headline: "Deterministic borrower features.",
+    lede: "Tabular inputs from ml-base—fixed-point tensors aligned with the ONNX export and both proving paths.",
     pipelineStep: 2,
     sections: [
-      { id: "vector", label: "Feature vector", index: "01" },
+      { id: "vector", label: "Features", index: "01" },
       { id: "quantization", label: "Quantization", index: "02" },
       { id: "public-inputs", label: "Public inputs", index: "03" },
     ],
@@ -69,8 +69,8 @@ export const SCREENS: Screen[] = [
     title: "Proof Generation",
     shortLabel: "Prove",
     eyebrow: "Off-chain prover",
-    headline: "Generate the epoch risk proof.",
-    lede: "Run EZKL baseline or Circom custom path against the committed ONNX graph and LoRA delta. Artifacts land in circuits-baseline/ or circuits-custom/.",
+    headline: "Generate the epoch proof.",
+    lede: "Run EZKL on the full ONNX graph or Circom on the LoRA subgraph. Artifacts are content-addressed under circuits-baseline/ and circuits-custom/.",
     pipelineStep: 3,
     sections: [
       { id: "path", label: "Proving path", index: "01" },
@@ -84,13 +84,13 @@ export const SCREENS: Screen[] = [
     title: "Proof Verification",
     shortLabel: "Verify",
     eyebrow: "On-chain verifier",
-    headline: "Verify the proof on EVM.",
-    lede: "Submit proof bytes and public inputs to the deployed Solidity verifier. Oracle contract rejects mismatched model, adapter, or epoch commitments.",
+    headline: "EVM verification gate.",
+    lede: "Proof bytes and public inputs are checked against RiskScoreVerifierV1 before RiskOracle admits the score.",
     pipelineStep: 4,
     sections: [
       { id: "verifier", label: "Verifier", index: "01" },
       { id: "public-inputs", label: "Public inputs", index: "02" },
-      { id: "simulation", label: "Tx simulation", index: "03" },
+      { id: "simulation", label: "Simulation", index: "03" },
     ],
   },
   {
@@ -100,12 +100,12 @@ export const SCREENS: Screen[] = [
     shortLabel: "Score",
     eyebrow: "Oracle output",
     headline: "Verified liquidation-risk score.",
-    lede: "Fixed-point score and risk bucket emitted by the oracle after successful verification. Compared against float32 reference from ml-base evaluation.",
+    lede: "Fixed-point score, risk bucket, and quantization drift versus float32 reference from ml-base.",
     pipelineStep: 5,
     sections: [
-      { id: "score", label: "Score output", index: "01" },
+      { id: "score", label: "Score", index: "01" },
       { id: "bucket", label: "Risk bucket", index: "02" },
-      { id: "accuracy", label: "Quantization drift", index: "03" },
+      { id: "accuracy", label: "Quant drift", index: "03" },
     ],
   },
   {
@@ -114,12 +114,12 @@ export const SCREENS: Screen[] = [
     title: "Protocol Impact",
     shortLabel: "Impact",
     eyebrow: "Consumer contract",
-    headline: "Collateral parameters after verification.",
-    lede: "Mock lending consumer maps verified risk buckets to collateral factor, borrow spread, and borrow freeze flags—no model-triggered liquidation.",
+    headline: "Collateral policy after verification.",
+    lede: "MockLendingConsumer applies bucket policy—collateral factor, spread, borrow gate—without model-triggered liquidation.",
     pipelineStep: 6,
     sections: [
-      { id: "consumer", label: "Consumer state", index: "01" },
-      { id: "params", label: "Parameter delta", index: "02" },
+      { id: "consumer", label: "Consumer", index: "01" },
+      { id: "params", label: "Deltas", index: "02" },
       { id: "audit", label: "Audit trail", index: "03" },
     ],
   },
@@ -129,12 +129,12 @@ export const SCREENS: Screen[] = [
     title: "Benchmark Comparison",
     shortLabel: "Benchmarks",
     eyebrow: "Research artifact",
-    headline: "EZKL baseline vs Circom LoRA path.",
-    lede: "Apples-to-apples comparison on constraint count, prover RAM, proof time, verification gas, proof size, and float vs fixed-point error.",
+    headline: "EZKL vs Circom on one workload.",
+    lede: "Constraint count, peak RAM, proof time, verification gas, proof size, and score quantization error—same inputs, documented machine spec.",
     sections: [
       { id: "comparison", label: "Comparison", index: "01" },
       { id: "methodology", label: "Methodology", index: "02" },
-      { id: "raw", label: "Raw results", index: "03" },
+      { id: "raw", label: "Artifacts", index: "03" },
     ],
   },
   {
@@ -143,8 +143,8 @@ export const SCREENS: Screen[] = [
     title: "Threat Model",
     shortLabel: "Threat model",
     eyebrow: "Security scope",
-    headline: "Guarantees and explicit non-guarantees.",
-    lede: "What the proof system attests, what the oracle enforces on-chain, and what remains outside scope for market manipulation or data honesty.",
+    headline: "Guarantees and non-guarantees.",
+    lede: "What the proof attests, what the oracle enforces, and what remains outside scope for market manipulation and data honesty.",
     sections: [
       { id: "guarantees", label: "Guarantees", index: "01" },
       { id: "non-guarantees", label: "Non-guarantees", index: "02" },
@@ -157,8 +157,8 @@ export const SCREENS: Screen[] = [
     title: "Changelog",
     shortLabel: "Updates",
     eyebrow: "Release notes",
-    headline: "Milestone and circuit updates.",
-    lede: "Versioned changes across ml-base, circuits-baseline, circuits-custom, contracts, and benchmarks as the repository advances.",
+    headline: "Milestone log.",
+    lede: "Oracle contract, EZKL pipeline, Circom benchmark path, and consumer risk logic—as each milestone lands in the repo.",
     sections: [{ id: "changelog", label: "Changelog", index: "01" }],
   },
 ];
