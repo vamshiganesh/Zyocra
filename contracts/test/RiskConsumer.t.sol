@@ -37,7 +37,7 @@ contract RiskConsumerTest is Test {
         oracle.submitScore(payload);
     }
 
-    function test_previewBucket_mapsThresholds() public {
+    function test_previewBucket_mapsThresholds() public view {
         assertEq(uint8(consumer.previewBucket(0)), uint8(RiskBuckets.Bucket.LOW));
         assertEq(uint8(consumer.previewBucket(5_499)), uint8(RiskBuckets.Bucket.LOW));
         assertEq(uint8(consumer.previewBucket(5_500)), uint8(RiskBuckets.Bucket.MEDIUM));
@@ -48,7 +48,7 @@ contract RiskConsumerTest is Test {
         assertEq(uint8(consumer.previewBucket(10_000)), uint8(RiskBuckets.Bucket.CRITICAL));
     }
 
-    function test_previewPolicy_mediumMatchesUiPlaceholder() public {
+    function test_previewPolicy_mediumMatchesUiPlaceholder() public view {
         RiskPolicies.Policy memory policy = consumer.previewPolicy(RiskBuckets.Bucket.MEDIUM);
         assertEq(policy.collateralFactorBps, 7_200);
         assertEq(policy.borrowSpreadBps, 45);
