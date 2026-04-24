@@ -13,7 +13,7 @@ contract IntegrationTest is Test {
     bytes32 internal constant ADAPTER_HASH = keccak256("zyocra-demo-adapter-v1");
 
     address internal owner = makeAddr("owner");
-    address internal borrower = 0x9c4f2e88a1b3c5d7e9f0112233445566778899aabb;
+    address internal borrower = makeAddr("borrower-demo");
 
     StubRiskScoreVerifier internal verifier;
     RiskOracle internal oracle;
