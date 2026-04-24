@@ -1,0 +1,162 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {Test} from "forge-std/Test.sol";
+import {RiskOracle} from "../src/RiskOracle.sol";
+import {RiskConsumer} from "../src/RiskConsumer.sol";
+import {StubRiskScoreVerifier} from "../src/verifiers/StubRiskScoreVerifier.sol";
+import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
+import {RiskPolicies} from "../src/libraries/RiskPolicies.sol";
+
+contract RiskConsumerTest is Test {
+    bytes32 internal constant MODEL_HASH = keccak256("zyocra-demo-model-v1");
+    bytes32 internal constant ADAPTER_HASH = keccak256("zyocra-demo-adapter-v1");
+
+    address internal owner = makeAddr("owner");
+    address internal borrower = makeAddr("borrower");
+
+    StubRiskScoreVerifier internal verifier;
+    RiskOracle internal oracle;
+    RiskConsumer internal consumer;
+
+    function setUp() public {
+        verifier = new StubRiskScoreVerifier(owner);
+        oracle = new RiskOracle(owner, address(verifier), MODEL_HASH, ADAPTER_HASH);
+        consumer = new RiskConsumer(address(oracle));
+    }
+
+    function _submit(uint64 epoch, uint256 scoreBps) internal {
+        RiskOracle.ScoreUpdatePayload memory payload = RiskOracle.ScoreUpdatePayload({
+            modelHash: MODEL_HASH,
+            adapterHash: ADAPTER_HASH,
+            epoch: epoch,
+            scoreBps: scoreBps,
+            proof: hex"01",
+            publicInputs: new uint256[](0)
+        });
+        oracle.submitScore(payload);
+    }
+
+    function test_previewBucket_mapsThresholds() public {
+        assertEq(uint8(consumer.previewBucket(0)), uint8(RiskBuckets.Bucket.LOW));
+        assertEq(uint8(consumer.previewBucket(5_499)), uint8(RiskBuckets.Bucket.LOW));
+        assertEq(uint8(consumer.previewBucket(5_500)), uint8(RiskBuckets.Bucket.MEDIUM));
+        assertEq(uint8(consumer.previewBucket(7_999)), uint8(RiskBuckets.Bucket.MEDIUM));
+        assertEq(uint8(consumer.previewBucket(8_000)), uint8(RiskBuckets.Bucket.HIGH));
+        assertEq(uint8(consumer.previewBucket(9_199)), uint8(RiskBuckets.Bucket.HIGH));
+        assertEq(uint8(consumer.previewBucket(9_200)), uint8(RiskBuckets.Bucket.CRITICAL));
+        assertEq(uint8(consumer.previewBucket(10_000)), uint8(RiskBuckets.Bucket.CRITICAL));
+    }
+
+    function test_previewPolicy_mediumMatchesUiPlaceholder() public {
+        RiskPolicies.Policy memory policy = consumer.previewPolicy(RiskBuckets.Bucket.MEDIUM);
+        assertEq(policy.collateralFactorBps, 7_200);
+        assertEq(policy.borrowSpreadBps, 45);
+        assertTrue(policy.borrowAllowed);
+        assertFalse(policy.mitigationFlag);
+    }
+
+    function test_applyVerifiedScore_updatesMediumBucket() public {
+        _submit(202_604_1, 6_200);
+
+        vm.expectEmit(true, true, false, true);
+        emit RiskConsumer.RiskBucketChanged(
+            borrower, RiskBuckets.Bucket.LOW, RiskBuckets.Bucket.MEDIUM, 202_604_1
+        );
+
+        vm.expectEmit(true, true, false, true);
+        emit RiskConsumer.CollateralParamsUpdated(
+            borrower, 202_604_1, RiskBuckets.Bucket.MEDIUM, 7_200, 45, true, false
+        );
+
+        consumer.applyVerifiedScore(borrower, 202_604_1);
+
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
+        assertEq(policy.collateralFactorBps, 7_200);
+        assertEq(policy.borrowSpreadBps, 45);
+        assertTrue(policy.borrowAllowed);
+        assertFalse(policy.mitigationFlag);
+        assertEq(policy.lastEpoch, 202_604_1);
+    }
+
+    function test_applyVerifiedScore_lowBucket() public {
+        _submit(1, 3_000);
+        consumer.applyVerifiedScore(borrower, 1);
+
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.LOW));
+        assertEq(policy.collateralFactorBps, 8_000);
+        assertEq(policy.borrowSpreadBps, 0);
+        assertTrue(policy.borrowAllowed);
+    }
+
+    function test_applyVerifiedScore_highBucketFreezesBorrow() public {
+        _submit(2, 8_500);
+        consumer.applyVerifiedScore(borrower, 2);
+
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.HIGH));
+        assertFalse(policy.borrowAllowed);
+        assertFalse(policy.mitigationFlag);
+        assertEq(policy.collateralFactorBps, 6_500);
+    }
+
+    function test_applyVerifiedScore_criticalSetsMitigationFlag() public {
+        _submit(3, 9_500);
+        consumer.applyVerifiedScore(borrower, 3);
+
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.CRITICAL));
+        assertFalse(policy.borrowAllowed);
+        assertTrue(policy.mitigationFlag);
+    }
+
+    function test_applyVerifiedScore_revertsIfEpochNotVerified() public {
+        vm.expectRevert(abi.encodeWithSelector(RiskConsumer.EpochNotVerified.selector, 1));
+        consumer.applyVerifiedScore(borrower, 1);
+    }
+
+    function test_applyVerifiedScore_revertsIfAlreadyApplied() public {
+        _submit(5, 6_000);
+        consumer.applyVerifiedScore(borrower, 5);
+
+        vm.expectRevert(abi.encodeWithSelector(RiskConsumer.AlreadyApplied.selector, borrower, 5));
+        consumer.applyVerifiedScore(borrower, 5);
+    }
+
+    function test_applyVerifiedScore_allowsNewerEpoch() public {
+        _submit(1, 3_000);
+        _submit(2, 6_500);
+
+        consumer.applyVerifiedScore(borrower, 1);
+
+        RiskConsumer.BorrowerPolicy memory afterFirst = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(afterFirst.bucket), uint8(RiskBuckets.Bucket.LOW));
+
+        consumer.applyVerifiedScore(borrower, 2);
+
+        RiskConsumer.BorrowerPolicy memory afterSecond = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(afterSecond.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
+        assertEq(afterSecond.lastEpoch, 2);
+    }
+
+    function test_applyVerifiedScore_skipsBucketEventWhenUnchanged() public {
+        _submit(1, 6_000);
+        _submit(2, 6_500);
+
+        consumer.applyVerifiedScore(borrower, 1);
+
+        vm.recordLogs();
+        consumer.applyVerifiedScore(borrower, 2);
+
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        uint256 bucketEvents;
+        for (uint256 i = 0; i < entries.length; i++) {
+            if (entries[i].topics[0] == keccak256("RiskBucketChanged(address,uint8,uint8,uint64)")) {
+                bucketEvents++;
+            }
+        }
+        assertEq(bucketEvents, 0);
+    }
+}
