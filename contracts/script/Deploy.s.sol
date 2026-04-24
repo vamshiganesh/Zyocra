@@ -15,7 +15,10 @@ contract Deploy is Script {
     bytes32 internal constant MODEL_HASH = keccak256("zyocra-demo-model-v1");
     bytes32 internal constant ADAPTER_HASH = keccak256("zyocra-demo-adapter-v1");
 
-    function run() external returns (address verifierAddr, address oracleAddr, address consumerAddr) {
+    function run()
+        external
+        returns (address verifierAddr, address oracleAddr, address consumerAddr)
+    {
         address deployer = vm.envOr("DEPLOYER", msg.sender);
 
         vm.startBroadcast(deployer);

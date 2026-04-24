@@ -57,7 +57,9 @@ contract RiskOracleTest is Test {
 
     function test_submitScore_emitsScoreVerified() public {
         vm.expectEmit(true, true, true, true);
-        emit RiskOracle.ScoreVerified(202_604_1, MODEL_HASH, ADAPTER_HASH, 6_200, uint64(block.timestamp));
+        emit RiskOracle.ScoreVerified(
+            202_604_1, MODEL_HASH, ADAPTER_HASH, 6_200, uint64(block.timestamp)
+        );
 
         vm.prank(relayer);
         oracle.submitScore(_payload(202_604_1, 6_200));

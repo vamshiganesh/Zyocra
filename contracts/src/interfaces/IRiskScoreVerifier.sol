@@ -10,5 +10,8 @@ interface IRiskScoreVerifier {
     /// @param proof Proof bytes from the off-chain prover (format depends on verifier).
     /// @param publicInputs Public field elements committed by the circuit (score, hashes, epoch, …).
     /// @return valid True when the proof is valid on-chain.
-    function verify(bytes calldata proof, uint256[] calldata publicInputs) external view returns (bool valid);
+    function verify(bytes calldata proof, uint256[] calldata publicInputs)
+        external
+        view
+        returns (bool valid);
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IRiskScoreVerifier} from "./interfaces/IRiskScoreVerifier.sol";
+import {IRiskScoreVerifier} from "../interfaces/IRiskScoreVerifier.sol";
 
 /// @title StubRiskScoreVerifier
 /// @notice Local-only verifier stub for Phase 1 development and tests.

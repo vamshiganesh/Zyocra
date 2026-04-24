@@ -54,7 +54,11 @@ contract RiskConsumer {
     }
 
     /// @notice Preview policy parameters for a bucket (testing / integrators).
-    function previewPolicy(RiskBuckets.Bucket bucket) external pure returns (RiskPolicies.Policy memory) {
+    function previewPolicy(RiskBuckets.Bucket bucket)
+        external
+        pure
+        returns (RiskPolicies.Policy memory)
+    {
         return RiskPolicies.policyFor(bucket);
     }
 

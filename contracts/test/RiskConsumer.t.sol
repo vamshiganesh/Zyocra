@@ -153,7 +153,8 @@ contract RiskConsumerTest is Test {
         Vm.Log[] memory entries = vm.getRecordedLogs();
         uint256 bucketEvents;
         for (uint256 i = 0; i < entries.length; i++) {
-            if (entries[i].topics[0] == keccak256("RiskBucketChanged(address,uint8,uint8,uint64)")) {
+            if (entries[i].topics[0] == keccak256("RiskBucketChanged(address,uint8,uint8,uint64)"))
+            {
                 bucketEvents++;
             }
         }

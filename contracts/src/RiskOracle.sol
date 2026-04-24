@@ -33,7 +33,12 @@ contract RiskOracle is IRiskOracle {
     error Unauthorized();
     error VerificationFailed();
     error StaleEpoch(uint64 provided, uint64 latest);
-    error HashMismatch(bytes32 expectedModel, bytes32 expectedAdapter, bytes32 providedModel, bytes32 providedAdapter);
+    error HashMismatch(
+        bytes32 expectedModel,
+        bytes32 expectedAdapter,
+        bytes32 providedModel,
+        bytes32 providedAdapter
+    );
     error EpochNotVerified(uint64 epoch);
 
     event VerifierUpdated(address indexed previousVerifier, address indexed newVerifier);
@@ -45,12 +50,7 @@ contract RiskOracle is IRiskOracle {
         uint64 timestamp
     );
 
-    constructor(
-        address owner_,
-        address verifier_,
-        bytes32 modelHash_,
-        bytes32 adapterHash_
-    ) {
+    constructor(address owner_, address verifier_, bytes32 modelHash_, bytes32 adapterHash_) {
         owner = owner_;
         verifier = IRiskScoreVerifier(verifier_);
         committedModelHash = modelHash_;
@@ -72,7 +72,8 @@ contract RiskOracle is IRiskOracle {
     /// @notice Submit a score after on-chain proof verification.
     /// @param payload Model commitments, epoch, score, proof bytes, and public inputs.
     function submitScore(ScoreUpdatePayload calldata payload) external {
-        if (payload.modelHash != committedModelHash || payload.adapterHash != committedAdapterHash) {
+        if (payload.modelHash != committedModelHash || payload.adapterHash != committedAdapterHash)
+        {
             revert HashMismatch(
                 committedModelHash, committedAdapterHash, payload.modelHash, payload.adapterHash
             );
