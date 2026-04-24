@@ -142,9 +142,9 @@ contract RiskOracleTest is Test {
         assertEq(address(oracle.verifier()), address(next));
     }
 
-    function testFuzz_submitScore_validScoreRange(uint64 epochOffset, uint256 scoreBps) public {
+    function testFuzz_submitScore_validScoreRange(uint256 scoreBps) public {
         scoreBps = bound(scoreBps, 0, 10_000);
-        uint64 epoch = uint64(epochOffset) + 1;
+        uint64 epoch = oracle.latestEpoch() + 1;
 
         vm.prank(relayer);
         oracle.submitScore(_payload(epoch, scoreBps));
