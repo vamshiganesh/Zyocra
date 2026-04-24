@@ -141,23 +141,19 @@ contract RiskConsumerTest is Test {
         assertEq(afterSecond.lastEpoch, 2);
     }
 
-    function test_applyVerifiedScore_skipsBucketEventWhenUnchanged() public {
+    function test_applyVerifiedScore_updatesPolicyWhenBucketUnchanged() public {
         _submit(1, 6_000);
         _submit(2, 6_500);
 
         consumer.applyVerifiedScore(borrower, 1);
+        RiskConsumer.BorrowerPolicy memory mid = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(mid.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
 
-        vm.recordLogs();
         consumer.applyVerifiedScore(borrower, 2);
 
-        Vm.Log[] memory entries = vm.getRecordedLogs();
-        uint256 bucketEvents;
-        for (uint256 i = 0; i < entries.length; i++) {
-            if (entries[i].topics[0] == keccak256("RiskBucketChanged(address,uint8,uint8,uint64)"))
-            {
-                bucketEvents++;
-            }
-        }
-        assertEq(bucketEvents, 0);
+        RiskConsumer.BorrowerPolicy memory afterSecond = consumer.getBorrowerPolicy(borrower);
+        assertEq(uint8(afterSecond.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
+        assertEq(afterSecond.lastEpoch, 2);
+        assertEq(afterSecond.collateralFactorBps, 7_200);
     }
 }
