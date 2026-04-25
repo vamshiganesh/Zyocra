@@ -6,21 +6,36 @@ Quantized DeFi liquidation-risk model, LoRA adapters, and ONNX export for Zyocra
 
 | Path | Purpose |
 |------|---------|
-| `training/` | Small tabular MLP / logistic-style risk model training |
-| `quantization/` | Float32 baseline, fixed-point export, scales, overflow bounds, error analysis |
-| `lora/` | Low-rank adapters framed as \(W' = W + AB\) |
-| `onnx-export/` | Deterministic ONNX graphs for the EZKL baseline path |
-| `requirements.txt` | Python deps (ONNX, EZKL API; PyTorch CPU installed via `make install`) |
+| `zyocra_ml/` | Importable Python package (model, features, LoRA, metrics) |
+| `scripts/` | Dataset prep, training, evaluation, ONNX export |
+| `tests/` | Determinism and model unit tests |
+| `samples/` | Small committed example manifests |
+| `artifacts/` | Runtime outputs (gitignored) |
+| `training/` | Milestone notes (logic lives in `zyocra_ml/` + `scripts/`) |
+| `quantization/` | Fixed-point export (later milestone) |
+| `lora/` | LoRA notes; implementation in `zyocra_ml/lora.py` |
+| `onnx-export/` | ONNX notes; export script in `scripts/export_onnx.py` |
+| `requirements.txt` | Python deps (PyTorch CPU via `make install`) |
 | `.venv/` | Local virtualenv (gitignored) |
 
-## Local setup
+## Quick start
 
 ```bash
 # from repo root
 make install
 source ml-base/.venv/bin/activate
+cd ml-base
+bash scripts/run_pipeline.sh
+pytest -q
 ```
 
-Large weights and generated artifacts belong in gitignored paths or outside the repo under `~/projects/zyocra/`.
+Full documentation: [`../docs/ml.md`](../docs/ml.md).
 
-Milestone 1 implements code under these directories. Placeholders only for now.
+## Phase 1 outputs
+
+After `run_pipeline.sh`:
+
+- `artifacts/models/zyocra-risk-mlp-v1.pt`
+- `artifacts/onnx/zyocra-risk-mlp-v1.onnx`
+- `artifacts/manifests/eval-latest.json`
+- Example copies in `samples/`
