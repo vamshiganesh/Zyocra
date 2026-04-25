@@ -1,14 +1,14 @@
 {
   "checkpoint": "artifacts/models/zyocra-risk-mlp-v1.pt",
   "evaluation_metrics": {
-    "brier_score": 1.0856495735059904e-07,
+    "brier_score": 5.655643130374409e-07,
     "bucket_accuracy": 1.0,
-    "mae": 0.00012559549387139974,
-    "max_abs_error": 0.002325365087017417,
-    "mse": 1.0856495735059904e-07,
-    "rmse": 0.0003294919685676709
+    "mae": 0.00031732617384324085,
+    "max_abs_error": 0.004693878814578056,
+    "mse": 5.655643130374409e-07,
+    "rmse": 0.0007520401006844256
   },
-  "generated_at": "2026-07-04T18:36:57.253949+00:00",
+  "generated_at": "2026-07-04T18:37:41.897710+00:00",
   "model_version": "zyocra-risk-mlp-v1",
   "parameter_counts": {
     "frozen": 9,
