@@ -17,9 +17,9 @@ def test_risk_mlp_forward_shape() -> None:
 
 def test_lora_enables_trainable_adapter_only() -> None:
     model = RiskMLP()
-  base_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total_before = model.count_parameters()["total"]
     model.enable_lora(rank=4)
     counts = model.count_parameters()
-    assert counts["trainable"] < counts["total"]
     assert counts["frozen"] > 0
-    assert counts["trainable"] < base_trainable + counts["total"]
+    assert counts["trainable"] > 0
+    assert counts["trainable"] < total_before
