@@ -1,0 +1,27 @@
+{
+  "evaluation_metrics": {},
+  "generated_at": "2026-07-04T18:37:47.846375+00:00",
+  "input_shape": [
+    1,
+    6
+  ],
+  "model_version": "zyocra-risk-mlp-v1",
+  "onnx_opset": 17,
+  "onnx_path": "artifacts/onnx/zyocra-risk-mlp-v1.onnx",
+  "onnx_sha256": "10678072b85229cac59c81647bfb1e3a8241975067c7fde14ea353430a05524d",
+  "output_shape": [
+    1,
+    1
+  ],
+  "parameter_counts": {
+    "frozen": 9,
+    "total": 293,
+    "trainable": 284
+  },
+  "quantization_config": {
+    "accumulator_bits": 32,
+    "activation_scale": 128,
+    "profile": "Q8.8",
+    "weight_scale": 256
+  }
+}

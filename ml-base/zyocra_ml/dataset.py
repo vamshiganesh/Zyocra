@@ -19,17 +19,18 @@ def _risk_score_from_features(features: np.ndarray) -> np.ndarray:
     higher collateralization and liquidation proximity reduce it.
     """
     col = {name: i for i, name in enumerate(FEATURE_NAMES)}
+    wallet_norm = features[:, col["wallet_age_days"]] / 800.0
     logits = (
-        -1.4 * features[:, col["collateralization_ratio"]]
+        -1.2 * features[:, col["collateralization_ratio"]]
         + 2.0 * features[:, col["debt_utilization"]]
-        + 1.6 * features[:, col["volatility_proxy_7d"]]
+        + 1.5 * features[:, col["volatility_proxy_7d"]]
         - 1.8 * features[:, col["liquidation_proximity"]]
         + 0.9 * features[:, col["borrow_concentration"]]
-        - 0.4 * features[:, col["wallet_age_days"]]
-        + 0.35
+        - 0.5 * wallet_norm
+        + 0.15
     )
-    logits = np.clip(logits, -30.0, 30.0)
-    return (1.0 / (1.0 + np.exp(-logits))).astype(np.float32).clip(0.0, 1.0)
+    logits = np.clip(logits, -20.0, 20.0)
+    return (1.0 / (1.0 + np.exp(-logits))).astype(np.float32)
 
 
 def generate_raw_dataset(n_samples: int = SYNTHETIC_SAMPLES, seed: int = SEED) -> tuple[np.ndarray, np.ndarray]:
