@@ -1,11 +1,5 @@
 # lora
 
-LoRA as a structured weight update, not an EZKL-native primitive:
+Low-rank adapter implementation: `zyocra_ml/lora.py` (`LoRALinear`, \(W' = W + AB\)).
 
-\[
-W' = W + AB
-\]
-
-**Planned:** adapter matrices \(A\), \(B\), effective adapted weights for export and custom-circuit commitments.
-
-See `docs/architecture.md`.
+Phase 1 applies LoRA to the **output head only** after base training. Full-layer adapters can extend the same abstraction in later milestones.

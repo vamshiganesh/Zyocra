@@ -1,5 +1,11 @@
 # onnx-export
 
-Export the quantized, LoRA-adapted inference graph to ONNX for the EZKL baseline path.
+Phase 1 ONNX export:
 
-**Planned:** deterministic export scripts and small committed fixtures (large graphs stay gitignored).
+```bash
+python scripts/export_onnx.py
+```
+
+Output: `artifacts/onnx/zyocra-risk-mlp-v1.onnx` (+ SHA-256 in manifest).
+
+EZKL compile uses this graph in Milestone 2 (`circuits-baseline/`).

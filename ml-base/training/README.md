@@ -1,7 +1,13 @@
 # training
 
-Compact tabular risk model (MLP or logistic-style). Not transformer-first.
+Phase 1 training logic lives in:
 
-**Planned:** deterministic feature pipeline, reproducible seeds, float32 baseline inference.
+- `zyocra_ml/model.py` — `RiskMLP`
+- `scripts/train.py` — base training + optional LoRA head fine-tune
 
-See `docs/architecture.md` and `docs/roadmap.md` (Milestone 1).
+```bash
+source ../.venv/bin/activate  # or ml-base/.venv from repo root
+python scripts/train.py
+```
+
+See [`../README.md`](../README.md) and [`../../docs/ml.md`](../../docs/ml.md).

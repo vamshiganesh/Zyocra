@@ -54,4 +54,4 @@ QUANT_CONFIG: dict[str, int | str] = {
     "accumulator_bits": 32,
 }
 
-ONNX_OPSET = 17
+ONNX_OPSET = 18
