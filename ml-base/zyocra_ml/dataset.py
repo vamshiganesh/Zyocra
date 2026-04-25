@@ -61,6 +61,35 @@ def write_raw_csv(path: Path, features: np.ndarray, labels: np.ndarray) -> None:
             writer.writerow([*(f"{v:.6f}" for v in row), f"{label:.6f}"])
 
 
+def deterministic_split(
+    n_samples: int,
+    train_fraction: float,
+    val_fraction: float,
+    seed: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return train, validation, and test index arrays (disjoint, shuffled)."""
+    rng = np.random.default_rng(seed)
+    indices = np.arange(n_samples)
+    rng.shuffle(indices)
+
+    train_end = int(n_samples * train_fraction)
+    val_end = train_end + int(n_samples * val_fraction)
+    train_idx = indices[:train_end]
+    val_idx = indices[train_end:val_end]
+    test_idx = indices[val_end:]
+    return train_idx, val_idx, test_idx
+
+
+def save_npz_split(path: Path, features: np.ndarray, labels: np.ndarray) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(path, features=features, labels=labels)
+
+
+def load_npz_split(path: Path) -> tuple[np.ndarray, np.ndarray]:
+    data = np.load(path)
+    return data["features"], data["labels"]
+
+
 def read_raw_csv(path: Path) -> tuple[np.ndarray, np.ndarray]:
     with path.open(encoding="utf-8") as fh:
         reader = csv.DictReader(fh)
