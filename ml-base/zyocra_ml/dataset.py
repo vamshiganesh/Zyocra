@@ -28,7 +28,8 @@ def _risk_score_from_features(features: np.ndarray) -> np.ndarray:
         - 0.4 * features[:, col["wallet_age_days"]]
         + 0.35
     )
-    return np.clip(1.0 / (1.0 + np.exp(-logits)), 0.0, 1.0).astype(np.float32)
+    logits = np.clip(logits, -30.0, 30.0)
+    return (1.0 / (1.0 + np.exp(-logits))).astype(np.float32).clip(0.0, 1.0)
 
 
 def generate_raw_dataset(n_samples: int = SYNTHETIC_SAMPLES, seed: int = SEED) -> tuple[np.ndarray, np.ndarray]:

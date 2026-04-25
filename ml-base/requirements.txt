@@ -6,6 +6,7 @@
 
 onnx
 onnxruntime
+onnxscript
 numpy
 ezkl
 pytest

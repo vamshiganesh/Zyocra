@@ -115,6 +115,8 @@ def main() -> None:
 
     lora_history: list[dict[str, float]] = []
     if not args.skip_lora:
+        for param in model.backbone.parameters():
+            param.requires_grad = False
         model.enable_lora(rank=LORA_RANK)
         lora_history = _train_epochs(
             model,
