@@ -1,14 +1,14 @@
 {
   "evaluation_metrics": {},
-  "generated_at": "2026-07-04T18:39:00.966936+00:00",
+  "generated_at": "2026-07-04T18:50:59.049865+00:00",
   "input_shape": [
     1,
     6
   ],
   "model_version": "zyocra-risk-mlp-v1",
-  "onnx_opset": 17,
+  "onnx_opset": 18,
   "onnx_path": "artifacts/onnx/zyocra-risk-mlp-v1.onnx",
-  "onnx_sha256": "4cab1b501ad2a57fff8bb04524d8337006ba7d3c518cd7e5ce30c8501ba7f682",
+  "onnx_sha256": "5b6edf85f0c0dc5c7e5a8b1cf20316a4cc23af961a4f5af9b7fd07bf532cc67d",
   "output_shape": [
     1,
     1
