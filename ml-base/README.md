@@ -12,7 +12,7 @@ Quantized DeFi liquidation-risk model, LoRA adapters, and ONNX export for Zyocra
 | `samples/` | Small committed example manifests |
 | `artifacts/` | Runtime outputs (gitignored) |
 | `training/` | Milestone notes (logic lives in `zyocra_ml/` + `scripts/`) |
-| `quantization/` | Fixed-point export (later milestone) |
+| `quantization/` | Q8.8 scripts + notes; logic in `zyocra_ml/quantization.py` |
 | `lora/` | LoRA notes; implementation in `zyocra_ml/lora.py` |
 | `onnx-export/` | ONNX notes; export script in `scripts/export_onnx.py` |
 | `requirements.txt` | Python deps (PyTorch CPU via `make install`) |
@@ -37,5 +37,7 @@ After `run_pipeline.sh`:
 
 - `artifacts/models/zyocra-risk-mlp-v1.pt`
 - `artifacts/onnx/zyocra-risk-mlp-v1.onnx`
+- `artifacts/quantization/` (int32 weights + scales)
+- `artifacts/validation/` (float vs quant vs ONNX comparison)
 - `artifacts/manifests/eval-latest.json`
-- Example copies in `samples/`
+- Example copies in `samples/` (incl. `quantization-error-v1.json`)

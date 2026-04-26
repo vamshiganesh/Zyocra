@@ -75,6 +75,8 @@ cd ml-base
 | `train.py` | Train base MLP + LoRA head → `artifacts/models/zyocra-risk-mlp-v1.pt` |
 | `evaluate.py` | Test metrics → `artifacts/manifests/eval-latest.json` |
 | `export_onnx.py` | ONNX graph → `artifacts/onnx/zyocra-risk-mlp-v1.onnx` |
+| `quantize_model.py` | Q8.8 weights → `artifacts/quantization/` |
+| `compare_outputs.py` | Float vs quant vs ONNX → `artifacts/validation/` |
 
 **Full pipeline:**
 
@@ -90,9 +92,12 @@ bash scripts/run_pipeline.sh
 | `artifacts/features/` | No | Scaled splits + `feature_stats.json` |
 | `artifacts/models/*.pt` | No | PyTorch checkpoints |
 | `artifacts/manifests/` | No | Per-step JSON manifests |
-| `artifacts/onnx/*.onnx` | No | ONNX graph for EZKL |
+| `artifacts/onnx/*.onnx` | No | Float32 ONNX graph for EZKL |
+| `artifacts/quantization/` | No | Q8.8 weights + `quant_config.json` |
+| `artifacts/validation/` | No | Output comparison JSON/CSV |
 | `samples/manifest-v1.json` | Yes | Example export manifest |
 | `samples/metrics-v1.json` | Yes | Example evaluation metrics |
+| `samples/quantization-error-v1.json` | Yes | Example quant/ONNX error summary |
 | `samples/features-head.csv` | Yes | First 10 raw rows (illustrative) |
 
 ## Manifest fields
@@ -128,6 +133,15 @@ pytest -q
 ```
 
 From repo root: `make test` runs pytest when `ml-base/tests/` exists.
+
+## Quantization and ONNX validation
+
+See [`quantization.md`](quantization.md) for Q8.8 scales, approximations, and benchmark metrics.
+
+```bash
+python scripts/quantize_model.py
+python scripts/compare_outputs.py
+```
 
 ## Milestone 2+ wiring
 

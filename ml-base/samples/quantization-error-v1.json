@@ -1,0 +1,51 @@
+{
+  "comparison_csv": "artifacts/validation/output_comparison.csv",
+  "comparison_json": "artifacts/validation/output_comparison.json",
+  "evaluation_metrics": {
+    "float_vs_fixed_point_max_abs": 0.006406337022781372,
+    "float_vs_fixed_point_mean_abs": 0.0013714569693358688,
+    "float_vs_onnx_max_abs": 8.940696716308594e-08,
+    "float_vs_onnx_mean_abs": 2.4032960464427998e-08
+  },
+  "generated_at": "2026-07-04T19:06:01.396477+00:00",
+  "model_version": "zyocra-risk-mlp-v1",
+  "parameter_counts": {
+    "frozen": 293,
+    "total": 293,
+    "trainable": 0
+  },
+  "quantization_config": {
+    "accumulator_bits": 32,
+    "activation_scale": 128,
+    "profile": "Q8.8",
+    "weight_scale": 256
+  },
+  "summary": {
+    "float_vs_onnx": {
+      "max_abs_error": 8.940696716308594e-08,
+      "max_rel_error": 1.5903282596560757e-06,
+      "mean_abs_error": 2.4032960464427998e-08,
+      "mean_rel_error": 1.3369599406926963e-07
+    },
+    "float_vs_quantized_fixed_point": {
+      "max_abs_error": 0.006406337022781372,
+      "max_rel_error": 0.02072142883127122,
+      "mean_abs_error": 0.0013714569693358688,
+      "mean_rel_error": 0.005376760389347188
+    },
+    "float_vs_quantized_weight_only": {
+      "max_abs_error": 0.001124262809753418,
+      "max_rel_error": 0.004524655207509978,
+      "mean_abs_error": 0.0003020865721749021,
+      "mean_rel_error": 0.0011421372415438176
+    },
+    "onnx_vs_quantized_fixed_point": {
+      "max_abs_error": 0.00640636682510376,
+      "max_rel_error": 0.02072113682981396,
+      "mean_abs_error": 0.001371459388355543,
+      "mean_rel_error": 0.005376769694632046
+    }
+  },
+  "test_rows": 308,
+  "validation_dir": "artifacts/validation"
+}
