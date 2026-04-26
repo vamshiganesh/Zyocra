@@ -209,7 +209,7 @@ def forward_quantized_fixed_point(
     Approximations (see docs/quantization.md):
     - biases applied in float32 after the integer matmul
     - ReLU on dequantized pre-activations
-  - final sigmoid in float32
+    - final sigmoid in float32
     """
     config = quantized.config
     batch = features.shape[0]

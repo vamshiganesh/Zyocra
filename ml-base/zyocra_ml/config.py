@@ -12,6 +12,8 @@ FEATURES_DIR = ARTIFACTS_DIR / "features"
 MODELS_DIR = ARTIFACTS_DIR / "models"
 MANIFESTS_DIR = ARTIFACTS_DIR / "manifests"
 ONNX_DIR = ARTIFACTS_DIR / "onnx"
+QUANT_DIR = ARTIFACTS_DIR / "quantization"
+VALIDATION_DIR = ARTIFACTS_DIR / "validation"
 SAMPLES_DIR = ML_ROOT / "samples"
 
 MODEL_VERSION = "zyocra-risk-mlp-v1"
