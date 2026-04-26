@@ -27,4 +27,10 @@ info "evaluate"
 info "export_onnx"
 "$PY" scripts/export_onnx.py
 
+info "quantize_model"
+"$PY" scripts/quantize_model.py
+
+info "compare_outputs"
+"$PY" scripts/compare_outputs.py
+
 info "pipeline complete — artifacts under ml-base/artifacts/"

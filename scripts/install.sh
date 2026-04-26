@@ -46,33 +46,36 @@ fi
 
 VENV="$ROOT/ml-base/.venv"
 REQ="$ROOT/ml-base/requirements.txt"
+PYTHON="$VENV/bin/python"
 
 info "Creating Python venv at ml-base/.venv (if needed)"
 if [[ ! -d "$VENV" ]]; then
   python3 -m venv "$VENV"
 fi
 
-# shellcheck disable=SC1091
-source "$VENV/bin/activate"
+if [[ ! -x "$PYTHON" ]]; then
+  warn "venv python missing at $PYTHON"
+  exit 1
+fi
 
 info "Upgrading pip inside venv"
-python -m pip install --upgrade pip
+"$PYTHON" -m pip install --upgrade pip
 
 info "Installing CPU PyTorch (free, no CUDA/cloud required)"
-python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+"$PYTHON" -m pip install --index-url https://download.pytorch.org/whl/cpu torch
 
 info "Installing ml-base requirements (onnx, onnxruntime, numpy, ezkl)"
-python -m pip install -r "$REQ"
+"$PYTHON" -m pip install -r "$REQ"
 
 info "Verifying imports"
-python - <<'PY'
+"$PYTHON" - <<'PY'
 import importlib
 for mod in ("torch", "onnx", "onnxruntime", "numpy", "ezkl"):
     importlib.import_module(mod)
     print(f"  ok  {mod}")
 PY
 
-EZKL_VER="$(python -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
+EZKL_VER="$("$PYTHON" -c 'import ezkl; print(getattr(ezkl, "__version__", "unknown"))' 2>/dev/null || echo unknown)"
 printf '  ok  %-10s python API %s (import ezkl)\n' "ezkl" "$EZKL_VER"
 
 if [[ -f "$ROOT/frontend/package.json" ]]; then
