@@ -29,7 +29,7 @@ bash scripts/run_pipeline.sh
 pytest -q
 ```
 
-Full documentation: [`../docs/ml.md`](../docs/ml.md).
+Full documentation: [`../docs/ml.md`](../docs/ml.md). Quantization: [`../docs/quantization.md`](../docs/quantization.md).
 
 ## Phase 1 outputs
 
