@@ -46,6 +46,20 @@ def _parse_field_element(value: str | int) -> int:
     return int(text)
 
 
+def load_public_inputs_uint256(proof_path: Path = PROOF_JSON) -> list[int]:
+    """
+    Public instances for Solidity verifier / oracle.
+
+    EZKL packs all public inputs + outputs in field elements (7 for this model:
+    6 features + 1 risk score).
+    """
+    data = json.loads(proof_path.read_text(encoding="utf-8"))
+    instances = data.get("instances")
+    if not instances or not instances[0]:
+        raise ValueError(f"no instances in {proof_path}")
+    return [_parse_field_element(x) for x in instances[0]]
+
+
 def build_oracle_payload(
     *,
     epoch: int = DEMO_EPOCH,
