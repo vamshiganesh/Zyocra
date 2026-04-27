@@ -13,14 +13,6 @@ if [[ ! -x "$PYTHON" ]]; then
 fi
 
 echo "=== EZKL baseline pipeline (ezkl==23.0.5) ==="
-"$PYTHON" "$SCRIPTS/prepare_onnx.py"
-"$PYTHON" "$SCRIPTS/gen_settings.py" --skip-prepare
-"$PYTHON" "$SCRIPTS/compile_circuit.py"
-"$PYTHON" "$SCRIPTS/setup.py"
-"$PYTHON" "$SCRIPTS/gen_input.py"
-"$PYTHON" "$SCRIPTS/gen_witness.py"
-"$PYTHON" "$SCRIPTS/prove.py"
-"$PYTHON" "$SCRIPTS/verify.py"
 "$PYTHON" "$SCRIPTS/gen_evm_verifier.py"
 "$PYTHON" "$SCRIPTS/demo.py" --skip-setup --skip-compile --sample-index 0
 

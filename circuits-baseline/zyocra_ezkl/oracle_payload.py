@@ -34,18 +34,16 @@ def load_proof_bytes(proof_path: Path = PROOF_JSON) -> bytes:
     raise ValueError(f"no proof bytes in {proof_path}")
 
 
-def load_public_inputs_uint256(proof_path: Path = PROOF_JSON) -> list[int]:
-    """
-    Public instances for Solidity verifier / oracle.
-
-    EZKL packs all public inputs + outputs in field elements (7 for this model:
-    6 features + 1 risk score).
-    """
-    data = json.loads(proof_path.read_text(encoding="utf-8"))
-    instances = data.get("instances")
-    if not instances or not instances[0]:
-        raise ValueError(f"no instances in {proof_path}")
-    return [int(x, 16) if isinstance(x, str) and x.startswith("0x") else int(x) for x in instances[0]]
+def _parse_field_element(value: str | int) -> int:
+    if isinstance(value, int):
+        return value
+    text = value.strip()
+    if text.startswith("0x"):
+        return int(text, 16)
+    # EZKL 23.0.5 instances are hex strings without 0x prefix
+    if all(c in "0123456789abcdefABCDEF" for c in text):
+        return int(text, 16)
+    return int(text)
 
 
 def build_oracle_payload(
