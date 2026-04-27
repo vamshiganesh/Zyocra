@@ -8,7 +8,7 @@
     "mse": 6.89742867178009e-05,
     "rmse": 0.008305075960989214
   },
-  "generated_at": "2026-07-04T19:05:51.695535+00:00",
+  "generated_at": "2026-07-04T19:07:10.665177+00:00",
   "model_version": "zyocra-risk-mlp-v1",
   "parameter_counts": {
     "frozen": 293,

@@ -8,5 +8,5 @@ onnx
 onnxruntime
 onnxscript
 numpy
-ezkl
+ezkl==23.0.5
 pytest

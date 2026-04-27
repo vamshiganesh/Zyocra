@@ -56,7 +56,7 @@ def main() -> None:
     if not args.static_batch:
         export_kwargs["dynamic_axes"] = {"features": {0: "batch"}, "risk_score": {0: "batch"}}
 
-    torch.onnx.export(model, dummy, args.out, **export_kwargs)
+    onnx.save(model, args.out, save_as_external_data=False)
 
     onnx_sha256 = sha256_file(args.out)
     manifest = build_manifest(

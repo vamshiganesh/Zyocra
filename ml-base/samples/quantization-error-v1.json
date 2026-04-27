@@ -7,7 +7,7 @@
     "float_vs_onnx_max_abs": 8.940696716308594e-08,
     "float_vs_onnx_mean_abs": 2.4032960464427998e-08
   },
-  "generated_at": "2026-07-04T19:06:01.396477+00:00",
+  "generated_at": "2026-07-04T19:07:19.187030+00:00",
   "model_version": "zyocra-risk-mlp-v1",
   "parameter_counts": {
     "frozen": 293,
