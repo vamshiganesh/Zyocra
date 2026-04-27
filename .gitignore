@@ -50,8 +50,19 @@ pip-wheel-metadata/
 
 # Large ML / zk artifacts (keep small fixtures and reports in-repo)
 ml-base/artifacts/
+circuits-baseline/onnx/
+circuits-baseline/keys/
+circuits-baseline/witnesses/*
+!circuits-baseline/witnesses/.gitkeep
 circuits-baseline/proofs/*
 !circuits-baseline/proofs/.gitkeep
+circuits-baseline/logs/*
+!circuits-baseline/logs/.gitkeep
+circuits-baseline/settings/network.ezkl
+circuits-baseline/settings/*.json
+!circuits-baseline/settings/.gitkeep
+circuits-baseline/verifiers/*
+!circuits-baseline/verifiers/.gitkeep
 circuits-custom/proofs/*
 !circuits-custom/proofs/.gitkeep
 circuits-custom/witnesses/*
