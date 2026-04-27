@@ -8,6 +8,7 @@ import hashlib
 import sys
 from pathlib import Path
 
+import onnx
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +38,8 @@ def main() -> None:
     parser.add_argument(
         "--static-batch",
         action="store_true",
-        help="Export fixed batch=1 graph (useful for some EZKL compile paths)",
+        default=True,
+        help="Export fixed batch=1 graph (default; required for EZKL)",
     )
     args = parser.parse_args()
 
@@ -56,7 +58,12 @@ def main() -> None:
     if not args.static_batch:
         export_kwargs["dynamic_axes"] = {"features": {0: "batch"}, "risk_score": {0: "batch"}}
 
-    onnx.save(model, args.out, save_as_external_data=False)
+    torch.onnx.export(model, dummy, args.out, **export_kwargs)
+    # EZKL tract requires weights inlined (no companion .onnx.data file).
+    inlined = onnx.load(args.out, load_external_data=True)
+    onnx.save(inlined, args.out, save_as_external_data=False)
+    for sidecar in args.out.parent.glob(f"{args.out.name}.data"):
+        sidecar.unlink(missing_ok=True)
 
     onnx_sha256 = sha256_file(args.out)
     manifest = build_manifest(
