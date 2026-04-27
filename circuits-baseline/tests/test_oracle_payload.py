@@ -20,7 +20,8 @@ from zyocra_ezkl.oracle_payload import (  # noqa: E402
 
 
 def test_parse_field_element_hex_without_prefix() -> None:
-    assert _parse_field_element("0c00000000000000000000000000000000000000000000000000000000000000") == 12
+    raw = "0c00000000000000000000000000000000000000000000000000000000000000"
+    assert _parse_field_element(raw) == int(raw, 16)
 
 
 def test_score_bps_from_float() -> None:
