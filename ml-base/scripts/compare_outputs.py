@@ -47,7 +47,13 @@ def forward_float(model, features: np.ndarray) -> np.ndarray:
 
 def forward_onnx(onnx_path: Path, features: np.ndarray) -> np.ndarray:
     session = ort.InferenceSession(onnx_path.as_posix(), providers=["CPUExecutionProvider"])
-    input_name = session.get_inputs()[0].name
+    input_meta = session.get_inputs()[0]
+    input_name = input_meta.name
+    shape = input_meta.shape
+    batch_fixed = isinstance(shape[0], int) and shape[0] == 1
+    if batch_fixed and features.shape[0] != 1:
+        rows = [session.run(None, {input_name: features[i : i + 1].astype(np.float32)})[0] for i in range(len(features))]
+        return np.concatenate(rows, axis=0)
     outputs = session.run(None, {input_name: features.astype(np.float32)})
     return outputs[0]
 

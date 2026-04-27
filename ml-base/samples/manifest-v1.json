@@ -1,7 +1,7 @@
 {
   "dtype": "float32",
   "evaluation_metrics": {},
-  "generated_at": "2026-07-04T19:12:48.355858+00:00",
+  "generated_at": "2026-07-04T19:19:28.479090+00:00",
   "input_shape": [
     1,
     6
@@ -10,7 +10,7 @@
   "note": "ONNX graph is float32; Q8.8 scales apply to manual fixed-point reference path",
   "onnx_opset": 18,
   "onnx_path": "artifacts/onnx/zyocra-risk-mlp-v1.onnx",
-  "onnx_sha256": "12841bcb48f8abf7c9782360dcc4f1f2bba4b1d3e617c98a8c906b80970a27a4",
+  "onnx_sha256": "3894228a469c488b13ac8972ec109e75d6fdd8f5910f918bab8c9878934356ae",
   "output_shape": [
     1,
     1
