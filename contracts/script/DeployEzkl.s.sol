@@ -59,8 +59,8 @@ contract DeployEzkl is Script {
     json = json.serialize("ezklVerifier", d.ezklVerifier);
     json = json.serialize("oracle", d.oracle);
     json = json.serialize("consumer", d.consumer);
-    json = json.serializeBytes32("modelHash", d.modelHash);
-    json = json.serializeBytes32("adapterHash", d.adapterHash);
+    json = json.serialize("modelHash", d.modelHash);
+    json = json.serialize("adapterHash", d.adapterHash);
     json.write("deployments/anvil-ezkl-latest.json");
   }
 
