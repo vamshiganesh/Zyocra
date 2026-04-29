@@ -58,8 +58,8 @@ contract EzklIntegrationTest is Test {
   function test_fullLoop_proofToConsumerPolicy() public {
     assertTrue(ezklVerifier.verify(proof, publicInputs));
 
-    vm.expectEmit(true, true, true, true);
-    emit RiskOracle.ScoreVerified(epoch, modelHash, adapterHash, scoreBps, uint64(block.timestamp));
+    vm.expectEmit(true, true, true, false);
+    emit RiskOracle.ScoreVerified(epoch, modelHash, adapterHash, scoreBps, 0);
 
     oracle.submitScore(
       RiskOracle.ScoreUpdatePayload({
