@@ -85,4 +85,8 @@ contract SubmitAndApply is Script {
     out = out.serialize("mitigationFlag", policy.mitigationFlag);
     out.write("deployments/phase1-loop-latest.json");
   }
+
+  function _payloadPath() internal view returns (string memory) {
+    return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/oracle-payload.json");
+  }
 }
