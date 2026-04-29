@@ -65,8 +65,10 @@ circuits-baseline/verifiers/*
 !circuits-baseline/verifiers/.gitkeep
 circuits-custom/proofs/*
 !circuits-custom/proofs/.gitkeep
-circuits-custom/witnesses/*
+contracts-custom/witnesses/*
 !circuits-custom/witnesses/.gitkeep
+contracts/deployments/*
+!contracts/deployments/.gitkeep
 *.pk
 *.vk
 *.proof
