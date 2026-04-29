@@ -6,7 +6,7 @@ solc_version = "0.8.24"
 optimizer = true
 optimizer_runs = 200
 fs_permissions = [
-  { access = "read", path = "../circuits-baseline/proofs/" },
+  { access = "read", path = "../circuits-baseline/" },
   { access = "read-write", path = "./deployments/" },
 ]
 
