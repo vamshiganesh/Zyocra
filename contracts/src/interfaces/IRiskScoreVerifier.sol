@@ -12,6 +12,5 @@ interface IRiskScoreVerifier {
     /// @return valid True when the proof is valid on-chain.
     function verify(bytes calldata proof, uint256[] calldata publicInputs)
         external
-        view
         returns (bool valid);
 }
