@@ -29,9 +29,12 @@ contract EzklIntegrationTest is Test {
   RiskOracle internal oracle;
   RiskConsumer internal consumer;
 
+  function _payloadPath() internal view returns (string memory) {
+    return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/oracle-payload.json");
+  }
+
   function setUp() public {
-    string memory root = vm.projectRoot();
-    string memory path = string.concat(root, "/circuits-baseline/proofs/oracle-payload.json");
+    string memory path = _payloadPath();
     vm.skip(!vm.exists(path));
 
     payloadJson = vm.readFile(path);

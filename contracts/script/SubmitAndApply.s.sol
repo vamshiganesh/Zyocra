@@ -21,9 +21,7 @@ contract SubmitAndApply is Script {
     address oracleAddr = vm.envAddress("ORACLE_ADDRESS");
     address consumerAddr = vm.envAddress("CONSUMER_ADDRESS");
 
-    string memory root = vm.projectRoot();
-    string memory payloadPath =
-      string.concat(root, "/circuits-baseline/proofs/oracle-payload.json");
+    string memory payloadPath = _payloadPath();
     string memory payloadJson = vm.readFile(payloadPath);
 
     bytes memory proof = payloadJson.readBytes(".proofHex");
