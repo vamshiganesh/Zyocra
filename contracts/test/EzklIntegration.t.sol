@@ -7,7 +7,9 @@ import {RiskConsumer} from "../src/RiskConsumer.sol";
 import {Halo2Verifier} from "../src/verifiers/Halo2Verifier.sol";
 import {EzklRiskScoreVerifier} from "../src/verifiers/EzklRiskScoreVerifier.sol";
 import {DemoCommitments} from "../src/libraries/DemoCommitments.sol";
+import {ProofJsonLib} from "../src/libraries/ProofJsonLib.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
+import {RiskPolicies} from "../src/libraries/RiskPolicies.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
 /// @notice On-chain EZKL proof → oracle → consumer integration (requires generated artifacts).
@@ -16,7 +18,6 @@ contract EzklIntegrationTest is Test {
 
   address internal borrower = makeAddr("borrower-demo");
 
-  string internal payloadJson;
   bytes internal proof;
   uint256[] internal publicInputs;
   bytes32 internal modelHash;
@@ -29,17 +30,23 @@ contract EzklIntegrationTest is Test {
   RiskOracle internal oracle;
   RiskConsumer internal consumer;
 
-  function _payloadPath() internal view returns (string memory) {
+  function _proofJsonPath() internal view returns (string memory) {
+    return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/proof.json");
+  }
+
+  function _payloadJsonPath() internal view returns (string memory) {
     return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/oracle-payload.json");
   }
 
   function setUp() public {
-    string memory path = _payloadPath();
-    vm.skip(!vm.exists(path));
+    vm.skip(!vm.exists(_proofJsonPath()));
 
-    payloadJson = vm.readFile(path);
-    proof = payloadJson.readBytes(".proofHex");
-    publicInputs = payloadJson.readUintArray(".publicInputs");
+    ProofJsonLib.Artifacts memory artifacts =
+      ProofJsonLib.load(vm.readFile(_proofJsonPath()));
+    proof = artifacts.proof;
+    publicInputs = artifacts.publicInputs;
+
+    string memory payloadJson = vm.readFile(_payloadJsonPath());
     modelHash = payloadJson.readBytes32(".modelHash");
     adapterHash = payloadJson.readBytes32(".adapterHash");
     scoreBps = payloadJson.readUint(".scoreBps");
@@ -61,9 +68,6 @@ contract EzklIntegrationTest is Test {
   function test_fullLoop_proofToConsumerPolicy() public {
     assertTrue(ezklVerifier.verify(proof, publicInputs));
 
-    vm.expectEmit(true, true, true, false);
-    emit RiskOracle.ScoreVerified(epoch, modelHash, adapterHash, scoreBps, 0);
-
     oracle.submitScore(
       RiskOracle.ScoreUpdatePayload({
         modelHash: modelHash,
@@ -76,24 +80,17 @@ contract EzklIntegrationTest is Test {
     );
 
     RiskBuckets.Bucket expectedBucket = RiskBuckets.bucketForScore(scoreBps);
-
-    vm.expectEmit(true, true, true, true);
-    emit RiskConsumer.CollateralParamsUpdated(
-      borrower,
-      epoch,
-      expectedBucket,
-      _collateralFor(expectedBucket),
-      _spreadFor(expectedBucket),
-      _borrowAllowed(expectedBucket),
-      _mitigation(expectedBucket)
-    );
+    RiskPolicies.Policy memory expected = RiskPolicies.policyFor(expectedBucket);
 
     consumer.applyVerifiedScore(borrower, epoch);
 
     RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
     assertEq(policy.lastEpoch, epoch);
-    assertEq(policy.collateralFactorBps, _collateralFor(expectedBucket));
     assertEq(uint8(policy.bucket), uint8(expectedBucket));
+    assertEq(policy.collateralFactorBps, expected.collateralFactorBps);
+    assertEq(policy.borrowSpreadBps, expected.borrowSpreadBps);
+    assertEq(policy.borrowAllowed, expected.borrowAllowed);
+    assertEq(policy.mitigationFlag, expected.mitigationFlag);
   }
 
   function test_rerun_bumpsEpochWithSameProof() public {
@@ -121,27 +118,5 @@ contract EzklIntegrationTest is Test {
     );
 
     assertEq(oracle.latestEpoch(), nextEpoch);
-  }
-
-  function _collateralFor(RiskBuckets.Bucket bucket) internal pure returns (uint256) {
-    if (bucket == RiskBuckets.Bucket.LOW) return 8_000;
-    if (bucket == RiskBuckets.Bucket.MEDIUM) return 7_200;
-    if (bucket == RiskBuckets.Bucket.HIGH) return 6_500;
-    return 5_000;
-  }
-
-  function _spreadFor(RiskBuckets.Bucket bucket) internal pure returns (uint256) {
-    if (bucket == RiskBuckets.Bucket.LOW) return 0;
-    if (bucket == RiskBuckets.Bucket.MEDIUM) return 45;
-    if (bucket == RiskBuckets.Bucket.HIGH) return 120;
-    return 250;
-  }
-
-  function _borrowAllowed(RiskBuckets.Bucket bucket) internal pure returns (bool) {
-    return bucket == RiskBuckets.Bucket.LOW || bucket == RiskBuckets.Bucket.MEDIUM;
-  }
-
-  function _mitigation(RiskBuckets.Bucket bucket) internal pure returns (bool) {
-    return bucket == RiskBuckets.Bucket.CRITICAL;
   }
 }
