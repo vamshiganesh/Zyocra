@@ -82,7 +82,7 @@ def build_oracle_payload(
         "scoreFloat": score_float,
         "proofHex": "0x" + proof_bytes.hex(),
         "proofLengthBytes": len(proof_bytes),
-        "publicInputs": [str(x) for x in public_inputs],
+        "publicInputs": public_inputs,
         "publicInputCount": len(public_inputs),
         "witnessPath": str(witness_path),
         "proofPath": str(proof_path),
