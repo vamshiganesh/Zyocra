@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {RiskOracle} from "../src/RiskOracle.sol";
 import {RiskConsumer} from "../src/RiskConsumer.sol";
 import {Halo2Verifier} from "../src/verifiers/Halo2Verifier.sol";

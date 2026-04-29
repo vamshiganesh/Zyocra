@@ -4,7 +4,6 @@ pragma solidity ^0.8.24;
 import {Script, console2} from "forge-std/Script.sol";
 import {RiskOracle} from "../src/RiskOracle.sol";
 import {RiskConsumer} from "../src/RiskConsumer.sol";
-import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
 /// @title SubmitAndApply
