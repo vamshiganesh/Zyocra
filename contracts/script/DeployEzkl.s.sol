@@ -64,12 +64,12 @@ contract DeployEzkl is Script {
     root.write("deployments/anvil-ezkl-latest.json");
   }
 
-  function _logDeployment(Deployment memory d) internal view {
+  function _logDeployment(Deployment memory d) internal pure {
     console2.log("Halo2Verifier", d.halo2Verifier);
     console2.log("EzklRiskScoreVerifier", d.ezklVerifier);
     console2.log("RiskOracle", d.oracle);
     console2.log("RiskConsumer", d.consumer);
-    console2.log("modelHash", vm.toString(d.modelHash));
-    console2.log("adapterHash", vm.toString(d.adapterHash));
+    console2.logBytes32(d.modelHash);
+    console2.logBytes32(d.adapterHash);
   }
 }
