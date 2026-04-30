@@ -31,7 +31,7 @@ contract StubRiskScoreVerifier is IRiskScoreVerifier {
     }
 
     /// @inheritdoc IRiskScoreVerifier
-    function verify(bytes calldata, uint256[] calldata) external returns (bool valid) {
+    function verify(bytes calldata, uint256[] calldata) external view returns (bool valid) {
         return verifyResult;
     }
 }
