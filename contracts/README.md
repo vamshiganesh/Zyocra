@@ -17,11 +17,13 @@ From repo root: `make test` runs Foundry when `foundry.toml` is present.
 | Path | Purpose |
 |------|---------|
 | `src/` | `RiskOracle`, `RiskConsumer`, interfaces, libraries |
-| `src/verifiers/` | `StubRiskScoreVerifier` (Phase 1 local stub) |
-| `script/` | `Deploy.s.sol` for Anvil |
-| `test/` | Oracle, consumer, and integration tests |
+| `src/verifiers/` | `StubRiskScoreVerifier`, `EzklRiskScoreVerifier`, `Halo2Verifier` |
+| `script/` | `Deploy.s.sol` (stub), `DeployEzkl.s.sol`, `SubmitAndApply.s.sol` |
+| `test/` | Oracle, consumer, stub integration, EZKL integration |
 
 ## Deploy (local)
+
+**Stub path** (unit tests / quick demos):
 
 ```bash
 anvil &
@@ -31,6 +33,9 @@ forge script script/Deploy.s.sol:Deploy \
   --broadcast
 ```
 
+**EZKL path** (full Phase 1 loop): see [`../docs/e2e-phase1.md`](../docs/e2e-phase1.md) or run `bash scripts/e2e_phase1.sh` from repo root.
+
 ## Documentation
 
-Full contract design, bucket thresholds, and Milestone 2+ verifier wiring: [`../docs/contracts.md`](../docs/contracts.md).
+- [`../docs/contracts.md`](../docs/contracts.md) — design, buckets, stub verifier
+- [`../docs/e2e-phase1.md`](../docs/e2e-phase1.md) — EZKL proof → oracle → consumer demo
