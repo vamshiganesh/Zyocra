@@ -74,16 +74,16 @@ contract SubmitAndApply is Script {
     console2.log("  mitigationFlag", policy.mitigationFlag);
     console2.log("  lastEpoch", policy.lastEpoch);
 
-    string memory result = "result";
-    string memory out = result.serialize("epoch", uint256(epoch));
-    out = out.serialize("scoreBps", scoreBps);
-    out = out.serialize("borrower", DEMO_BORROWER);
-    out = out.serialize("bucket", uint8(policy.bucket));
-    out = out.serialize("collateralFactorBps", policy.collateralFactorBps);
-    out = out.serialize("borrowSpreadBps", policy.borrowSpreadBps);
-    out = out.serialize("borrowAllowed", policy.borrowAllowed);
-    out = out.serialize("mitigationFlag", policy.mitigationFlag);
-    out.write("deployments/phase1-loop-latest.json");
+    string memory root = "result";
+    root.serialize("epoch", uint256(epoch));
+    root.serialize("scoreBps", scoreBps);
+    root.serialize("borrower", DEMO_BORROWER);
+    root.serialize("bucket", uint8(policy.bucket));
+    root.serialize("collateralFactorBps", policy.collateralFactorBps);
+    root.serialize("borrowSpreadBps", policy.borrowSpreadBps);
+    root.serialize("borrowAllowed", policy.borrowAllowed);
+    root.serialize("mitigationFlag", policy.mitigationFlag);
+    root.write("deployments/phase1-loop-latest.json");
   }
 
   function _proofJsonPath() internal view returns (string memory) {

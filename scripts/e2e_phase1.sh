@@ -48,6 +48,25 @@ if [[ ! -f "${DEPLOY_JSON}" ]]; then
   exit 1
 fi
 
+if [[ ! -f "${DEPLOY_JSON}" ]] || ! python3 -c "import json; d=json.load(open('${DEPLOY_JSON}')); assert 'oracle' in d" 2>/dev/null; then
+  BROADCAST="${ROOT}/contracts/broadcast/DeployEzkl.s.sol/31337/run-latest.json"
+  python3 - <<PY
+import json
+from pathlib import Path
+b = json.loads(Path("${BROADCAST}").read_text())
+txs = [t for t in b["transactions"] if t.get("transactionType") == "CREATE"]
+addrs = [t["contractAddress"] for t in txs]
+out = {
+    "halo2Verifier": addrs[0],
+    "ezklVerifier": addrs[1],
+    "oracle": addrs[2],
+    "consumer": addrs[3],
+}
+Path("${DEPLOY_JSON}").write_text(json.dumps(out, indent=2) + "\n")
+print(json.dumps(out, indent=2))
+PY
+fi
+
 ORACLE=$(python3 -c "import json; print(json.load(open('${DEPLOY_JSON}'))['oracle'])")
 CONSUMER=$(python3 -c "import json; print(json.load(open('${DEPLOY_JSON}'))['consumer'])")
 
