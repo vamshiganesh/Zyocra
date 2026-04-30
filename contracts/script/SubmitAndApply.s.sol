@@ -4,12 +4,13 @@ pragma solidity ^0.8.24;
 import {Script, console2} from "forge-std/Script.sol";
 import {RiskOracle} from "../src/RiskOracle.sol";
 import {RiskConsumer} from "../src/RiskConsumer.sol";
+import {ProofJsonLib} from "../src/libraries/ProofJsonLib.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
 /// @title SubmitAndApply
 /// @notice Submit EZKL proof to oracle and apply verified score on the consumer.
-/// @dev Reads `circuits-baseline/proofs/oracle-payload.json`. Bumps epoch when rerunning
-///      against an oracle that already has a newer epoch committed.
+/// @dev Proof bytes + public instances are loaded from `proof.json` (canonical EZKL format).
+///      Metadata (epoch, score, hashes) comes from `oracle-payload.json`.
 contract SubmitAndApply is Script {
   using stdJson for string;
 
@@ -20,11 +21,10 @@ contract SubmitAndApply is Script {
     address oracleAddr = vm.envAddress("ORACLE_ADDRESS");
     address consumerAddr = vm.envAddress("CONSUMER_ADDRESS");
 
-    string memory payloadPath = _payloadPath();
-    string memory payloadJson = vm.readFile(payloadPath);
+    ProofJsonLib.Artifacts memory artifacts =
+      ProofJsonLib.load(vm.readFile(_proofJsonPath()));
 
-    bytes memory proof = payloadJson.readBytes(".proofHex");
-    uint256[] memory publicInputs = payloadJson.readUintArray(".publicInputs");
+    string memory payloadJson = vm.readFile(_payloadJsonPath());
     bytes32 modelHash = payloadJson.readBytes32(".modelHash");
     bytes32 adapterHash = payloadJson.readBytes32(".adapterHash");
     uint256 scoreBps = payloadJson.readUint(".scoreBps");
@@ -42,8 +42,8 @@ contract SubmitAndApply is Script {
     console2.log("==> submitScore");
     console2.log("  epoch", epoch);
     console2.log("  scoreBps", scoreBps);
-    console2.log("  proof bytes", proof.length);
-    console2.log("  public inputs", publicInputs.length);
+    console2.log("  proof bytes", artifacts.proof.length);
+    console2.log("  public inputs", artifacts.publicInputs.length);
 
     vm.startBroadcast();
 
@@ -53,8 +53,8 @@ contract SubmitAndApply is Script {
         adapterHash: adapterHash,
         epoch: epoch,
         scoreBps: scoreBps,
-        proof: proof,
-        publicInputs: publicInputs
+        proof: artifacts.proof,
+        publicInputs: artifacts.publicInputs
       })
     );
 
@@ -83,10 +83,14 @@ contract SubmitAndApply is Script {
     out = out.serialize("borrowSpreadBps", policy.borrowSpreadBps);
     out = out.serialize("borrowAllowed", policy.borrowAllowed);
     out = out.serialize("mitigationFlag", policy.mitigationFlag);
-    out.write("deployments/phase1-loop-latest.json");
+    out.write("result", "deployments/phase1-loop-latest.json");
   }
 
-  function _payloadPath() internal view returns (string memory) {
+  function _proofJsonPath() internal view returns (string memory) {
+    return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/proof.json");
+  }
+
+  function _payloadJsonPath() internal view returns (string memory) {
     return string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/oracle-payload.json");
   }
 }

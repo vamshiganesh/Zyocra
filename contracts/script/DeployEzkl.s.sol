@@ -54,14 +54,14 @@ contract DeployEzkl is Script {
   }
 
   function _writeDeployment(Deployment memory d) internal {
-    string memory obj = "deployment";
-    string memory json = obj.serialize("halo2Verifier", d.halo2Verifier);
+    string memory json = "deployment";
+    json = json.serialize("halo2Verifier", d.halo2Verifier);
     json = json.serialize("ezklVerifier", d.ezklVerifier);
     json = json.serialize("oracle", d.oracle);
     json = json.serialize("consumer", d.consumer);
     json = json.serialize("modelHash", d.modelHash);
     json = json.serialize("adapterHash", d.adapterHash);
-    json.write("deployments/anvil-ezkl-latest.json");
+    json.write("deployment", "deployments/anvil-ezkl-latest.json");
   }
 
   function _logDeployment(Deployment memory d) internal view {
