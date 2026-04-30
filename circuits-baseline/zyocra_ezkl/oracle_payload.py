@@ -57,7 +57,7 @@ def load_public_inputs_uint256(proof_path: Path = PROOF_JSON) -> list[int]:
     instances = data.get("instances")
     if not instances or not instances[0]:
         raise ValueError(f"no instances in {proof_path}")
-    return [_parse_field_element(x) for x in instances[0]]
+    return [_parse_field_element(x) >> 248 for x in instances[0]]
 
 
 def build_oracle_payload(

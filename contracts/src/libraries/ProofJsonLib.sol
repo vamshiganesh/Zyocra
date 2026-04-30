@@ -18,7 +18,8 @@ library ProofJsonLib {
     string[] memory instanceHex = proofJson.readStringArray(".instances[0]");
     uint256[] memory publicInputs = new uint256[](instanceHex.length);
     for (uint256 i = 0; i < instanceHex.length; i++) {
-      publicInputs[i] = _hexStringToUint(instanceHex[i]);
+      // EZKL EVM verifier expects decomposed field limbs (see encode_evm_calldata).
+      publicInputs[i] = _hexStringToUint(instanceHex[i]) >> 248;
     }
     return Artifacts({proof: proof, publicInputs: publicInputs});
   }

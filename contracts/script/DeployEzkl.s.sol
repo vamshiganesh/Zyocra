@@ -61,7 +61,7 @@ contract DeployEzkl is Script {
     json = json.serialize("consumer", d.consumer);
     json = json.serialize("modelHash", d.modelHash);
     json = json.serialize("adapterHash", d.adapterHash);
-    json.write("deployment", "deployments/anvil-ezkl-latest.json");
+    json.write("deployments/anvil-ezkl-latest.json");
   }
 
   function _logDeployment(Deployment memory d) internal view {

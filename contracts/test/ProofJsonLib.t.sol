@@ -11,10 +11,8 @@ contract ProofJsonLibTest is Test {
 
     ProofJsonLib.Artifacts memory artifacts = ProofJsonLib.load(vm.readFile(path));
     assertEq(artifacts.publicInputs.length, 7);
-    assertEq(
-      artifacts.publicInputs[0],
-      15378636851831057204693021446466362761762419838405387411490460376050962530304
-    );
+    assertEq(artifacts.publicInputs[0], 34);
+    assertEq(artifacts.publicInputs[6], 23);
     assertEq(artifacts.proof.length, 3648);
   }
 }

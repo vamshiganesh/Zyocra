@@ -16,23 +16,27 @@ if [[ ! -x "$PYTHON" ]]; then
   exit 1
 fi
 
-info "[1/7] EZKL inference + proof (deterministic sample row 0)"
+info "[1/8] EZKL inference + proof (deterministic sample row 0)"
 "$PYTHON" "${ROOT}/circuits-baseline/scripts/demo.py" --skip-setup --skip-compile --sample-index 0
 
-info "[2/7] Build contracts"
+info "[2/8] Sync EZKL Solidity verifier into contracts/"
+"$PYTHON" "${ROOT}/circuits-baseline/scripts/gen_evm_verifier.py"
+cp "${ROOT}/circuits-baseline/verifiers/RiskScoreVerifier.sol" "${ROOT}/contracts/src/verifiers/Halo2Verifier.sol"
+
+info "[3/8] Build contracts"
 (cd "${ROOT}/contracts" && forge build)
 
 if ! curl -sf "${RPC_URL}" >/dev/null 2>&1; then
-  info "[3/7] Start Anvil on port ${ANVIL_PORT}"
+  info "[4/8] Start Anvil on port ${ANVIL_PORT}"
   anvil --port "${ANVIL_PORT}" --silent &
   ANVIL_PID=$!
   trap 'kill "${ANVIL_PID}" 2>/dev/null || true' EXIT
   sleep 1
 else
-  info "[3/7] Reuse Anvil at ${RPC_URL}"
+  info "[4/8] Reuse Anvil at ${RPC_URL}"
 fi
 
-info "[4/7] Deploy EZKL oracle stack"
+info "[5/8] Deploy EZKL oracle stack"
 (cd "${ROOT}/contracts" && forge script script/DeployEzkl.s.sol:DeployEzkl \
   --rpc-url "${RPC_URL}" \
   --broadcast \
@@ -47,7 +51,7 @@ fi
 ORACLE=$(python3 -c "import json; print(json.load(open('${DEPLOY_JSON}'))['oracle'])")
 CONSUMER=$(python3 -c "import json; print(json.load(open('${DEPLOY_JSON}'))['consumer'])")
 
-info "[5/7] Submit proof + apply consumer policy"
+info "[6/8] Submit proof + apply consumer policy"
 export ORACLE_ADDRESS="${ORACLE}"
 export CONSUMER_ADDRESS="${CONSUMER}"
 (cd "${ROOT}/contracts" && forge script script/SubmitAndApply.s.sol:SubmitAndApply \
@@ -56,7 +60,7 @@ export CONSUMER_ADDRESS="${CONSUMER}"
   --private-key "${PRIVATE_KEY}")
 
 LOOP_JSON="${ROOT}/contracts/deployments/phase1-loop-latest.json"
-info "[6/7] On-chain result"
+info "[7/8] On-chain result"
 python3 - <<PY
 import json
 from pathlib import Path
@@ -75,6 +79,6 @@ print(f"  oracle:          ${ORACLE}")
 print(f"  consumer:        ${CONSUMER}")
 PY
 
-info "[7/7] Phase 1 loop complete"
+info "[8/8] Phase 1 loop complete"
 echo "Events emitted: ScoreVerified, CollateralParamsUpdated, RiskBucketChanged (frontend-ready)"
 echo "Artifacts: ${LOOP_JSON}"
