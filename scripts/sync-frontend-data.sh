@@ -64,7 +64,7 @@ if not deploy:
             }
 
 epoch_num = int(oracle.get("epoch") or loop.get("epoch") or demo.get("epoch") or 2026041)
-epoch_id = f"epoch-{str(epoch_num)[:4]}-{str(epoch_num)[4:].lstrip('0') or '0'}"
+epoch_id = f"epoch-{epoch_num // 1000}-{epoch_num % 1000:03d}"
 
 score_bps = int(oracle.get("scoreBps") or loop.get("scoreBps") or round(float(demo.get("score_float", 0)) * 10000))
 score_float = float(oracle.get("scoreFloat") or demo.get("score_float") or score_bps / 10000)
@@ -152,8 +152,10 @@ out = {
     },
 }
 
-Path("${OUT}").write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-print(f"wrote {OUT}")
+out_path = root / "frontend/public/data/phase1-demo.json"
+out_path.parent.mkdir(parents=True, exist_ok=True)
+out_path.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+print(f"wrote {out_path}")
 print(f"  epoch={epoch_id} scoreBps={score_bps} bucket={bucket} onChain={on_chain}")
 PY
 
