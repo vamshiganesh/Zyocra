@@ -1,0 +1,72 @@
+{
+  "benchmark": {
+    "note": "Run Milestone 5 benchmarks to populate EZKL vs Circom comparison rows.",
+    "populated": false
+  },
+  "commitments": {
+    "adapterHash": "0x5c840159cf800e89cc2fc5ff33164ec8aee75b5a20c7e15cbdc612c31d47993c",
+    "adapterHashShort": "0x5c8401\u202647993c",
+    "modelHash": "0x2fe8f38e2a8992e0546762c67f073e737f12419ac3f13004598e08c7d978f627",
+    "modelHashShort": "0x2fe8f3\u202678f627"
+  },
+  "consumer": {
+    "borrowAllowed": true,
+    "borrowSpreadBps": 0,
+    "borrower": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "borrowerShort": "0x709979\u2026dc79C8",
+    "bucket": "LOW",
+    "collateralFactor": 0.8,
+    "collateralFactorBps": 8000,
+    "lastEpoch": 2026041
+  },
+  "epoch": {
+    "id": "epoch-2026-41",
+    "numeric": 2026041,
+    "status": "ready"
+  },
+  "features": {
+    "names": [
+      "collateralization_ratio",
+      "debt_utilization",
+      "volatility_proxy_7d",
+      "liquidation_proximity",
+      "borrow_concentration",
+      "wallet_age_days"
+    ],
+    "sampleIndex": 0,
+    "values": [
+      0.26375776529312134,
+      0.09584087133407593,
+      0.503912091255188,
+      0.5070705413818359,
+      0.47515666484832764,
+      0.8217794299125671
+    ]
+  },
+  "hasArtifacts": true,
+  "hasOnChain": false,
+  "proof": {
+    "artifactPath": "circuits-baseline/proofs/proof.json",
+    "ezklVersion": "23.0.5",
+    "hashPrefix": "0x08df2311\u20265483c553",
+    "lengthBytes": 3648,
+    "offChainVerify": true,
+    "status": "generated"
+  },
+  "score": {
+    "bps": 1797,
+    "bucket": "LOW",
+    "bucketRange": "0.00 \u2013 0.55",
+    "float": 0.1796875
+  },
+  "syncedAt": "2026-07-05T15:10:42Z",
+  "verification": {
+    "chainId": 31337,
+    "consumer": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
+    "halo2Verifier": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6",
+    "onChain": false,
+    "oracle": "0x610178da211fef7d417bc0e6fed39f05609ad788",
+    "result": "pass",
+    "verifierAdapter": "0x8a791620dd6260079bf849dc5567adc3f2fdc318"
+  }
+}
