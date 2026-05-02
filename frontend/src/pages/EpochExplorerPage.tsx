@@ -1,18 +1,34 @@
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
+import { DataStatus } from "../components/product/DataStatus";
 import { EpochTable } from "../components/product/EpochTable";
 import { FlowNav } from "../components/product/FlowNav";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { demoEpoch, epochDetailFields, epochRegistry } from "../data/product-placeholders";
+import { demoEpoch } from "../data/product-placeholders";
+import { usePipelineFields } from "../data/use-pipeline-fields";
 import "./pages.css";
 
 const screen = screenBySlug("epoch")!;
 
 export function EpochExplorerPage() {
+  const {
+    status,
+    error,
+    reload,
+    live,
+    epochId,
+    epochDetailFields,
+    epochRegistry,
+    onChain,
+  } = usePipelineFields();
+
+  const proofField = epochDetailFields.find((f) => f.label === "Proof status");
+  const verifierField = epochDetailFields.find((f) => f.label === "Verifier status");
+
   return (
     <div className="page">
       <section className="band band--hero">
@@ -28,7 +44,7 @@ export function EpochExplorerPage() {
             }
             aside={
               <p className="mono-label">
-                {demoEpoch.id} · {demoEpoch.status}
+                {epochId} · {onChain ? "active" : live ? "ready" : demoEpoch.status}
               </p>
             }
           />
@@ -37,13 +53,14 @@ export function EpochExplorerPage() {
 
       <section className="band band--panels">
         <Shell>
+          <DataStatus status={status} error={error} onRetry={reload} />
           <div className="panel-stack">
             <ClippedCard>
               <div id="active">
                 <SectionHeader
                   label="Active epoch"
-                  title={demoEpoch.id}
-                  description={`Committed at block ${demoEpoch.blockHeight} · scored ${demoEpoch.scoredAt} · proof ${demoEpoch.proofStatus} · verifier ${demoEpoch.verifierStatus}`}
+                  title={epochId}
+                  description={`${onChain ? "On-chain submission" : "Local artifacts"} · proof ${proofField?.value ?? "—"} · verifier ${verifierField?.value ?? "—"}`}
                 />
                 <DataFieldGrid fields={epochDetailFields} columns={3} />
               </div>

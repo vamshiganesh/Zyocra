@@ -1,21 +1,22 @@
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
+import { DataStatus } from "../components/product/DataStatus";
 import { FlowNav } from "../components/product/FlowNav";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import {
-  inputFeatures,
-  publicInputFields,
-  quantizationFields,
-} from "../data/product-placeholders";
+import { quantizationFields } from "../data/product-placeholders";
+import { usePipelineFields } from "../data/use-pipeline-fields";
 import "./pages.css";
 
 const screen = screenBySlug("inputs")!;
 
 export function InputSummaryPage() {
+  const { status, error, reload, epochId, inputFeatures, publicInputFields, borrowerShort } =
+    usePipelineFields();
+
   return (
     <div className="page">
       <section className="band band--hero">
@@ -29,19 +30,20 @@ export function InputSummaryPage() {
                 Run prover
               </ClippedButton>
             }
-            aside={<p className="mono-label">borrower · 0x9c4f…88a1</p>}
+            aside={<p className="mono-label">borrower · {borrowerShort}</p>}
           />
         </Shell>
       </section>
 
       <section className="band band--panels">
         <Shell>
+          <DataStatus status={status} error={error} onRetry={reload} />
           <div className="panel-stack">
             <ClippedCard>
               <div id="vector">
                 <SectionHeader
                   label="Features"
-                  title="Epoch-2026-041 feature vector"
+                  title={`${epochId} feature vector`}
                   description="Six-dimensional tabular input to the risk MLP. Exported with deterministic ordering for ONNX and circuits."
                 />
                 <DataFieldGrid fields={inputFeatures} columns={3} />

@@ -1,4 +1,6 @@
 import { Shell } from "../components/layout/Shell";
+import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceholderPanel";
+import { DataStatus } from "../components/product/DataStatus";
 import { ProductHero } from "../components/product/ProductHero";
 import { PipelineStrip } from "../components/product/PipelineStrip";
 import { ClippedButton } from "../components/ui/ClippedButton";
@@ -6,17 +8,16 @@ import { ClippedCard } from "../components/ui/ClippedCard";
 import { FaqAccordion } from "../components/ui/FaqAccordion";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { StatTile } from "../components/ui/StatTile";
-import {
-  headlineMetrics,
-  overviewCopy,
-  systemLayers,
-} from "../data/content";
+import { headlineMetrics as benchmarkPlaceholders, overviewCopy, systemLayers } from "../data/content";
+import { usePipelineFields } from "../data/use-pipeline-fields";
 import { flowSteps } from "../data/product-placeholders";
 import { faqItems } from "../data/placeholders";
 import "./pages.css";
 
 export function OverviewPage() {
   const c = overviewCopy;
+  const { status, error, reload, headlineMetrics, live } = usePipelineFields();
+  const metrics = live && headlineMetrics ? headlineMetrics : benchmarkPlaceholders;
 
   return (
     <div className="page">
@@ -49,6 +50,7 @@ export function OverviewPage() {
 
       <section className="band band--panels">
         <Shell>
+          <DataStatus status={status} error={error} onRetry={reload} />
           <div className="panel-stack">
             <ClippedCard>
               <div id="flow">
@@ -84,11 +86,15 @@ export function OverviewPage() {
               <div id="metrics">
                 <SectionHeader
                   label={c.metrics.label}
-                  title={c.metrics.title}
-                  description={c.metrics.description}
+                  title={live ? "Live demo snapshot" : c.metrics.title}
+                  description={
+                    live
+                      ? "Values from phase1-demo.json — EZKL pipeline and optional Anvil submission."
+                      : c.metrics.description
+                  }
                 />
                 <div className="stats-grid">
-                  {headlineMetrics.map((m) => (
+                  {metrics.map((m) => (
                     <StatTile
                       key={m.label}
                       label={m.label}
@@ -99,6 +105,10 @@ export function OverviewPage() {
                   ))}
                 </div>
               </div>
+            </ClippedCard>
+
+            <ClippedCard>
+              <BenchmarkPlaceholderPanel />
             </ClippedCard>
 
             <ClippedCard>

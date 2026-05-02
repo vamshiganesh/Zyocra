@@ -1,6 +1,7 @@
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
+import { DataStatus } from "../components/product/DataStatus";
 import { FlowNav } from "../components/product/FlowNav";
 import { PlaceholderPanel } from "../components/product/PlaceholderPanel";
 import { ProductHero } from "../components/product/ProductHero";
@@ -8,12 +9,33 @@ import { provePaths } from "../data/content";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { circomArtifactFields, ezklArtifactFields } from "../data/product-placeholders";
+import { circomArtifactFields } from "../data/product-placeholders";
+import { usePipelineFields } from "../data/use-pipeline-fields";
 import "./pages.css";
 
 const screen = screenBySlug("prove")!;
 
+const proofStatusTitle: Record<string, string> = {
+  idle: "Pending",
+  ready: "Generated",
+  running: "Running",
+  verified: "Verified",
+  sealed: "Sealed",
+};
+
 export function ProofGenerationPage() {
+  const {
+    status,
+    error,
+    reload,
+    live,
+    epochId,
+    ezklArtifactFields,
+    proofPanelStatus,
+  } = usePipelineFields();
+
+  const proofTitle = proofStatusTitle[proofPanelStatus] ?? "Pending";
+
   return (
     <div className="page">
       <section className="band band--hero">
@@ -27,13 +49,14 @@ export function ProofGenerationPage() {
                 Verify proof
               </ClippedButton>
             }
-            aside={<p className="mono-label">proof status · generated</p>}
+            aside={<p className="mono-label">proof status · {proofTitle.toLowerCase()}</p>}
           />
         </Shell>
       </section>
 
       <section className="band band--panels">
         <Shell>
+          <DataStatus status={status} error={error} onRetry={reload} />
           <div className="panel-stack">
             <ClippedCard>
               <div id="path">
@@ -60,12 +83,14 @@ export function ProofGenerationPage() {
               <div id="prover">
                 <SectionHeader
                   label="Prover run"
-                  title="epoch-2026-041-ezkl"
+                  title={`${epochId}-ezkl`}
                   description="Constraint snapshot, peak RAM, and proof time captured at prove completion."
                 />
-                <PlaceholderPanel label="Proof status" title="Generated" status="ready">
+                <PlaceholderPanel label="Proof status" title={proofTitle} status={proofPanelStatus}>
                   <p className="data-grid__hint">
-                    Wire to <code>make prove</code> at Milestone 2. Status transitions: idle → running → generated → verified.
+                    {live
+                      ? "Proof bytes from circuits-baseline/proofs/proof.json — off-chain ezkl.verify() reflected in artifacts panel."
+                      : "Run bash scripts/sync-frontend-data.sh after the EZKL pipeline to populate proof status."}
                   </p>
                 </PlaceholderPanel>
               </div>
