@@ -1,17 +1,20 @@
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
+import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceholderPanel";
+import { DataStatus } from "../components/product/DataStatus";
 import { benchmarkArtifacts, benchmarkMethodology } from "../data/content";
 import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
-import { BenchmarkPanel } from "../components/ui/BenchmarkPanel";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { benchmarkRows } from "../data/placeholders";
+import { usePhase1Data } from "../hooks/usePhase1Data";
 import "./pages.css";
 
 const screen = screenBySlug("benchmarks")!;
 
 export function BenchmarkComparisonPage() {
+  const { status, error, reload } = usePhase1Data();
+
   return (
     <div className="page">
       <section className="band band--hero">
@@ -32,16 +35,10 @@ export function BenchmarkComparisonPage() {
 
       <section className="band band--panels">
         <Shell>
+          <DataStatus status={status} error={error} onRetry={reload} />
           <div className="panel-stack">
             <ClippedCard>
-              <div id="comparison">
-                <SectionHeader
-                  label="Comparison"
-                  title="EZKL baseline vs Circom LoRA"
-                  description="Central evidence for hiring review—populate at Milestone 5 on one documented host."
-                />
-                <BenchmarkPanel rows={benchmarkRows} />
-              </div>
+              <BenchmarkPlaceholderPanel />
             </ClippedCard>
 
             <ClippedCard>
