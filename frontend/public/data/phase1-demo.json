@@ -20,7 +20,7 @@
     "lastEpoch": 2026041
   },
   "epoch": {
-    "id": "epoch-2026-41",
+    "id": "epoch-2026-041",
     "numeric": 2026041,
     "status": "ready"
   },
@@ -59,7 +59,7 @@
     "bucketRange": "0.00 \u2013 0.55",
     "float": 0.1796875
   },
-  "syncedAt": "2026-07-05T15:11:05Z",
+  "syncedAt": "2026-07-05T15:14:55Z",
   "verification": {
     "chainId": 31337,
     "consumer": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
