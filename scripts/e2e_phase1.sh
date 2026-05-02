@@ -99,5 +99,6 @@ print(f"  consumer:        ${CONSUMER}")
 PY
 
 info "[8/8] Phase 1 loop complete"
+bash "${ROOT}/scripts/sync-frontend-data.sh"
 echo "Events emitted: ScoreVerified, CollateralParamsUpdated, RiskBucketChanged (frontend-ready)"
 echo "Artifacts: ${LOOP_JSON}"

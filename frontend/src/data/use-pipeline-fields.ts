@@ -17,7 +17,32 @@ export function usePipelineFields() {
     publicInputFields: view?.publicInputFields ?? ph.publicInputFields,
     ezklArtifactFields: view?.ezklArtifactFields ?? ph.ezklArtifactFields,
     verifyFields: view?.verifyFields ?? ph.verifyFields,
-    txSimFields: view?.txSimFields ?? ph.txSimFields,
+    txSimFields: view?.txSimFields ?? [
+      {
+        label: "Caller",
+        value: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        mono: true,
+        description: "Foundry default deployer for local simulation.",
+      },
+      {
+        label: "Target",
+        value: "RiskOracle.submitScore",
+        mono: true,
+        description: "Oracle entrypoint after standalone verify() passes.",
+      },
+      {
+        label: "Consumer",
+        value: "—",
+        mono: true,
+        description: "RiskConsumer applying verified bucket policy.",
+      },
+      {
+        label: "Result",
+        value: "—",
+        mono: true,
+        description: "Simulated verifier outcome for attached proof bytes.",
+      },
+    ],
     scoreOutput: view?.scoreOutput ?? ph.scoreOutput,
     impactFields: view?.impactFields ?? ph.impactFields,
     auditTrail: view?.auditTrail ?? ph.auditTrail,

@@ -75,14 +75,14 @@ contract SubmitAndApply is Script {
     console2.log("  lastEpoch", policy.lastEpoch);
 
     string memory root = "result";
-    root.serialize("epoch", uint256(epoch));
-    root.serialize("scoreBps", scoreBps);
-    root.serialize("borrower", DEMO_BORROWER);
-    root.serialize("bucket", uint8(policy.bucket));
-    root.serialize("collateralFactorBps", policy.collateralFactorBps);
-    root.serialize("borrowSpreadBps", policy.borrowSpreadBps);
-    root.serialize("borrowAllowed", policy.borrowAllowed);
-    root.serialize("mitigationFlag", policy.mitigationFlag);
+    root = root.serialize("epoch", uint256(epoch));
+    root = root.serialize("scoreBps", scoreBps);
+    root = root.serialize("borrower", DEMO_BORROWER);
+    root = root.serialize("bucket", uint8(policy.bucket));
+    root = root.serialize("collateralFactorBps", policy.collateralFactorBps);
+    root = root.serialize("borrowSpreadBps", policy.borrowSpreadBps);
+    root = root.serialize("borrowAllowed", policy.borrowAllowed);
+    root = root.serialize("mitigationFlag", policy.mitigationFlag);
     root.write("deployments/phase1-loop-latest.json");
   }
 

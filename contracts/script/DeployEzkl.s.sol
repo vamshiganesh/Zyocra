@@ -55,12 +55,12 @@ contract DeployEzkl is Script {
 
   function _writeDeployment(Deployment memory d) internal {
     string memory root = "deployment";
-    root.serialize("halo2Verifier", d.halo2Verifier);
-    root.serialize("ezklVerifier", d.ezklVerifier);
-    root.serialize("oracle", d.oracle);
-    root.serialize("consumer", d.consumer);
-    root.serialize("modelHash", d.modelHash);
-    root.serialize("adapterHash", d.adapterHash);
+    root = root.serialize("halo2Verifier", d.halo2Verifier);
+    root = root.serialize("ezklVerifier", d.ezklVerifier);
+    root = root.serialize("oracle", d.oracle);
+    root = root.serialize("consumer", d.consumer);
+    root = root.serialize("modelHash", d.modelHash);
+    root = root.serialize("adapterHash", d.adapterHash);
     root.write("deployments/anvil-ezkl-latest.json");
   }
 
