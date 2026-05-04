@@ -1,0 +1,11 @@
+{
+  "name": "zyocra-circuits-custom",
+  "private": true,
+  "description": "Circom + snarkjs tooling for the LoRA output-head benchmark path",
+  "scripts": {
+    "witness": "node build/lora_output_head_js/generate_witness.js build/lora_output_head_js/lora_output_head.wasm inputs/input.json witnesses/witness.wtns"
+  },
+  "devDependencies": {
+    "snarkjs": "^0.7.5"
+  }
+}

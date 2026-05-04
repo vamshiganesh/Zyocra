@@ -27,9 +27,9 @@ def _quantize(values: np.ndarray, scale: int) -> np.ndarray:
 
 
 def _load_model(checkpoint: Path) -> torch.nn.Module:
-    from zyocra_ml.inference import load_model_from_checkpoint
+    from zyocra_ml.inference import load_risk_mlp
 
-    return load_model_from_checkpoint(checkpoint)
+    return load_risk_mlp(checkpoint)
 
 
 def _hidden_from_checkpoint(checkpoint: Path, sample_index: int = 0) -> np.ndarray:

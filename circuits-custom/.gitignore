@@ -1,0 +1,16 @@
+# Build artifacts
+build/
+keys/*.zkey
+keys/*.ptau
+keys/verification_key.json
+witnesses/*.wtns
+proofs/*.json
+proofs/*.wtns
+node_modules/
+package-lock.json
+
+# Large ceremony downloads (fetch via scripts/setup_ptau.sh)
+keys/pot14_*.ptau
+
+# Logs
+logs/
