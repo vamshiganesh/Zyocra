@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Download Hermez powers-of-tau ceremony file (pot14) if missing.
+# Powers-of-tau file for Groth16 setup (pot12 suffices for ~44 constraints).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KEYS="$ROOT/keys"
-PTAU="$KEYS/pot14_final.ptau"
-URL="https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_14.ptau"
+PTAU="$KEYS/pot12_final.ptau"
 
 mkdir -p "$KEYS"
 
@@ -14,14 +13,11 @@ if [[ -f "$PTAU" ]]; then
   exit 0
 fi
 
-echo "==> downloading pot14_final.ptau (~18 MB)"
-if command -v curl >/dev/null 2>&1; then
-  curl -fsSL "$URL" -o "$PTAU"
-elif command -v wget >/dev/null 2>&1; then
-  wget -q "$URL" -O "$PTAU"
-else
-  echo "need curl or wget to fetch powers of tau" >&2
-  exit 1
-fi
-
+echo "==> generating local pot12 (no trusted download required)"
+cd "$KEYS"
+npx snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
+echo "zyocra-local-contribution" | npx snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau \
+  --name="zyocra-local" -v
+npx snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
+rm -f pot12_0000.ptau pot12_0001.ptau
 echo "    saved $PTAU"

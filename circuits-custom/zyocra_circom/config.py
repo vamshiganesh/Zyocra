@@ -30,7 +30,7 @@ PROOF_JSON = PROOFS_DIR / "proof.json"
 PUBLIC_SIGNALS_JSON = PROOFS_DIR / "public.json"
 VKEY_JSON = KEYS_DIR / "verification_key.json"
 ZKEY_FINAL = KEYS_DIR / "circuit_final.zkey"
-PTAU_FINAL = KEYS_DIR / "pot14_final.ptau"
+PTAU_FINAL = KEYS_DIR / "pot12_final.ptau"
 VERIFIER_SOL = VERIFIERS_DIR / "LoraHeadVerifier.sol"
 
 # Aligned with ml-base/zyocra_ml/config.py
