@@ -96,6 +96,8 @@ if [[ -f "$ROOT/circuits-custom/package.json" ]]; then
   info "Installing circuits-custom npm deps (snarkjs)"
   (cd "$ROOT/circuits-custom" && npm install --silent 2>/dev/null || npm install)
 fi
+
+info "Ensuring benchmark output dirs exist"
 mkdir -p "$ROOT/benchmarks/raw-results" "$ROOT/benchmarks/plots"
 
 info "Install complete"
