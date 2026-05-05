@@ -92,7 +92,10 @@ else
   info "Skipping forge install (contracts/ not initialized yet)"
 fi
 
-info "Ensuring benchmark output dirs exist"
+if [[ -f "$ROOT/circuits-custom/package.json" ]]; then
+  info "Installing circuits-custom npm deps (snarkjs)"
+  (cd "$ROOT/circuits-custom" && npm install --silent 2>/dev/null || npm install)
+fi
 mkdir -p "$ROOT/benchmarks/raw-results" "$ROOT/benchmarks/plots"
 
 info "Install complete"
