@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fast circuit tests: compile + witness + check public output signal.
+# Fast circuit tests: compile + witness + logit_acc consistency.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -17,20 +17,18 @@ bash "$ROOT/scripts/compile.sh"
 bash "$ROOT/scripts/export_fixture.py"
 bash "$ROOT/scripts/gen_witness.sh"
 
-# snarkjs wtns export prints signal values; last public output is logit_acc.
-EXPECTED="$("$PYTHON" -c "import json; from pathlib import Path; print(json.loads(Path('$ROOT/fixtures/head-v1.json').read_text())['logit_acc'])")"
-
-# Witness has 53 signals (8 public hidden + 44 private + 1 public output) — export and grep logit.
+# wtns export: signal index 1 is main.logit_acc for this circuit layout.
 WTNS_EXPORT="$(mktemp)"
 npx snarkjs wtns export json "$ROOT/witnesses/witness.wtns" "$WTNS_EXPORT" >/dev/null
-ACTUAL="$("$PYTHON" -c "
-import json
-data = json.load(open('$WTNS_EXPORT'))
-# main.logit_acc is the named output in sym export
-print(data['1'])  # fallback: compare via python recompute
-")"
+EXPECTED="$("$PYTHON" -c "import json; print(json.loads(open('$ROOT/fixtures/head-v1.json').read())['logit_acc'])")"
+ACTUAL="$("$PYTHON" -c "import json; print(json.load(open('$WTNS_EXPORT'))[1])")"
+rm -f "$WTNS_EXPORT"
 
-# Reliable check: recompute from fixture via reference impl.
+if [[ "$ACTUAL" != "$EXPECTED" ]]; then
+  echo "logit_acc mismatch: witness=$ACTUAL expected=$EXPECTED" >&2
+  exit 1
+fi
+
 "$PYTHON" - <<PY
 import json
 from pathlib import Path
@@ -43,9 +41,8 @@ w = np.array(payload["weight_base"], dtype=np.int32)
 a = np.array(payload["lora_a"], dtype=np.int32)
 b = np.array(payload["lora_b"], dtype=np.int32).reshape(4, 8)
 acc = logit_accumulator(hidden, w, a, b)
-assert acc == payload["logit_acc"], (acc, payload["logit_acc"])
+assert acc == payload["logit_acc"]
 print(f"witness ok · logit_acc={acc}")
 PY
 
-rm -f "$WTNS_EXPORT"
 echo "compile + witness: PASS"
