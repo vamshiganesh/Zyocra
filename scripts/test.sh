@@ -65,7 +65,7 @@ if [[ -d "$ROOT/circuits-custom/tests" ]] && command -v circom >/dev/null 2>&1; 
   info "Running circuits-custom tests"
   export PYTHONPATH="$ROOT/circuits-custom:${PYTHONPATH:-}"
   if [[ -x "$PY" ]] && [[ -f "$ROOT/circuits-custom/tests/test_fixed_point.py" ]]; then
-  if (cd "$ROOT/circuits-custom" && "$PY" -m pytest tests/test_fixed_point.py -q); then
+    if (cd "$ROOT/circuits-custom" && "$PY" -m pytest tests/test_fixed_point.py -q); then
       :
     else
       status=1

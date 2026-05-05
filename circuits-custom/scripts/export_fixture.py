@@ -32,6 +32,8 @@ DEMO_MANIFEST.write_text(
             "logit_acc": payload["logit_acc"],
             "sample_index": payload.get("sample_index"),
             "fixture": str(FIXTURE_V1),
+            "constraints": {"non_linear": 44, "total_r1cs": 89},
+            "public_io": {"hidden_dim": 8, "lora_rank": 4},
         },
         indent=2,
         sort_keys=True,
