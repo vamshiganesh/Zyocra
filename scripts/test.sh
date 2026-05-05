@@ -61,6 +61,26 @@ else
   info "Skipping frontend tests (optional UI not present)"
 fi
 
+if [[ -d "$ROOT/circuits-custom/tests" ]] && command -v circom >/dev/null 2>&1; then
+  info "Running circuits-custom tests"
+  export PYTHONPATH="$ROOT/circuits-custom:${PYTHONPATH:-}"
+  if [[ -x "$PY" ]] && [[ -f "$ROOT/circuits-custom/tests/test_fixed_point.py" ]]; then
+  if (cd "$ROOT/circuits-custom" && "$PY" -m pytest tests/test_fixed_point.py -q); then
+      :
+    else
+      status=1
+    fi
+  fi
+  if bash "$ROOT/circuits-custom/tests/test_circuit.sh"; then
+    :
+  else
+    status=1
+  fi
+  ran=1
+elif [[ -d "$ROOT/circuits-custom/tests" ]]; then
+  info "Skipping circuits-custom tests (circom not installed)"
+fi
+
 if [[ "$ran" -eq 0 ]]; then
   warn "No test suites found. Run: make install"
   exit 1

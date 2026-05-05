@@ -1,30 +1,48 @@
 # circuits-custom
 
-Hand-optimized Circom path for LoRA-structured inference subgraphs.
+Hand-optimized **Circom** path for the LoRA output-head subgraph — Phase 2 benchmark circuit.
 
-Targets the workload where low-rank structure is most optimizable:
+Full documentation: [`docs/circom.md`](../docs/circom.md)
 
-- LoRA delta application \(W' = W + AB\)
-- Dense-layer dot products using \(W'\)
-- Optional activation approximation gadgets
+## Proof statement (narrow scope)
+
+Proves the integer accumulator for the risk MLP **output head** with explicit low-rank decomposition:
+
+```
+logit_acc = ⟨hidden, W_base⟩ + Σ_r A[r] · ⟨B[r,:], hidden⟩
+```
+
+- **Public:** `hidden[8]` (backbone Q8.8 activations), `logit_acc`
+- **Private:** `weight_base`, `lora_a`, `lora_b`
+- **Not in-circuit:** backbone, bias, sigmoid (same boundary as EZKL baseline docs)
+
+## Why this subgraph
+
+LoRA is applied only on the output head in Phase 1. The rank-4 structure allows a fused dot product without materializing \(W' = W + AB\) — the main hand-optimization lever vs a compiler-generated full graph.
+
+## Quick start
+
+```bash
+cd circuits-custom
+npm install
+bash scripts/run_pipeline.sh
+```
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `circom/` | Circuit sources and templates |
-| `inputs/` | Public/private input fixtures |
-| `witnesses/` | Generated witnesses (local) |
-| `proofs/` | Proof artifacts (large binaries gitignored) |
+| `circom/` | Circuit sources (`lora_output_head.circom` + gates) |
+| `zyocra_circom/` | Python fixed-point reference + witness export |
+| `fixtures/` | Committed witness vectors |
+| `scripts/` | compile → setup → witness → prove → verify |
+| `verifiers/` | Generated `LoraHeadVerifier.sol` |
 
-## Proof statement (target)
+## Tests
 
-For public input \(x\), base-weight commitment \(h_W\), adapter commitments \(h_A\), \(h_B\), and public output \(y\):
-
-\[
-y = f((W + AB)x + b)
-\]
-
-under declared quantization and activation approximation rules.
-
-Milestone 3 implements this path. Placeholders only for now.
+```bash
+export PYTHONPATH=circuits-custom
+../ml-base/.venv/bin/python -m pytest tests/ -q
+bash tests/test_circuit.sh
+bash tests/test_prove_verify.sh
+```
