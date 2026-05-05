@@ -86,7 +86,7 @@ Zyocra/
 | UI shell + design system | Done (static pages, no backend) |
 | Milestone 1 — ML + quantization | Not started |
 | Milestone 2 — EZKL baseline | Not started |
-| Milestone 3 — Custom Circom | Not started |
+| Milestone 3 — Custom Circom | LoRA output-head circuit + prove/verify pipeline |
 | Milestone 4 — Consumer integration | Not started |
 | Milestone 5 — Benchmarks + report | Env snapshot only |
 

@@ -12,6 +12,8 @@ cd "$CIRCOM_DIR"
 echo "==> circom compile"
 circom lora_output_head.circom --r1cs --wasm --sym -o "$BUILD_DIR"
 
-if [[ -f "$BUILD_DIR/lora_output_head.r1cs" ]] && [[ -d "$ROOT/node_modules/snarkjs" ]]; then
-  npx snarkjs r1cs info "$BUILD_DIR/lora_output_head.r1cs" 2>/dev/null | awk -F': ' '/Constraints/ {print "    total constraints:", $2}'
+cd "$ROOT"
+if [[ -f "$BUILD_DIR/lora_output_head.r1cs" ]] && [[ -f "$ROOT/node_modules/.bin/snarkjs" || -d "$ROOT/node_modules/snarkjs" ]]; then
+  npx --prefix "$ROOT" snarkjs r1cs info "$BUILD_DIR/lora_output_head.r1cs" 2>/dev/null \
+    | awk -F': ' '/# of Constraints/ {print "    total constraints:", $2}'
 fi
