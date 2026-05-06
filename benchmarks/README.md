@@ -1,42 +1,40 @@
 # benchmarks
 
-Apples-to-apples comparison of the EZKL baseline and custom Circom paths on the same logical workload.
+Apples-to-apples comparison of the EZKL baseline and custom Circom paths.
 
-## Layout
-
-| Path | Purpose |
-|------|---------|
-| `scripts/` | Reproducible benchmark harnesses |
-| `raw-results/` | Commit small `*.json`, `*.csv`, `*.md` reports |
-| `plots/` | Commit small `*.svg`, `*.png` charts |
-
-Large proofs/keys (`*.proof`, `*.pk`, `*.vk`, `*.bin`) are gitignored.
-
-## Required metrics (target)
-
-| Metric | EZKL baseline | Custom Circom |
-|--------|---------------|---------------|
-| Constraint count | from generated artifacts | from hand-written artifacts |
-| Prover peak RAM | during prove | during prove |
-| Proof generation time | end-to-end | end-to-end |
-| Verification gas | EVM verifier call | EVM verifier call |
-| Proof size | bytes | bytes |
-| Numerical accuracy loss | float vs fixed-point | float vs fixed-point |
-| Engineering complexity | notes | notes |
-
-## Methodology (must stay explicit)
-
-- Same machine specs
-- Same input batch assumptions
-- Same model family and quantization level
-- Same public input/output exposure policy
-- Same gas-measurement harness
+Full documentation: [`docs/benchmarks.md`](../docs/benchmarks.md)
 
 ## Run
 
 ```bash
 # from repo root
 make benchmark
+
+# options
+bash benchmarks/scripts/run.sh --refresh-prove   # regenerate proofs before timing
+bash benchmarks/scripts/run.sh --skip-gas        # skip Foundry gas probes
 ```
 
-Writes an environment snapshot under `raw-results/` until full prove/verify benches land (Milestone 5).
+## Outputs
+
+| Path | Purpose |
+|------|---------|
+| `raw-results/bench-latest.json` | Normalized full report |
+| `raw-results/bench-latest.csv` | Metric table for spreadsheets |
+| `raw-results/bench-latest.md` | Human summary |
+| `raw-results/ezkl-latest.json` | EZKL path snapshot |
+| `raw-results/circom-latest.json` | Circom path snapshot |
+| `plots/*.svg` | Bar charts (constraints, prove time, proof size, gas) |
+
+Stamped copies: `bench-<UTC>.{json,csv,md}`.
+
+## Layout
+
+| Path | Purpose |
+|------|---------|
+| `zyocra_bench/` | Python harness (first-class code) |
+| `scripts/run.sh` | Entry point |
+| `raw-results/` | Committed small JSON/CSV/MD |
+| `plots/` | Committed SVG charts |
+
+Large proofs/keys remain gitignored in circuit packages.
