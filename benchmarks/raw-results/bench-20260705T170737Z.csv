@@ -1,0 +1,8 @@
+metric,unit,ezkl,circom,notes
+constraint_count,count,964,89,EZKL: settings num_rows; Circom: R1CS total
+prove_time_ms,ms,2.571e+04,1720,median of 3 runs
+verify_time_ms,ms,563.9,1110,off-chain verifier
+proof_size_bytes,bytes,21439,806,serialized proof file size
+peak_rss_kb,KB,1743388,189976,prove step peak RSS (Linux time -v)
+verify_gas,gas,536109,—,EVM verifier only (Foundry)
+accuracy_max_abs_error,score,0.006406,—,EZKL: full model test split; Circom: see accuracy.circom_head_subgraph

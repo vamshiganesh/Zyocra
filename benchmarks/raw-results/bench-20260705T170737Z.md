@@ -1,0 +1,47 @@
+# Zyocra benchmark summary
+
+- **UTC:** 2026-07-05T17:05:49Z
+- **Host:** Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+- **CPUs:** 8
+- **EZKL:** 23.0.5
+- **Circom:** circom compiler 2.2.3
+- **Forge:** forge Version: 1.5.1-stable
+
+## Workload scope
+
+- **EZKL:** Full ONNX graph (6→16→8→1 + sigmoid) via EZKL 23.0.5
+- **Circom:** LoRA output head only (8-dim hidden → logit_acc, rank-4 explicit A·B fusion)
+
+## Metrics
+
+| Metric | EZKL | Circom | Unit | Notes |
+|--------|------|--------|------|-------|
+| constraint_count | 964 | 89 | count | EZKL: settings num_rows; Circom: R1CS total |
+| prove_time_ms | 2.571e+04 | 1720 | ms | median of 3 runs |
+| verify_time_ms | 563.9 | 1110 | ms | off-chain verifier |
+| proof_size_bytes | 21439 | 806 | bytes | serialized proof file size |
+| peak_rss_kb | 1743388 | 189976 | KB | prove step peak RSS (Linux time -v) |
+| verify_gas | 536109 | — | gas | EVM verifier only (Foundry) |
+| accuracy_max_abs_error | 0.006406 | — | score | EZKL: full model test split; Circom: see accuracy.circom_head_subgraph |
+
+## Methodology
+
+- **sample_index:** 0
+- **epoch_label:** epoch-2026-041
+- **prove_runs:** 3
+- **prove_aggregation:** median wall time
+- **ram_measurement:** /usr/bin/time -v Maximum resident set size (Linux)
+- **gas_measurement:** Foundry gasleft() delta in BenchmarkGasTest
+- **public_input_policy:** EZKL: public inputs/outputs per settings; Circom: hidden[8] public, weights private
+- **quantization:** Q8.8 — activation_scale=128, weight_scale=256 (ml-base)
+
+## Limitations
+
+- EZKL proves the full quantized ONNX graph; Circom proves only the LoRA output-head subgraph — constraint and prove-time comparisons are not end-to-end equivalent workloads.
+- EZKL constraint metric uses settings.json num_rows (PLONK rows); Circom uses snarkjs R1CS constraint count — different proof systems (Halo2/KZG vs Groth16).
+- Off-chain verify time for EZKL uses ezkl.verify(); Circom uses snarkjs groth16 verify — not EVM gas.
+- Peak RSS requires /usr/bin/time on Linux; macOS/Windows runs may omit RAM metrics.
+- Gas figures measure standalone verifier contracts on Foundry, excluding RiskOracle.submitScore overhead.
+- Accuracy: full-model quantization error applies to EZKL; Circom head accuracy is integer recompute on a single fixture vector.
+- Prove times are medians of 3 runs on one machine; no statistical confidence intervals.
+- Local pot12 ceremony for Circom is not production-grade trusted setup.
