@@ -137,13 +137,17 @@ def export_gas_input(out_path: Path) -> dict[str, Any]:
     proof = json.loads(CIRCOM_PROOF.read_text(encoding="utf-8"))
     public = json.loads(CIRCOM_PUBLIC.read_text(encoding="utf-8"))
 
+    # EVM Groth16 verifiers expect Fq2 limb swap on pi_b (snarkjs proof.json is untransposed).
+    pi_b = proof["pi_b"]
+    pi_b_evm = [
+        [pi_b[0][1], pi_b[0][0]],
+        [pi_b[1][1], pi_b[1][0]],
+    ]
+
     payload = {
         "circom": {
             "pi_a": [proof["pi_a"][0], proof["pi_a"][1]],
-            "pi_b": [
-                [proof["pi_b"][0][0], proof["pi_b"][0][1]],
-                [proof["pi_b"][1][0], proof["pi_b"][1][1]],
-            ],
+            "pi_b": pi_b_evm,
             "pi_c": [proof["pi_c"][0], proof["pi_c"][1]],
             "pub_signals": [str(x) for x in public],
         }
