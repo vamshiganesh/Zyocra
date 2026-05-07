@@ -92,6 +92,13 @@ def build_metric_rows(
             "circom": None,
             "notes": "EZKL: full model test split; Circom: see accuracy.circom_head_subgraph",
         },
+        {
+            "metric": "engineering_complexity",
+            "unit": "notes",
+            "ezkl": "ONNX export + EZKL compile/setup; large pk (~600MB)",
+            "circom": "Hand gates + snarkjs; local pot12; subgraph only",
+            "notes": "qualitative — not a numeric score",
+        },
     ]
     return rows
 
