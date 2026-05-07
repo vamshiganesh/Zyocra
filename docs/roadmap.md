@@ -69,7 +69,7 @@ Dispatch-inspired product shell (yellow accents, not orange) for visualizing sco
 | Milestone 2 (EZKL baseline) | Not started |
 | Milestone 3 (Custom Circom) | Done — `lora_output_head` (44 nonlinear constraints), Groth16 pipeline, `docs/circom.md` |
 | Milestone 4 (Consumer) | Not started |
-| Milestone 5 (Benchmarks + publish) | Env snapshot only |
+| Milestone 5 (Benchmarks + publish) | Harness + `docs/benchmarks.md` — `make benchmark` |
 
 ## Resume-oriented outcome
 
