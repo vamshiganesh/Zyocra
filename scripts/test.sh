@@ -81,6 +81,17 @@ elif [[ -d "$ROOT/circuits-custom/tests" ]]; then
   info "Skipping circuits-custom tests (circom not installed)"
 fi
 
+if [[ -d "$ROOT/benchmarks/tests" ]] && [[ -x "$PY" ]]; then
+  info "Running benchmark harness unit tests"
+  export PYTHONPATH="$ROOT/benchmarks:${PYTHONPATH:-}"
+  if (cd "$ROOT/benchmarks" && "$PY" -m pytest tests/ -q); then
+    ran=1
+  else
+    status=1
+    ran=1
+  fi
+fi
+
 if [[ "$ran" -eq 0 ]]; then
   warn "No test suites found. Run: make install"
   exit 1
