@@ -19,20 +19,20 @@ The consumer is a **mock lending-risk module** that updates collateral parameter
 
 ## Benchmark headline
 
-*Filled in Milestone 5. Methodology is fixed in `docs/architecture.md` and `benchmarks/README.md`.*
+*From `make benchmark` on WSL2 — see [`docs/benchmarks.md`](docs/benchmarks.md) for methodology and limitations.*
 
 | Metric | EZKL baseline | Custom Circom |
 |--------|---------------|---------------|
-| Constraint count | — | — |
-| Prover peak RAM | — | — |
-| Proof generation time | — | — |
-| Verification gas | — | — |
-| Proof size | — | — |
-| Float vs fixed-point error | — | — |
-| Engineering complexity | — | — |
+| Constraint count | 964 (PLONK rows) | 89 (R1CS) |
+| Prover peak RAM | ~1.7 GB | ~185 MB |
+| Proof generation time | ~23 s (median) | ~1.9 s (median) |
+| Verification gas (EVM) | 536,109 | 244,502 |
+| Proof size | ~21 KB | ~804 B |
+| Float vs fixed-point error | 0.0064 max abs (test split) | head fixture integer exact |
+| Engineering complexity | ONNX → EZKL full pipeline | hand-written LoRA head subgraph |
 
 ```bash
-make benchmark   # writes env snapshots to benchmarks/raw-results/ today
+make benchmark   # writes bench-latest.{json,csv,md} + plots/
 ```
 
 ## System architecture
@@ -88,7 +88,7 @@ Zyocra/
 | Milestone 2 — EZKL baseline | Not started |
 | Milestone 3 — Custom Circom | LoRA output-head circuit + prove/verify pipeline |
 | Milestone 4 — Consumer integration | Not started |
-| Milestone 5 — Benchmarks + report | Env snapshot only |
+| Milestone 5 — Benchmarks + report | `make benchmark` harness + `docs/benchmarks.md` |
 
 Roadmap: [`docs/roadmap.md`](docs/roadmap.md).
 
