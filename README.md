@@ -92,11 +92,19 @@ Zyocra/
 
 Roadmap: [`docs/roadmap.md`](docs/roadmap.md).
 
-## Threat model (summary)
+## Trust model (summary)
 
-**Guarantees:** score matches declared model/weights under the proof system; oracle accepts only valid proofs; consumer updates only from verified oracle output.
+Zyocra separates **proof correctness** from **model quality** and **data honesty**.
 
-**Non-guarantees:** model optimality, dataset bias, market-level manipulation resistance, honest off-chain data feeds.
+| Layer | What is trusted |
+|-------|-----------------|
+| **Proof** | Declared inference ran as specified (EZKL: full graph; Circom: LoRA head subgraph only). |
+| **Oracle** | Verifier soundness, deploy-time `modelHash`/`adapterHash`, monotonic epochs, valid `(proof, publicInputs)`. |
+| **Consumer** | Verified oracle scores; hard-coded bucket → collateral policy. |
+
+**Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
+
+**Known Phase 1 gaps:** `scoreBps` calldata is not cross-checked against proof public outputs on-chain; `applyVerifiedScore(borrower, …)` does not bind the borrower to proof inputs; `setVerifier` is owner-controlled without timelock.
 
 Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
 
