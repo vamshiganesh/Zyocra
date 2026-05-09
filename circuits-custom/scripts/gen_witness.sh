@@ -8,7 +8,7 @@ INPUT="$ROOT/inputs/input.json"
 OUT="$ROOT/witnesses/witness.wtns"
 
 if [[ ! -f "$INPUT" ]]; then
-  bash "$ROOT/scripts/export_fixture.py"
+  bash "$ROOT/scripts/export_fixture.sh"
 fi
 if [[ ! -f "$WASM" ]]; then
   bash "$ROOT/scripts/compile.sh"

@@ -33,7 +33,7 @@ def _npx_snarkjs(*args: str) -> subprocess.CompletedProcess[str]:
 
 def _ensure_artifacts() -> None:
     compile_sh = CIRCOM_ROOT / "scripts" / "compile.sh"
-    export_sh = CIRCOM_ROOT / "scripts" / "export_fixture.py"
+    export_sh = CIRCOM_ROOT / "scripts" / "export_fixture.sh"
     witness_sh = CIRCOM_ROOT / "scripts" / "gen_witness.sh"
     setup_sh = CIRCOM_ROOT / "scripts" / "setup_keys.sh"
     prove_sh = CIRCOM_ROOT / "scripts" / "prove.sh"

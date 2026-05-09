@@ -14,7 +14,7 @@ fi
 export PYTHONPATH="$ROOT:${PYTHONPATH:-}"
 
 bash "$ROOT/scripts/compile.sh"
-bash "$ROOT/scripts/export_fixture.py"
+bash "$ROOT/scripts/export_fixture.sh"
 bash "$ROOT/scripts/gen_witness.sh"
 
 # wtns export: signal index 1 is main.logit_acc for this circuit layout.
