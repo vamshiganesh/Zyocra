@@ -45,6 +45,7 @@ PROVE_RUNS = 3
 SAMPLE_INDEX = 0
 EPOCH_LABEL = "epoch-2026-041"
 
+LATEST_JSON = RAW_DIR / "bench-latest.json"
 FE_PUBLIC_BENCH = REPO_ROOT / "frontend" / "public" / "data" / "bench-latest.json"
 LATEST_CSV = RAW_DIR / "bench-latest.csv"
 LATEST_MD = RAW_DIR / "bench-latest.md"

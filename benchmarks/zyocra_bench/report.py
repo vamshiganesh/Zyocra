@@ -8,7 +8,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from zyocra_bench.config import LATEST_CSV, LATEST_JSON, LATEST_MD, PLOTS_DIR, RAW_DIR
+from zyocra_bench.config import LATEST_CSV, LATEST_JSON, LATEST_MD, PLOTS_DIR, RAW_DIR, FE_PUBLIC_BENCH
 
 
 def _fmt(v: Any) -> str:
@@ -119,7 +119,7 @@ def _bar_chart_svg(
             f'<rect x="{gx:.1f}" y="{y_base - eh:.1f}" width="{bar_w:.1f}" height="{eh:.1f}" fill="#1a1a1a"/>'
         )
         bars.append(
-            f'<rect x="{gx + bar_w + 4:.1f}" y="{y_base - ch:.1f}" width="{bar_w:.1f}" height="{ch:.1f}" fill="#c8a000"/>'
+            f'<rect x="{gx + bar_w + 4:.1f}" y="{y_base - ch:.1f}" width="{bar_w:.1f}" height="{ch:.1f}" fill="#eba50e"/>'
         )
         bars.append(
             f'<text x="{gx + bar_w:.1f}" y="{height - 22}" font-size="10" text-anchor="middle" fill="#333">{label}</text>'
@@ -132,7 +132,7 @@ def _bar_chart_svg(
   {''.join(bars)}
   <rect x="{margin}" y="48" width="10" height="10" fill="#1a1a1a"/>
   <text x="{margin + 14}" y="57" font-size="10" fill="#333">EZKL</text>
-  <rect x="{margin + 70}" y="48" width="10" height="10" fill="#c8a000"/>
+  <rect x="{margin + 70}" y="48" width="10" height="10" fill="#eba50e"/>
   <text x="{margin + 84}" y="57" font-size="10" fill="#333">Circom</text>
 </svg>
 """
@@ -184,6 +184,8 @@ def publish_report(report: dict[str, Any], stamp: str) -> dict[str, str]:
     shutil.copy2(stamped_json, LATEST_JSON)
     shutil.copy2(stamped_csv, LATEST_CSV)
     shutil.copy2(stamped_md, LATEST_MD)
+    FE_PUBLIC_BENCH.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(LATEST_JSON, FE_PUBLIC_BENCH)
 
     charts = write_charts(report, PLOTS_DIR)
 
