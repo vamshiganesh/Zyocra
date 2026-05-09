@@ -59,7 +59,7 @@ export const systemLayers = [
   {
     num: "04",
     title: "contracts",
-    body: "RiskOracle commits scores with proof metadata; MockLendingConsumer maps buckets to collateral policy.",
+    body: "RiskOracle commits scores with proof metadata; RiskConsumer maps buckets to collateral policy.",
   },
 ];
 

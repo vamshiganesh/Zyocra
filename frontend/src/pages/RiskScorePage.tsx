@@ -64,7 +64,7 @@ export function RiskScorePage() {
                 <SectionHeader
                   label="Risk bucket"
                   title="Consumer threshold map"
-                  description="Discrete bands drive collateral factor and spread—documented in MockLendingConsumer, not inferred at runtime."
+                  description="Discrete bands drive collateral factor and spread—documented in RiskConsumer, not inferred at runtime."
                 />
                 <div className="layer-list">
                   {bucketThresholds.map((row) => (

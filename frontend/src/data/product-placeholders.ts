@@ -401,7 +401,7 @@ export const impactFields: DataField[] = [
     label: "Collateral factor (after)",
     value: "0.72",
     mono: true,
-    description: "Post-verification factor applied by MockLendingConsumer for MEDIUM bucket.",
+    description: "Post-verification factor applied by RiskConsumer for MEDIUM bucket.",
   },
   {
     label: "Borrow spread",
@@ -467,7 +467,7 @@ export const guaranteeItems = [
   },
   {
     title: "Consumer coupling",
-    body: "MockLendingConsumer mutates borrower collateral policy only after a verified oracle emission in the same epoch.",
+    body: "RiskConsumer mutates borrower collateral policy only after a verified oracle emission in the same epoch.",
   },
 ];
 

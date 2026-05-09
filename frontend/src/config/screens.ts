@@ -115,7 +115,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Impact",
     eyebrow: "Consumer contract",
     headline: "Collateral policy after verification.",
-    lede: "MockLendingConsumer applies bucket policy—collateral factor, spread, borrow gate—without model-triggered liquidation.",
+    lede: "RiskConsumer applies bucket policy—collateral factor, spread, borrow gate—without model-triggered liquidation.",
     pipelineStep: 6,
     sections: [
       { id: "consumer", label: "Consumer", index: "01" },
