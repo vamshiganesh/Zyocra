@@ -65,7 +65,7 @@ bash scripts/run_pipeline.sh
 Individual steps:
 
 ```bash
-bash scripts/export_fixture.py   # fixtures/ + inputs/input.json
+bash scripts/export_fixture.sh   # fixtures/ + inputs/input.json
 bash scripts/compile.sh            # build/lora_output_head.{r1cs,wasm}
 bash scripts/setup_ptau.sh         # keys/pot12_final.ptau (local ceremony)
 bash scripts/setup_keys.sh         # keys/circuit_final.zkey
@@ -75,7 +75,7 @@ bash scripts/verify.sh             # prints "OK!"
 bash scripts/export_verifier.sh    # verifiers/LoraHeadVerifier.sol
 ```
 
-When `ml-base/artifacts/models/checkpoint.pt` exists, `export_fixture.py` exports **unfolded** LoRA weights and a real backbone hidden vector from `test.npz`. Otherwise it uses the committed `fixtures/head-v1.json` synthetic grid.
+When `ml-base/artifacts/models/checkpoint.pt` exists, `export_fixture.sh` exports **unfolded** LoRA weights and a real backbone hidden vector from `test.npz`. Otherwise it uses the committed `fixtures/head-v1.json` synthetic grid.
 
 ## Public vs private I/O
 

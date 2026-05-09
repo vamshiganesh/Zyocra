@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
+import { BenchmarkDataProvider } from "./hooks/useBenchmarkData";
 import { Phase1DataProvider } from "./hooks/usePhase1Data";
 import { BenchmarkComparisonPage } from "./pages/BenchmarkComparisonPage";
 import { EpochExplorerPage } from "./pages/EpochExplorerPage";
@@ -16,6 +17,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Phase1DataProvider>
+        <BenchmarkDataProvider>
         <Routes>
           <Route element={<AppShell />}>
           <Route index element={<OverviewPage />} />
@@ -34,6 +36,7 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
         </Routes>
+        </BenchmarkDataProvider>
       </Phase1DataProvider>
     </BrowserRouter>
   );
