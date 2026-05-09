@@ -87,8 +87,7 @@ def build_oracle_payload(
         "witnessPath": str(witness_path),
         "proofPath": str(proof_path),
         "notes": {
-            "verifier": "Deploy verifiers/RiskScoreVerifier.sol or EZKL-generated Halo2Verifier",
-            "stub_phase": "RiskOracle still uses StubRiskScoreVerifier until verifier is wired",
+            "verifier": "EzklRiskScoreVerifier + Halo2Verifier (e2e_phase1.sh)",
             "public_layout": "6 input features (public) + 1 output score (public)",
         },
     }

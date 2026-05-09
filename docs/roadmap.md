@@ -64,12 +64,13 @@ Dispatch-inspired product shell (yellow accents, not orange) for visualizing sco
 
 | Milestone | Status |
 |-----------|--------|
-| Repo layout, docs, local toolchain | Done |
-| Milestone 1 (ML + quantization) | Not started |
-| Milestone 2 (EZKL baseline) | Not started |
-| Milestone 3 (Custom Circom) | Done — `lora_output_head` (44 nonlinear constraints), Groth16 pipeline, `docs/circom.md` |
-| Milestone 4 (Consumer) | Not started |
-| Milestone 5 (Benchmarks + publish) | Harness + `docs/benchmarks.md` — `make benchmark` |
+| Monorepo layout + docs | Done |
+| Milestone 1 (ML + quantization) | Done |
+| Milestone 2 (EZKL baseline) | Done |
+| Milestone 3 (Custom Circom) | Done |
+| Milestone 4 (Consumer) | Done |
+| Milestone 5 (Benchmarks + publish) | Done |
+| Demo UI + live data binding | Done |
 
 ## Resume-oriented outcome
 

@@ -438,7 +438,7 @@ export const auditTrail: DataField[] = [
   },
   {
     label: "Consumer update",
-    value: "setCollateralParams()",
+    value: "applyVerifiedScore()",
     mono: true,
     description: "Mock lending consumer applies bucket policy to borrower state.",
   },
@@ -487,9 +487,10 @@ export const nonGuaranteeItems = [
 ];
 
 export const assumptionItems = [
-  "Trusted setup material for the active proof system is generated once per circuit revision and checked into the repo with checksums.",
-  "Quantization scales in ml-base match EZKL settings.toml and Circom constant definitions byte-for-byte.",
-  "Deployed verifier bytecode equals the artifact produced by the pinned compiler version in CI.",
+  "Proving keys and verifier bytecode match the pinned toolchain versions (EZKL 23.0.5, circom 2.2.x) used in CI and local demos.",
+  "Quantization scales in ml-base match EZKL settings.json and Circom witness grids (Q8.8: activation_scale=128, weight_scale=256).",
+  "Model and adapter hashes registered at oracle deploy time match the artifacts used by the off-chain prover.",
+  "Oracle owner acts honestly when rotating verifiers, or governance constraints are added before production.",
 ];
 
 export const flowSteps = [

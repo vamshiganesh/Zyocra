@@ -84,11 +84,12 @@ Zyocra/
 | Monorepo layout + docs | Done |
 | Local toolchain (`make install`) | Done |
 | UI shell + design system | Done (static pages, no backend) |
-| Milestone 1 — ML + quantization | Not started |
-| Milestone 2 — EZKL baseline | Not started |
-| Milestone 3 — Custom Circom | LoRA output-head circuit + prove/verify pipeline |
-| Milestone 4 — Consumer integration | Not started |
-| Milestone 5 — Benchmarks + report | `make benchmark` harness + `docs/benchmarks.md` |
+| Milestone 1 — ML + quantization | Done (`ml-base/`, ONNX export, Q8.8 validation) |
+| Milestone 2 — EZKL baseline | Done (`circuits-baseline/`, Halo2 verifier, e2e) |
+| Milestone 3 — Custom Circom | Done (`lora_output_head`, Groth16 pipeline) |
+| Milestone 4 — Consumer integration | Done (`RiskOracle` + `RiskConsumer`, Foundry tests) |
+| Milestone 5 — Benchmarks + report | Done (`make benchmark`, `docs/benchmarks.md`) |
+| Demo UI + data binding | Done (live `phase1-demo.json`, `bench-latest.json`) |
 
 Roadmap: [`docs/roadmap.md`](docs/roadmap.md).
 

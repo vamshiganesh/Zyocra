@@ -19,7 +19,7 @@ test: ## Run Foundry / Python / frontend tests that exist
 lint: ## Lightweight local lint (shell syntax, forge fmt, pnpm lint, optional ruff)
 	@./scripts/lint.sh
 
-benchmark: ## Write env snapshot + metric placeholders to benchmarks/raw-results/
+benchmark: ## Run EZKL vs Circom benchmark harness (writes bench-latest.* + plots)
 	@./scripts/benchmark.sh
 
 check-tools: ## Print versions of host tools and ml-base venv packages
