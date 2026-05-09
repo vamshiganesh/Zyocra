@@ -32,7 +32,13 @@ bash scripts/sync-frontend-data.sh
 bash scripts/e2e_phase1.sh
 ```
 
-The dev server serves `phase1-demo.json` from `public/data/`. Reload the app or click **Retry** on the status banner if the file changed while the tab was open.
+Sync demo data from repo root:
+
+```bash
+bash scripts/sync-frontend-data.sh   # phase1-demo.json + bench-latest.json (if present)
+```
+
+`bench-latest.json` is written by `make benchmark` to `benchmarks/raw-results/` and copied to `frontend/public/data/` by the benchmark harness and sync script.
 
 ## Fields surfaced in the UI
 
@@ -58,7 +64,7 @@ When `hasOnChain` is `true`, epoch registry status, verifier labels, and audit t
 | `frontend/src/hooks/usePhase1Data.ts` | Fetch, loading / empty / error states |
 | `frontend/src/data/use-pipeline-fields.ts` | Live fields with static fallbacks |
 | `frontend/src/components/product/DataStatus.tsx` | Non-blocking status banner |
-| `frontend/src/components/product/BenchmarkPlaceholderPanel.tsx` | Milestone 5 benchmark slot |
+| `frontend/src/hooks/useBenchmarkData.tsx` | Fetch bench-latest.json for benchmark panel |
 
 ## Empty and fallback behavior
 

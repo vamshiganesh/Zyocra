@@ -65,7 +65,7 @@ function verify(bytes calldata proof, uint256[] calldata publicInputs)
     external view returns (bool valid);
 ```
 
-Milestone 2+ deploys a generated EZKL or Circom verifier at this interface. Phase 1 uses `StubRiskScoreVerifier` (owner-configurable pass/fail for tests).
+Milestone 2+ deploys a generated EZKL or Circom verifier at this interface. Unit tests use `StubRiskScoreVerifier`; the e2e demo uses `EzklRiskScoreVerifier` + `Halo2Verifier`.
 
 ## Risk buckets & policy
 

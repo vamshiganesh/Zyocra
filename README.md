@@ -83,7 +83,7 @@ Zyocra/
 |------|--------|
 | Monorepo layout + docs | Done |
 | Local toolchain (`make install`) | Done |
-| UI shell + design system | Done (static pages, no backend) |
+| UI shell + design system | Done (live data binding) |
 | Milestone 1 — ML + quantization | Done (`ml-base/`, ONNX export, Q8.8 validation) |
 | Milestone 2 — EZKL baseline | Done (`circuits-baseline/`, Halo2 verifier, e2e) |
 | Milestone 3 — Custom Circom | Done (`lora_output_head`, Groth16 pipeline) |
