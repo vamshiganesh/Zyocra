@@ -36,7 +36,7 @@ export function BenchmarkComparisonPage() {
 
       <section className="band band--panels">
         <Shell>
-          <DataStatus status={status} error={error} onRetry={reload} />
+          <DataStatus status={status} error={error} onRetry={reload} variant="benchmark" />
           <div className="panel-stack">
             <ClippedCard>
               <BenchmarkPlaceholderPanel />

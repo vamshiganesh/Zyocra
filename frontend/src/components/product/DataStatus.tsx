@@ -5,9 +5,11 @@ type Props = {
   status: DataLoadStatus;
   error?: string | null;
   onRetry?: () => void;
+  /** Override default copy for benchmark vs phase-1 data sources */
+  variant?: "phase1" | "benchmark";
 };
 
-const copy: Record<DataLoadStatus, { title: string; body: string }> = {
+const phase1Copy: Record<DataLoadStatus, { title: string; body: string }> = {
   loading: {
     title: "Loading local demo data",
     body: "Reading phase1-demo.json from the public data directory.",
@@ -23,10 +25,26 @@ const copy: Record<DataLoadStatus, { title: string; body: string }> = {
   ready: { title: "", body: "" },
 };
 
-export function DataStatus({ status, error, onRetry }: Props) {
+const benchmarkCopy: Record<DataLoadStatus, { title: string; body: string }> = {
+  loading: {
+    title: "Loading benchmark results",
+    body: "Reading bench-latest.json from the public data directory.",
+  },
+  empty: {
+    title: "No benchmark results yet",
+    body: "Run make benchmark from repo root, then bash scripts/sync-frontend-data.sh.",
+  },
+  error: {
+    title: "Could not load benchmark data",
+    body: "Check that frontend/public/data/bench-latest.json exists and is valid JSON.",
+  },
+  ready: { title: "", body: "" },
+};
+
+export function DataStatus({ status, error, onRetry, variant = "phase1" }: Props) {
   if (status === "ready") return null;
 
-  const text = copy[status];
+  const text = variant === "benchmark" ? benchmarkCopy[status] : phase1Copy[status];
 
   return (
     <div className={`data-status data-status--${status}`} role="status">

@@ -29,7 +29,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "What does the consumer contract do?",
     answer:
-      "MockLendingConsumer maps verified risk buckets to collateral factor, borrow spread, and borrow-freeze flags. It does not liquidate—policy tightening only, aligned with how risk oracles are used in production lending design.",
+      "RiskConsumer maps verified risk buckets to collateral factor, borrow spread, and borrow-freeze flags. It does not liquidate—policy tightening only, aligned with how risk oracles are used in production lending design.",
   },
   {
     question: "What do model hash and adapter hash bind?",
@@ -71,7 +71,7 @@ export const changelog = [
       { tag: "ORACLE", text: "RiskOracle.sol scaffold—commitment storage, proof gate stub (Milestone 2)." },
       { tag: "EZKL", text: "circuits-baseline/ directory and settings placeholder for ONNX compile path." },
       { tag: "CIRCOM", text: "circuits-custom/ LoRA gadget stubs for benchmark path (Milestone 3)." },
-      { tag: "CONSUMER", text: "MockLendingConsumer risk-bucket mapping spec in contracts/ (Milestone 4)." },
+      { tag: "CONSUMER", text: "RiskConsumer risk-bucket mapping in contracts/ (Foundry tests)." },
       { tag: "NOTE", text: "Prove, verify, and benchmark values in UI are illustrative until milestones ship." },
     ],
   },
