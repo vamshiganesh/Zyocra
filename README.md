@@ -157,7 +157,7 @@ Full install and run commands: [`docs/setup.md`](docs/setup.md).
 | [`docs/roadmap.md`](docs/roadmap.md) | Milestones 1–5 |
 | [`docs/setup.md`](docs/setup.md) | Ubuntu WSL toolchain |
 | [`docs/ui-reference.md`](docs/ui-reference.md) | Optional Dispatch-inspired UI (yellow accents) |
-| [`docs/technical-report.md`](docs/technical-report.md) | Milestone 5 report placeholder |
+| [`docs/benchmarks.md`](docs/benchmarks.md) | EZKL vs Circom harness and limitations |
 
 ## License
 
