@@ -97,4 +97,10 @@ if [[ "$ran" -eq 0 ]]; then
   exit 1
 fi
 
+if [[ "$status" -eq 0 ]]; then
+  info "All test suites passed"
+else
+  warn "One or more test suites failed (exit $status)"
+fi
+
 exit "$status"

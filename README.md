@@ -129,10 +129,21 @@ make install
 source ml-base/.venv/bin/activate
 
 make check-tools
-make test
+make test          # Foundry + pytest (ml-base, circuits-custom, benchmarks) + frontend tsc
 make lint
-make benchmark
+make benchmark     # EZKL vs Circom metrics → benchmarks/raw-results/
 ```
+
+### Test commands
+
+| Command | What runs |
+|---------|-----------|
+| `make test` | All suites: `forge test`, `ml-base` pytest, `circuits-custom` (if circom installed), `benchmarks` pytest, `frontend` `tsc` |
+| `cd contracts && forge test` | Solidity only |
+| `cd ml-base && pytest -q` | ML pipeline unit tests |
+| `bash circuits-custom/tests/test_prove_verify.sh` | Full Circom Groth16 loop |
+| `bash scripts/e2e_phase1.sh` | EZKL → Anvil → oracle → consumer |
+| `cd frontend && pnpm test` | TypeScript typecheck |
 
 Full install and run commands: [`docs/setup.md`](docs/setup.md).
 

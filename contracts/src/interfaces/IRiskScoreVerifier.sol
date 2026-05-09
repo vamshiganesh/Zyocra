@@ -3,8 +3,7 @@ pragma solidity ^0.8.24;
 
 /// @title IRiskScoreVerifier
 /// @notice Adapter surface for on-chain zk proof verification (EZKL / Circom verifiers).
-/// @dev Phase 1 uses `StubRiskScoreVerifier` locally. Production wiring swaps the
-///      deployed address on `RiskOracle` without changing oracle logic.
+/// @dev EZKL path uses `EzklRiskScoreVerifier`; unit tests use `StubRiskScoreVerifier`.
 interface IRiskScoreVerifier {
     /// @notice Verify a serialized proof against public inputs.
     /// @param proof Proof bytes from the off-chain prover (format depends on verifier).

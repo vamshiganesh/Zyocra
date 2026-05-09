@@ -89,7 +89,7 @@ Each data field uses three layers where applicable:
 | `ORACLE` | RiskOracle contract |
 | `EZKL` | Baseline pipeline |
 | `CIRCOM` | Custom circuit path |
-| `CONSUMER` | MockLendingConsumer |
+| `CONSUMER` | RiskConsumer |
 | `DOCS` | Documentation |
 | `NOTE` | Explicit non-wiring or caveat |
 
