@@ -8,13 +8,13 @@ import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { usePhase1Data } from "../hooks/usePhase1Data";
+import { useBenchmarkData } from "../hooks/useBenchmarkData";
 import "./pages.css";
 
 const screen = screenBySlug("benchmarks")!;
 
 export function BenchmarkComparisonPage() {
-  const { status, error, reload } = usePhase1Data();
+  const { status, error, reload } = useBenchmarkData();
 
   return (
     <div className="page">
