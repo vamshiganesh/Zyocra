@@ -147,14 +147,20 @@ out = {
         "lastEpoch": loop.get("epoch") or epoch_num,
     },
     "benchmark": {
-        "populated": False,
-        "note": "Run Milestone 5 benchmarks to populate EZKL vs Circom comparison rows.",
+        "populated": (root / "benchmarks/raw-results/bench-latest.json").is_file(),
+        "note": "Run make benchmark from repo root. Workloads differ: EZKL full graph vs Circom head subgraph.",
     },
 }
 
 out_path = root / "frontend/public/data/phase1-demo.json"
 out_path.parent.mkdir(parents=True, exist_ok=True)
 out_path.write_text(json.dumps(out, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+bench_src = root / "benchmarks/raw-results/bench-latest.json"
+bench_dst = root / "frontend/public/data/bench-latest.json"
+if bench_src.is_file():
+    bench_dst.parent.mkdir(parents=True, exist_ok=True)
+    bench_dst.write_text(bench_src.read_text(encoding="utf-8"), encoding="utf-8")
+    print(f"  bench → {bench_dst}")
 print(f"wrote {out_path}")
 print(f"  epoch={epoch_id} scoreBps={score_bps} bucket={bucket} onChain={on_chain}")
 PY
