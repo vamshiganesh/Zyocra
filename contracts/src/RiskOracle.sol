@@ -59,10 +59,16 @@ contract RiskOracle is IRiskOracle {
         verifier = IRiskScoreVerifier(verifier_);
         committedModelHash = modelHash_;
         committedAdapterHash = adapterHash_;
+        authorizedProvers[owner_] = true;
     }
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert Unauthorized();
+        _;
+    }
+
+    modifier onlyAuthorizedProver() {
+        if (!authorizedProvers[msg.sender]) revert UnauthorizedProver(msg.sender);
         _;
     }
 
@@ -73,9 +79,15 @@ contract RiskOracle is IRiskOracle {
         emit VerifierUpdated(previous, newVerifier);
     }
 
+    /// @notice Grant or revoke permission to call `submitScore`.
+    function setAuthorizedProver(address prover, bool authorized) external onlyOwner {
+        authorizedProvers[prover] = authorized;
+        emit AuthorizedProverUpdated(prover, authorized);
+    }
+
     /// @notice Submit a score after on-chain proof verification.
     /// @param payload Model commitments, epoch, score, proof bytes, and public inputs.
-    function submitScore(ScoreUpdatePayload calldata payload) external {
+    function submitScore(ScoreUpdatePayload calldata payload) external onlyAuthorizedProver {
         if (payload.modelHash != committedModelHash || payload.adapterHash != committedAdapterHash)
         {
             revert HashMismatch(
@@ -92,6 +104,8 @@ contract RiskOracle is IRiskOracle {
         if (!verifier.verify(payload.proof, payload.publicInputs)) {
             revert VerificationFailed();
         }
+
+        ScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
 
         uint64 timestamp = uint64(block.timestamp);
         ScoreRecord memory record = ScoreRecord({
