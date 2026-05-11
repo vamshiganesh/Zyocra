@@ -5,6 +5,8 @@ import {Test} from "forge-std/Test.sol";
 import {RiskOracle} from "../src/RiskOracle.sol";
 import {StubRiskScoreVerifier} from "../src/verifiers/StubRiskScoreVerifier.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
+import {ScoreEncoding} from "../src/libraries/ScoreEncoding.sol";
+import {PublicInputLayout} from "../src/libraries/PublicInputLayout.sol";
 
 contract RiskOracleTest is Test {
     bytes32 internal constant MODEL_HASH = keccak256("zyocra-demo-model-v1");
@@ -12,6 +14,7 @@ contract RiskOracleTest is Test {
 
     address internal owner = makeAddr("owner");
     address internal relayer = makeAddr("relayer");
+    address internal stranger = makeAddr("stranger");
 
     StubRiskScoreVerifier internal verifier;
     RiskOracle internal oracle;
@@ -19,26 +22,36 @@ contract RiskOracleTest is Test {
     function setUp() public {
         verifier = new StubRiskScoreVerifier(owner);
         oracle = new RiskOracle(owner, address(verifier), MODEL_HASH, ADAPTER_HASH);
+
+        vm.prank(owner);
+        oracle.setAuthorizedProver(relayer, true);
     }
 
-    function _payload(uint64 epoch, uint256 scoreBps)
+    function _payload(uint64 epoch, uint256 scoreLimb)
         internal
         pure
         returns (RiskOracle.ScoreUpdatePayload memory)
     {
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+        uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
+        inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
             proof: hex"deadbeef",
-            publicInputs: new uint256[](0)
+            publicInputs: inputs
         });
     }
 
     function test_submitScore_storesRecordAndUpdatesLatestEpoch() public {
+        uint256 scoreLimb = 79;
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+
         vm.prank(relayer);
-        oracle.submitScore(_payload(202_604_1, 6_200));
+        oracle.submitScore(_payload(202_604_1, scoreLimb));
 
         assertEq(oracle.latestEpoch(), 202_604_1);
 
@@ -46,7 +59,7 @@ contract RiskOracleTest is Test {
         assertEq(record.modelHash, MODEL_HASH);
         assertEq(record.adapterHash, ADAPTER_HASH);
         assertEq(record.epoch, 202_604_1);
-        assertEq(record.scoreBps, 6_200);
+        assertEq(record.scoreBps, scoreBps);
         assertEq(record.timestamp, uint64(block.timestamp));
         assertEq(record.blockNumber, uint64(block.number));
 
@@ -56,35 +69,38 @@ contract RiskOracleTest is Test {
     }
 
     function test_submitScore_emitsScoreVerified() public {
+        uint256 scoreLimb = 79;
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+
         vm.expectEmit(true, true, true, true);
         emit RiskOracle.ScoreVerified(
-            202_604_1, MODEL_HASH, ADAPTER_HASH, 6_200, uint64(block.timestamp)
+            202_604_1, MODEL_HASH, ADAPTER_HASH, scoreBps, uint64(block.timestamp)
         );
 
         vm.prank(relayer);
-        oracle.submitScore(_payload(202_604_1, 6_200));
+        oracle.submitScore(_payload(202_604_1, scoreLimb));
     }
 
     function test_submitScore_acceptsMonotonicEpochs() public {
         vm.startPrank(relayer);
-        oracle.submitScore(_payload(1, 4_000));
-        oracle.submitScore(_payload(2, 5_000));
-        oracle.submitScore(_payload(3, 7_000));
+        oracle.submitScore(_payload(1, 51));
+        oracle.submitScore(_payload(2, 64));
+        oracle.submitScore(_payload(3, 90));
         vm.stopPrank();
 
         assertEq(oracle.latestEpoch(), 3);
-        assertEq(oracle.getScoreByEpoch(2).scoreBps, 5_000);
+        assertEq(oracle.getScoreByEpoch(2).scoreBps, ScoreEncoding.scoreBpsFromEzklLimb(64));
     }
 
     function test_submitScore_revertsOnStaleEpoch() public {
         vm.startPrank(relayer);
-        oracle.submitScore(_payload(10, 4_000));
+        oracle.submitScore(_payload(10, 51));
 
         vm.expectRevert(abi.encodeWithSelector(RiskOracle.StaleEpoch.selector, 10, 10));
-        oracle.submitScore(_payload(10, 4_100));
+        oracle.submitScore(_payload(10, 52));
 
         vm.expectRevert(abi.encodeWithSelector(RiskOracle.StaleEpoch.selector, 5, 10));
-        oracle.submitScore(_payload(5, 4_200));
+        oracle.submitScore(_payload(5, 53));
         vm.stopPrank();
     }
 
@@ -94,11 +110,11 @@ contract RiskOracleTest is Test {
 
         vm.prank(relayer);
         vm.expectRevert(RiskOracle.VerificationFailed.selector);
-        oracle.submitScore(_payload(1, 5_000));
+        oracle.submitScore(_payload(1, 64));
     }
 
     function test_submitScore_revertsOnHashMismatch() public {
-        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 5_000);
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
         payload.modelHash = keccak256("wrong-model");
 
         vm.prank(relayer);
@@ -115,9 +131,43 @@ contract RiskOracleTest is Test {
     }
 
     function test_submitScore_revertsOnInvalidScore() public {
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
+        payload.scoreBps = 10_001;
+
         vm.prank(relayer);
         vm.expectRevert(abi.encodeWithSelector(RiskBuckets.InvalidScore.selector, 10_001));
-        oracle.submitScore(_payload(1, 10_001));
+        oracle.submitScore(payload);
+    }
+
+    function test_submitScore_revertsOnScoreMismatch() public {
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
+        payload.scoreBps = 1_000;
+
+        vm.prank(relayer);
+        vm.expectRevert(
+            abi.encodeWithSelector(ScoreEncoding.ScoreMismatch.selector, 1_000, payload.scoreBps)
+        );
+        oracle.submitScore(payload);
+    }
+
+    function test_submitScore_revertsForUnauthorizedProver() public {
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(RiskOracle.UnauthorizedProver.selector, stranger));
+        oracle.submitScore(_payload(1, 64));
+    }
+
+    function test_setAuthorizedProver_onlyOwner() public {
+        vm.prank(stranger);
+        vm.expectRevert(RiskOracle.Unauthorized.selector);
+        oracle.setAuthorizedProver(stranger, true);
+
+        vm.prank(owner);
+        oracle.setAuthorizedProver(stranger, true);
+        assertTrue(oracle.authorizedProvers(stranger));
+
+        vm.prank(stranger);
+        oracle.submitScore(_payload(1, 64));
+        assertEq(oracle.latestEpoch(), 1);
     }
 
     function test_getLatestScore_revertsBeforeAnySubmission() public {
@@ -142,12 +192,15 @@ contract RiskOracleTest is Test {
         assertEq(address(oracle.verifier()), address(next));
     }
 
-    function testFuzz_submitScore_validScoreRange(uint256 scoreBps) public {
-        scoreBps = bound(scoreBps, 0, 10_000);
+    function testFuzz_submitScore_validScoreRange(uint256 scoreLimb) public {
+        scoreLimb = bound(scoreLimb, 0, 12_800);
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+        vm.assume(scoreBps <= 10_000);
+
         uint64 epoch = oracle.latestEpoch() + 1;
 
         vm.prank(relayer);
-        oracle.submitScore(_payload(epoch, scoreBps));
+        oracle.submitScore(_payload(epoch, scoreLimb));
 
         assertEq(oracle.getScoreByEpoch(epoch).scoreBps, scoreBps);
     }
