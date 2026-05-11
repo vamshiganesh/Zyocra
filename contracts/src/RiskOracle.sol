@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {IRiskOracle} from "./interfaces/IRiskOracle.sol";
 import {IRiskScoreVerifier} from "./interfaces/IRiskScoreVerifier.sol";
 import {RiskBuckets} from "./libraries/RiskBuckets.sol";
+import {ScoreEncoding} from "./libraries/ScoreEncoding.sol";
 
 /// @title RiskOracle
 /// @notice Stores verified liquidation-risk scores after proof verification.
@@ -29,8 +30,10 @@ contract RiskOracle is IRiskOracle {
 
     uint64 public latestEpoch;
     mapping(uint64 epoch => ScoreRecord) private _scores;
+    mapping(address prover => bool) public authorizedProvers;
 
     error Unauthorized();
+    error UnauthorizedProver(address caller);
     error VerificationFailed();
     error StaleEpoch(uint64 provided, uint64 latest);
     error HashMismatch(
@@ -42,6 +45,7 @@ contract RiskOracle is IRiskOracle {
     error EpochNotVerified(uint64 epoch);
 
     event VerifierUpdated(address indexed previousVerifier, address indexed newVerifier);
+    event AuthorizedProverUpdated(address indexed prover, bool authorized);
     event ScoreVerified(
         uint64 indexed epoch,
         bytes32 indexed modelHash,
