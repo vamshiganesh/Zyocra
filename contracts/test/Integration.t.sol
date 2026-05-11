@@ -6,6 +6,8 @@ import {RiskOracle} from "../src/RiskOracle.sol";
 import {RiskConsumer} from "../src/RiskConsumer.sol";
 import {StubRiskScoreVerifier} from "../src/verifiers/StubRiskScoreVerifier.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
+import {ScoreEncoding} from "../src/libraries/ScoreEncoding.sol";
+import {PublicInputLayout} from "../src/libraries/PublicInputLayout.sol";
 
 /// @notice End-to-end flow mirroring epoch-2026-041 demo data (MEDIUM bucket).
 contract IntegrationTest is Test {
@@ -27,18 +29,10 @@ contract IntegrationTest is Test {
 
     function test_epochDemoFlow_oracleThenConsumer() public {
         uint64 epoch = 202_604_1;
-        uint256 scoreBps = 6_200;
+        uint256 scoreLimb = 79;
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
 
-        oracle.submitScore(
-            RiskOracle.ScoreUpdatePayload({
-                modelHash: MODEL_HASH,
-                adapterHash: ADAPTER_HASH,
-                epoch: epoch,
-                scoreBps: scoreBps,
-                proof: hex"cafebabe",
-                publicInputs: new uint256[](3)
-            })
-        );
+        oracle.submitScore(_payload(epoch, scoreLimb));
 
         assertEq(oracle.latestEpoch(), epoch);
         assertEq(oracle.getLatestScore().scoreBps, scoreBps);
@@ -53,42 +47,46 @@ contract IntegrationTest is Test {
     }
 
     function test_verifierSwap_allowsNewSubmissions() public {
-        oracle.submitScore(_payload(1, 4_000));
+        oracle.submitScore(_payload(1, 51));
 
         StubRiskScoreVerifier next = new StubRiskScoreVerifier(owner);
         vm.prank(owner);
         oracle.setVerifier(address(next));
 
-        oracle.submitScore(_payload(2, 8_100));
+        oracle.submitScore(_payload(2, 90));
         assertEq(oracle.latestEpoch(), 2);
     }
 
     function test_rejectedProofDoesNotAdvanceEpoch() public {
-        oracle.submitScore(_payload(1, 4_000));
+        oracle.submitScore(_payload(1, 51));
 
         vm.prank(owner);
         verifier.setVerifyResult(false);
 
         vm.expectRevert(RiskOracle.VerificationFailed.selector);
-        oracle.submitScore(_payload(2, 5_000));
+        oracle.submitScore(_payload(2, 64));
 
         assertEq(oracle.latestEpoch(), 1);
         vm.expectRevert(abi.encodeWithSelector(RiskConsumer.EpochNotVerified.selector, 2));
         consumer.applyVerifiedScore(borrower, 2);
     }
 
-    function _payload(uint64 epoch, uint256 scoreBps)
+    function _payload(uint64 epoch, uint256 scoreLimb)
         internal
-        pure
+        view
         returns (RiskOracle.ScoreUpdatePayload memory)
     {
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+        uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
+        inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
             proof: hex"01",
-            publicInputs: new uint256[](0)
+            publicInputs: inputs
         });
     }
 }
