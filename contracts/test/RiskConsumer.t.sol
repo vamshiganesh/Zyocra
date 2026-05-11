@@ -40,6 +40,7 @@ contract RiskConsumerTest is Test {
             proof: hex"01",
             publicInputs: inputs
         });
+        vm.prank(owner);
         oracle.submitScore(payload);
     }
 

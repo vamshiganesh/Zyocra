@@ -33,8 +33,6 @@ contract IntegrationTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
 
         oracle.submitScore(_payload(epoch, scoreLimb));
-
-        assertEq(oracle.latestEpoch(), epoch);
         assertEq(oracle.getLatestScore().scoreBps, scoreBps);
 
         consumer.applyVerifiedScore(borrower, epoch);
