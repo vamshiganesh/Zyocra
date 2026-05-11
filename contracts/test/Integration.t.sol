@@ -32,7 +32,10 @@ contract IntegrationTest is Test {
         uint256 scoreLimb = 79;
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
 
+        vm.prank(owner);
         oracle.submitScore(_payload(epoch, scoreLimb));
+
+        assertEq(oracle.latestEpoch(), epoch);
         assertEq(oracle.getLatestScore().scoreBps, scoreBps);
 
         consumer.applyVerifiedScore(borrower, epoch);
@@ -45,12 +48,14 @@ contract IntegrationTest is Test {
     }
 
     function test_verifierSwap_allowsNewSubmissions() public {
+        vm.prank(owner);
         oracle.submitScore(_payload(1, 51));
 
         StubRiskScoreVerifier next = new StubRiskScoreVerifier(owner);
         vm.prank(owner);
         oracle.setVerifier(address(next));
 
+        vm.prank(owner);
         oracle.submitScore(_payload(2, 90));
         assertEq(oracle.latestEpoch(), 2);
     }
