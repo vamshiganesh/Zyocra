@@ -7,6 +7,8 @@ import {RiskConsumer} from "../src/RiskConsumer.sol";
 import {StubRiskScoreVerifier} from "../src/verifiers/StubRiskScoreVerifier.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
 import {RiskPolicies} from "../src/libraries/RiskPolicies.sol";
+import {ScoreEncoding} from "../src/libraries/ScoreEncoding.sol";
+import {PublicInputLayout} from "../src/libraries/PublicInputLayout.sol";
 
 contract RiskConsumerTest is Test {
     bytes32 internal constant MODEL_HASH = keccak256("zyocra-demo-model-v1");
@@ -25,14 +27,18 @@ contract RiskConsumerTest is Test {
         consumer = new RiskConsumer(address(oracle));
     }
 
-    function _submit(uint64 epoch, uint256 scoreBps) internal {
+    function _submit(uint64 epoch, uint256 scoreLimb) internal {
+        uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
+        uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
+        inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+
         RiskOracle.ScoreUpdatePayload memory payload = RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
             proof: hex"01",
-            publicInputs: new uint256[](0)
+            publicInputs: inputs
         });
         oracle.submitScore(payload);
     }
@@ -57,7 +63,7 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_updatesMediumBucket() public {
-        _submit(202_604_1, 6_200);
+        _submit(202_604_1, 79);
 
         vm.expectEmit(true, true, false, true);
         emit RiskConsumer.RiskBucketChanged(
@@ -81,7 +87,7 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_lowBucket() public {
-        _submit(1, 3_000);
+        _submit(1, 38);
         consumer.applyVerifiedScore(borrower, 1);
 
         RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
@@ -92,7 +98,7 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_highBucketFreezesBorrow() public {
-        _submit(2, 8_500);
+        _submit(2, 109);
         consumer.applyVerifiedScore(borrower, 2);
 
         RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
@@ -103,7 +109,7 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_criticalSetsMitigationFlag() public {
-        _submit(3, 9_500);
+        _submit(3, 118);
         consumer.applyVerifiedScore(borrower, 3);
 
         RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
@@ -118,7 +124,7 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_revertsIfAlreadyApplied() public {
-        _submit(5, 6_000);
+        _submit(5, 77);
         consumer.applyVerifiedScore(borrower, 5);
 
         vm.expectRevert(abi.encodeWithSelector(RiskConsumer.AlreadyApplied.selector, borrower, 5));
@@ -126,8 +132,8 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_allowsNewerEpoch() public {
-        _submit(1, 3_000);
-        _submit(2, 6_500);
+        _submit(1, 38);
+        _submit(2, 83);
 
         consumer.applyVerifiedScore(borrower, 1);
 
@@ -142,8 +148,8 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_updatesPolicyWhenBucketUnchanged() public {
-        _submit(1, 6_000);
-        _submit(2, 6_500);
+        _submit(1, 77);
+        _submit(2, 83);
 
         consumer.applyVerifiedScore(borrower, 1);
         RiskConsumer.BorrowerPolicy memory mid = consumer.getBorrowerPolicy(borrower);

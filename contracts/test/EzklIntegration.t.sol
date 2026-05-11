@@ -10,6 +10,7 @@ import {DemoCommitments} from "../src/libraries/DemoCommitments.sol";
 import {ProofJsonLib} from "../src/libraries/ProofJsonLib.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
 import {RiskPolicies} from "../src/libraries/RiskPolicies.sol";
+import {ScoreEncoding} from "../src/libraries/ScoreEncoding.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
 /// @notice On-chain EZKL proof → oracle → consumer integration (requires generated artifacts).
@@ -118,5 +119,27 @@ contract EzklIntegrationTest is Test {
     );
 
     assertEq(oracle.latestEpoch(), nextEpoch);
+  }
+
+  function test_submitScore_revertsOnTamperedScoreBps() public {
+    assertTrue(ezklVerifier.verify(proof, publicInputs));
+
+    vm.expectRevert(
+      abi.encodeWithSelector(
+        ScoreEncoding.ScoreMismatch.selector,
+        scoreBps + 1,
+        ScoreEncoding.scoreBpsFromEzklLimb(publicInputs[6])
+      )
+    );
+    oracle.submitScore(
+      RiskOracle.ScoreUpdatePayload({
+        modelHash: modelHash,
+        adapterHash: adapterHash,
+        epoch: epoch,
+        scoreBps: scoreBps + 1,
+        proof: proof,
+        publicInputs: publicInputs
+      })
+    );
   }
 }
