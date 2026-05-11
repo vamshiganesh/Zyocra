@@ -19,7 +19,7 @@ library ScoreEncoding {
     }
 
     /// @notice Assert calldata score matches the proved EZKL public output limb.
-    function requireScoreMatchesPublicInput(uint256 scoreBps, uint256[] calldata publicInputs)
+    function requireScoreMatchesPublicInput(uint256 scoreBps, uint256[] memory publicInputs)
         internal
         pure
     {

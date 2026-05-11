@@ -145,7 +145,7 @@ contract RiskOracleTest is Test {
 
         vm.prank(relayer);
         vm.expectRevert(
-            abi.encodeWithSelector(ScoreEncoding.ScoreMismatch.selector, 1_000, payload.scoreBps)
+            abi.encodeWithSelector(ScoreEncoding.ScoreMismatch.selector, 1_000, ScoreEncoding.scoreBpsFromEzklLimb(64))
         );
         oracle.submitScore(payload);
     }

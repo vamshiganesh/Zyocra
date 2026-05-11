@@ -12,7 +12,7 @@ library PublicInputLayout {
 
     error InvalidPublicInputs(uint256 expected, uint256 actual);
 
-    function requireEzklLayout(uint256[] calldata publicInputs) internal pure {
+    function requireEzklLayout(uint256[] memory publicInputs) internal pure {
         if (publicInputs.length != EZKL_PUBLIC_INPUT_COUNT) {
             revert InvalidPublicInputs(EZKL_PUBLIC_INPUT_COUNT, publicInputs.length);
         }

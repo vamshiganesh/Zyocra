@@ -10,10 +10,11 @@ contract ScoreEncodingTest is Test {
         assertEq(ScoreEncoding.scoreBpsFromEzklLimb(23), 1797);
     }
 
-    function test_requireScoreMatchesPublicInput_acceptsAlignedPayload() public {
+    function test_requireScoreMatchesPublicInput_acceptsAlignedPayload() public pure {
         uint256[] memory inputs = new uint256[](7);
         inputs[6] = 23;
-        _requireMatch(1797, inputs);
+
+        ScoreEncoding.requireScoreMatchesPublicInput(1797, inputs);
     }
 
     function test_requireScoreMatchesPublicInput_revertsOnMismatch() public {
@@ -21,7 +22,7 @@ contract ScoreEncodingTest is Test {
         inputs[6] = 23;
 
         vm.expectRevert(abi.encodeWithSelector(ScoreEncoding.ScoreMismatch.selector, 6200, 1797));
-        _requireMatch(6200, inputs);
+        ScoreEncoding.requireScoreMatchesPublicInput(6200, inputs);
     }
 
     function test_requireScoreMatchesPublicInput_revertsOnWrongLength() public {
@@ -30,16 +31,7 @@ contract ScoreEncodingTest is Test {
         vm.expectRevert(
             abi.encodeWithSelector(PublicInputLayout.InvalidPublicInputs.selector, 7, 3)
         );
-        _requireMatch(1000, inputs);
-    }
-
-    function _requireMatch(uint256 scoreBps, uint256[] memory inputs) internal pure {
-        uint256[] calldataInputs;
-        assembly {
-            calldataInputs.offset := inputs
-            calldataInputs.length := mload(inputs)
-        }
-        ScoreEncoding.requireScoreMatchesPublicInput(scoreBps, calldataInputs);
+        ScoreEncoding.requireScoreMatchesPublicInput(1000, inputs);
     }
 
     function testFuzz_roundTrip_limbToBps(uint256 limb) public pure {
