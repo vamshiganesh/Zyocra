@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from zyocra_bench.config import (
+    CIRCOM_HEAD_HIDDEN_DIM,
+    CIRCOM_HEAD_LORA_RANK,
+    EZKL_FULL_MATMUL_COUNT,
     EZKL_COMPILED,
     EZKL_DEMO,
     EZKL_PK,
@@ -21,7 +24,7 @@ from zyocra_bench.config import (
     PROVE_RUNS,
     PYTHON,
 )
-from zyocra_bench.timing import median_runs, run_once
+from zyocra_bench.timing import run_aggregate
 
 
 def _require(path: Path, hint: str) -> None:
@@ -71,7 +74,7 @@ def collect_ezkl(*, refresh_prove: bool = False) -> dict[str, Any]:
     prove_script = EZKL_ROOT / "scripts" / "prove.py"
     verify_script = EZKL_ROOT / "scripts" / "verify.py"
 
-    prove_stats = median_runs([py, str(prove_script)], PROVE_RUNS, cwd=EZKL_ROOT)
+    prove_agg = run_aggregate([py, str(prove_script)], PROVE_RUNS, cwd=EZKL_ROOT)
 
     t0 = time.perf_counter()
     ok = _verify_via_python()
@@ -95,13 +98,18 @@ def collect_ezkl(*, refresh_prove: bool = False) -> dict[str, Any]:
         },
         "constraint_count": circuit["num_rows"],
         "constraint_count_secondary": circuit["total_assignments"],
+        "matmul_count": EZKL_FULL_MATMUL_COUNT,
         "constraint_metric_note": "num_rows from settings.json (EZKL PLONK rows); total_assignments also reported",
-        "prove_ms_median": round(prove_stats.wall_ms, 2),
+        "prove_ms_median": round(prove_agg.wall_ms_median, 2),
+        "prove_ms_min": round(prove_agg.wall_ms_min, 2),
+        "prove_ms_max": round(prove_agg.wall_ms_max, 2),
+        "prove_ms_stdev": prove_agg.wall_ms_stdev,
         "prove_runs": PROVE_RUNS,
         "verify_ms": round(verify_ms, 2),
         "verify_kind": "off_chain_ezkl",
         "proof_size_bytes": EZKL_PROOF.stat().st_size,
-        "peak_rss_kb": prove_stats.peak_rss_kb,
+        "peak_rss_kb": prove_agg.peak_rss_kb,
+        "public_input_count": 7,
         "score_float_witness": score_float,
         "available": True,
     }

@@ -18,6 +18,16 @@ class RunStats:
     stderr: str
 
 
+@dataclass(frozen=True)
+class AggregatedStats:
+    wall_ms_median: float
+    wall_ms_min: float
+    wall_ms_max: float
+    wall_ms_stdev: float | None
+    peak_rss_kb: int | None
+    runs: int
+
+
 _TIME_BIN = Path("/usr/bin/time")
 
 
@@ -26,7 +36,6 @@ def _parse_time_v(stderr: str) -> tuple[float | None, int | None]:
     rss = None
     for line in stderr.splitlines():
         if "Elapsed (wall clock)" in line:
-            # e.g. Elapsed (wall clock) time (h:mm:ss or m:ss): 0.12
             m = re.search(r"(\d+):(\d{2}(?:\.\d+)?)$", line.strip())
             if m:
                 elapsed = float(m.group(1)) * 60 + float(m.group(2))
@@ -59,17 +68,34 @@ def run_once(cmd: list[str], cwd: Path | None = None) -> RunStats:
     return RunStats(wall_ms=wall_ms, peak_rss_kb=None, exit_code=proc.returncode, stderr=proc.stderr)
 
 
+def aggregate_runs(results: list[RunStats]) -> AggregatedStats:
+    walls = [r.wall_ms for r in results]
+    rss_vals = [r.peak_rss_kb for r in results if r.peak_rss_kb is not None]
+    stdev = float(statistics.stdev(walls)) if len(walls) > 1 else None
+    return AggregatedStats(
+        wall_ms_median=float(statistics.median(walls)),
+        wall_ms_min=float(min(walls)),
+        wall_ms_max=float(max(walls)),
+        wall_ms_stdev=round(stdev, 2) if stdev is not None else None,
+        peak_rss_kb=int(statistics.median(rss_vals)) if rss_vals else None,
+        runs=len(results),
+    )
+
+
 def median_runs(cmd: list[str], runs: int, cwd: Path | None = None) -> RunStats:
+    """Backward-compatible median stats for a command."""
+    agg = run_aggregate(cmd, runs, cwd=cwd)
+    return RunStats(
+        wall_ms=agg.wall_ms_median,
+        peak_rss_kb=agg.peak_rss_kb,
+        exit_code=0,
+        stderr="",
+    )
+
+
+def run_aggregate(cmd: list[str], runs: int, cwd: Path | None = None) -> AggregatedStats:
     results = [run_once(cmd, cwd=cwd) for _ in range(runs)]
     if any(r.exit_code != 0 for r in results):
         bad = next(r for r in results if r.exit_code != 0)
         raise RuntimeError(f"command failed ({bad.exit_code}): {' '.join(cmd)}\n{bad.stderr}")
-
-    walls = [r.wall_ms for r in results]
-    rss_vals = [r.peak_rss_kb for r in results if r.peak_rss_kb is not None]
-    return RunStats(
-        wall_ms=float(statistics.median(walls)),
-        peak_rss_kb=int(statistics.median(rss_vals)) if rss_vals else None,
-        exit_code=0,
-        stderr="",
-    )
+    return aggregate_runs(results)

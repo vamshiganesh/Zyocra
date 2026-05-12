@@ -40,10 +40,27 @@ CIRCOM_VERIFIER = CIRCOM_ROOT / "verifiers" / "LoraHeadVerifier.sol"
 PYTHON = ML_ROOT / ".venv" / "bin" / "python"
 
 # Benchmark protocol
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 PROVE_RUNS = 3
 SAMPLE_INDEX = 0
+SAMPLE_INDICES = [0, 1, 2, 3]
 EPOCH_LABEL = "epoch-2026-041"
+
+# Workload op counts for normalized metrics
+EZKL_FULL_MATMUL_COUNT = 3
+CIRCOM_HEAD_LORA_RANK = 4
+CIRCOM_HEAD_HIDDEN_DIM = 8
+
+# EZKL head-only subgraph (comparable to Circom head)
+EZKL_HEAD_ROOT = EZKL_ROOT / "head"
+EZKL_HEAD_ONNX = EZKL_HEAD_ROOT / "onnx" / "zyocra-head-v1.onnx"
+EZKL_HEAD_SETTINGS = EZKL_HEAD_ROOT / "settings" / "settings.json"
+EZKL_HEAD_COMPILED = EZKL_HEAD_ROOT / "settings" / "network.ezkl"
+EZKL_HEAD_WITNESS = EZKL_HEAD_ROOT / "witnesses" / "witness.json"
+EZKL_HEAD_PROOF = EZKL_HEAD_ROOT / "proofs" / "proof.json"
+EZKL_HEAD_PK = EZKL_HEAD_ROOT / "keys" / "pk.key"
+EZKL_HEAD_VK = EZKL_HEAD_ROOT / "keys" / "vk.key"
+EZKL_HEAD_SRS = EZKL_HEAD_ROOT / "keys" / "kzg.srs"
 
 LATEST_JSON = RAW_DIR / "bench-latest.json"
 FE_PUBLIC_BENCH = REPO_ROOT / "frontend" / "public" / "data" / "bench-latest.json"

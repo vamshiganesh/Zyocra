@@ -9,6 +9,8 @@ from typing import Any
 
 from zyocra_bench.config import (
     CIRCOM_FIXTURE,
+    CIRCOM_HEAD_HIDDEN_DIM,
+    CIRCOM_HEAD_LORA_RANK,
     CIRCOM_PROOF,
     CIRCOM_PUBLIC,
     CIRCOM_R1CS,
@@ -18,7 +20,7 @@ from zyocra_bench.config import (
     CIRCOM_ZKEY,
     PROVE_RUNS,
 )
-from zyocra_bench.timing import median_runs, run_once
+from zyocra_bench.timing import run_aggregate, run_once
 
 
 def _npx_snarkjs(*args: str) -> subprocess.CompletedProcess[str]:
@@ -87,7 +89,7 @@ def collect_circom(*, refresh_prove: bool = False) -> dict[str, Any]:
     if refresh_prove or not CIRCOM_PROOF.is_file():
         subprocess.run(["bash", str(CIRCOM_ROOT / "scripts" / "prove.sh")], cwd=CIRCOM_ROOT, check=True)
 
-    prove_stats = median_runs(
+    prove_agg = run_aggregate(
         ["bash", str(CIRCOM_ROOT / "scripts" / "prove.sh")],
         PROVE_RUNS,
         cwd=CIRCOM_ROOT,
@@ -117,13 +119,20 @@ def collect_circom(*, refresh_prove: bool = False) -> dict[str, Any]:
         },
         "constraint_count": r1cs.get("constraints"),
         "constraint_count_secondary": _nonlinear_constraints(),
+        "matmul_count": 1,
+        "lora_rank_ops": CIRCOM_HEAD_LORA_RANK,
+        "hidden_dim": CIRCOM_HEAD_HIDDEN_DIM,
         "constraint_metric_note": "R1CS constraints from snarkjs r1cs info; secondary = non-linear (circom compiler)",
-        "prove_ms_median": round(prove_stats.wall_ms, 2),
+        "prove_ms_median": round(prove_agg.wall_ms_median, 2),
+        "prove_ms_min": round(prove_agg.wall_ms_min, 2),
+        "prove_ms_max": round(prove_agg.wall_ms_max, 2),
+        "prove_ms_stdev": prove_agg.wall_ms_stdev,
         "prove_runs": PROVE_RUNS,
         "verify_ms": round(t0_proc.wall_ms, 2),
         "verify_kind": "off_chain_snarkjs_groth16",
         "proof_size_bytes": CIRCOM_PROOF.stat().st_size,
-        "peak_rss_kb": prove_stats.peak_rss_kb,
+        "peak_rss_kb": prove_agg.peak_rss_kb,
+        "public_input_count": 9,
         "logit_acc_public": logit_acc,
         "available": True,
     }
