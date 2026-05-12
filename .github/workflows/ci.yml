@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Zyocra/contracts
+        working-directory: contracts
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,9 +26,6 @@ jobs:
   python:
     name: Python tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: Zyocra
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: Zyocra/frontend
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -73,7 +70,7 @@ jobs:
         with:
           node-version: "20"
           cache: pnpm
-          cache-dependency-path: Zyocra/frontend/pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install and test
         run: |
@@ -84,9 +81,6 @@ jobs:
     name: Circom compile smoke
     runs-on: ubuntu-latest
     continue-on-error: true
-    defaults:
-      run:
-        working-directory: Zyocra
     steps:
       - uses: actions/checkout@v4
 
