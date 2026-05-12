@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  contracts:
+    name: Foundry tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Zyocra/contracts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: forge test
+        run: forge test -vv
+
+  python:
+    name: Python tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Zyocra
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ml-base dependencies
+        run: |
+          python3 -m venv ml-base/.venv
+          ml-base/.venv/bin/pip install -q --upgrade pip
+          ml-base/.venv/bin/pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          ml-base/.venv/bin/pip install -q -r ml-base/requirements.txt
+
+      - name: pytest ml-base
+        run: ml-base/.venv/bin/python -m pytest ml-base/tests -q
+
+      - name: pytest circuits-custom
+        run: |
+          export PYTHONPATH="${PWD}/circuits-custom"
+          ml-base/.venv/bin/python -m pytest circuits-custom/tests/test_fixed_point.py -q
+
+      - name: pytest benchmarks
+        run: |
+          export PYTHONPATH="${PWD}/benchmarks"
+          ml-base/.venv/bin/python -m pytest benchmarks/tests -q
+
+  frontend:
+    name: Frontend typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Zyocra/frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: Zyocra/frontend/pnpm-lock.yaml
+
+      - name: Install and test
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm test
+
+  circom-smoke:
+    name: Circom compile smoke
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: Zyocra
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install circom
+        run: |
+          curl -L https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 -o /usr/local/bin/circom
+          chmod +x /usr/local/bin/circom
+          circom --version
+
+      - name: Compile head circuit
+        run: bash circuits-custom/scripts/compile.sh

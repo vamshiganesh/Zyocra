@@ -61,11 +61,13 @@ contract IntegrationTest is Test {
     }
 
     function test_rejectedProofDoesNotAdvanceEpoch() public {
+        vm.prank(owner);
         oracle.submitScore(_payload(1, 51));
 
         vm.prank(owner);
         verifier.setVerifyResult(false);
 
+        vm.prank(owner);
         vm.expectRevert(RiskOracle.VerificationFailed.selector);
         oracle.submitScore(_payload(2, 64));
 
