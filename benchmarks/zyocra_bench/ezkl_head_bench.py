@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 from zyocra_bench.config import (
+    CIRCOM_FIXTURE,
     EZKL_HEAD_COMPILED,
     EZKL_HEAD_PK,
     EZKL_HEAD_PROOF,
@@ -18,6 +22,7 @@ from zyocra_bench.config import (
     EZKL_HEAD_VK,
     EZKL_HEAD_WITNESS,
     EZKL_ROOT,
+    ML_ROOT,
     PROVE_RUNS,
     PYTHON,
 )
@@ -47,32 +52,45 @@ def _ensure_head_artifacts() -> None:
     prepare = EZKL_ROOT / "scripts" / "prepare_head.py"
     if not prepare.is_file():
         raise FileNotFoundError("prepare_head.py missing")
-    import subprocess
-
     py = str(PYTHON) if PYTHON.is_file() else sys.executable
     subprocess.run([py, str(prepare)], cwd=EZKL_ROOT, check=True)
 
 
+def _head_input_json() -> Path:
+    witness_input = EZKL_HEAD_ROOT / "settings" / "head-input.json"
+    if witness_input.is_file():
+        return witness_input
+
+    if CIRCOM_FIXTURE.is_file():
+        hidden = np.array(json.loads(CIRCOM_FIXTURE.read_text(encoding="utf-8"))["hidden"], dtype=np.float64)
+        hidden_f = (hidden / 128.0).reshape(1, -1).astype(np.float32)
+    else:
+        hidden_f = np.zeros((1, 8), dtype=np.float32)
+
+    payload = {"input_data": [hidden_f.reshape(-1).tolist()]}
+    witness_input.parent.mkdir(parents=True, exist_ok=True)
+    witness_input.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return witness_input
+
+
 def collect_ezkl_head(*, refresh_prove: bool = False) -> dict[str, Any]:
     """Measure EZKL head-only path; builds artifacts on first run if checkpoint exists."""
+    head_onnx = ML_ROOT / "artifacts" / "onnx" / "zyocra-head-v1.onnx"
+    if not head_onnx.is_file():
+        raise FileNotFoundError(
+            f"missing {head_onnx} — run ml-base/scripts/export_head_onnx.py first"
+        )
+
     _ensure_head_artifacts()
     _require(EZKL_HEAD_COMPILED, "run circuits-baseline/scripts/prepare_head.py")
     _require(EZKL_HEAD_PK, "run circuits-baseline/scripts/prepare_head.py")
 
     sys.path.insert(0, str(EZKL_ROOT))
-    from zyocra_ezkl.pipeline import gen_witness, prove, verify, write_input_json
+    from zyocra_ezkl.pipeline import gen_witness, prove, verify
 
-    witness_input = EZKL_HEAD_ROOT / "settings" / "head-input.json"
-    if not witness_input.is_file():
-        sys.path.insert(0, str(EZKL_ROOT.parent / "circuits-custom"))
-        from zyocra_circom.weights import _hidden_from_checkpoint  # noqa: PLC2701
-
-        hidden = _hidden_from_checkpoint(
-            EZKL_ROOT.parent / "ml-base" / "artifacts" / "models" / "zyocra-risk-mlp-v1.pt",
-            sample_index=0,
-        )
-        hidden_f = (hidden.astype(float) / 128.0).reshape(1, -1)
-        write_input_json(hidden_f, witness_input)
+    witness_input = _head_input_json()
+    EZKL_HEAD_WITNESS.parent.mkdir(parents=True, exist_ok=True)
+    EZKL_HEAD_PROOF.parent.mkdir(parents=True, exist_ok=True)
 
     if not EZKL_HEAD_WITNESS.is_file() or refresh_prove:
         gen_witness(
@@ -97,7 +115,20 @@ def collect_ezkl_head(*, refresh_prove: bool = False) -> dict[str, Any]:
     py = str(PYTHON) if PYTHON.is_file() else sys.executable
     prove_script = EZKL_ROOT / "scripts" / "prove.py"
     prove_agg = run_aggregate(
-        [py, str(prove_script), "--witness", str(EZKL_HEAD_WITNESS), "--proof", str(EZKL_HEAD_PROOF)],
+        [
+            py,
+            str(prove_script),
+            "--witness",
+            str(EZKL_HEAD_WITNESS),
+            "--compiled",
+            str(EZKL_HEAD_COMPILED),
+            "--pk",
+            str(EZKL_HEAD_PK),
+            "--proof",
+            str(EZKL_HEAD_PROOF),
+            "--srs",
+            str(EZKL_HEAD_SRS),
+        ],
         PROVE_RUNS,
         cwd=EZKL_ROOT,
     )
@@ -128,7 +159,7 @@ def collect_ezkl_head(*, refresh_prove: bool = False) -> dict[str, Any]:
         "prove_runs": PROVE_RUNS,
         "verify_ms": round(verify_ms, 2),
         "verify_kind": "off_chain_ezkl",
-        "proof_size_bytes": EZKL_HEAD_PROOF.stat().st_size if EZKL_HEAD_PROOF.is_file() else None,
+        "proof_size_bytes": EZKL_HEAD_PROOF.stat().st_size,
         "peak_rss_kb": prove_agg.peak_rss_kb,
         "available": True,
     }

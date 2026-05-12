@@ -28,7 +28,10 @@ def write_csv(report: dict[str, Any], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     rows = report.get("metrics", [])
     with path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=["metric", "unit", "ezkl", "circom", "notes"])
+        writer = csv.DictWriter(
+            fh,
+            fieldnames=["metric", "unit", "ezkl", "ezkl_head", "circom", "notes"],
+        )
         writer.writeheader()
         for row in rows:
             writer.writerow(
@@ -36,6 +39,7 @@ def write_csv(report: dict[str, Any], path: Path) -> None:
                     "metric": row["metric"],
                     "unit": row["unit"],
                     "ezkl": _fmt(row.get("ezkl")),
+                    "ezkl_head": _fmt(row.get("ezkl_head")),
                     "circom": _fmt(row.get("circom")),
                     "notes": row.get("notes", ""),
                 }

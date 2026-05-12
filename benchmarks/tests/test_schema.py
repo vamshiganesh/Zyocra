@@ -39,7 +39,7 @@ def test_assemble_report_has_limitations() -> None:
         accuracy={},
         errors=["partial"],
     )
-    assert report["schema_version"] == "1.0"
+    assert report["schema_version"] == "1.1"
     assert len(report["limitations"]) == len(LIMITATIONS)
     assert report["errors"] == ["partial"]
 

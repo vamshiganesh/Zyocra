@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,7 @@ from zyocra_bench.config import (
     EZKL_DEMO,
     EZKL_VALIDATION,
     ML_ROOT,
+    SAMPLE_INDEX,
 )
 
 
@@ -20,18 +22,60 @@ def _load_validation() -> dict[str, Any] | None:
     return json.loads(EZKL_VALIDATION.read_text(encoding="utf-8"))
 
 
+def _collect_head_alignment() -> dict[str, Any] | None:
+    if not CIRCOM_FIXTURE.is_file():
+        return None
+
+    import numpy as np
+
+    circuits_custom = str(ML_ROOT.parent / "circuits-custom")
+    if circuits_custom not in sys.path:
+        sys.path.insert(0, circuits_custom)
+
+    from zyocra_circom.config import ACTIVATION_SCALE, CHECKPOINT, WEIGHT_SCALE
+    from zyocra_circom.fixed_point import dequantize_logit, logit_accumulator
+    from zyocra_circom.weights import _head_tensors_from_checkpoint, _hidden_from_checkpoint  # noqa: PLC2701
+
+    payload = json.loads(CIRCOM_FIXTURE.read_text(encoding="utf-8"))
+    circom_logit_acc = int(payload["logit_acc"])
+
+    if not CHECKPOINT.is_file():
+        return {
+            "comparable": False,
+            "note": "ml-base checkpoint missing — cannot run forward alignment",
+            "circom_logit_acc": circom_logit_acc,
+        }
+
+    hidden = _hidden_from_checkpoint(CHECKPOINT, sample_index=SAMPLE_INDEX)
+    weight_base, lora_a, lora_b = _head_tensors_from_checkpoint(CHECKPOINT)
+    lora_b_mat = lora_b.reshape(4, 8)
+    ml_logit_acc = logit_accumulator(hidden, weight_base, lora_a, lora_b_mat)
+    ml_logit_float = dequantize_logit(ml_logit_acc, ACTIVATION_SCALE, WEIGHT_SCALE)
+
+    return {
+        "comparable": True,
+        "sample_index": SAMPLE_INDEX,
+        "ml_base_logit_acc": ml_logit_acc,
+        "ml_base_logit_float": ml_logit_float,
+        "circom_fixture_logit_acc": circom_logit_acc,
+        "integer_match": ml_logit_acc == circom_logit_acc,
+        "fixture_recompute_match": circom_logit_acc == payload["logit_acc"],
+    }
+
+
 def collect_accuracy() -> dict[str, Any]:
     """
     EZKL: full-model float vs fixed-point error from ml-base validation.
-    Circom: head logit dequant error vs Python reference on fixture hidden vector.
+    Circom: head logit integer check on fixture.
+    head_alignment: ml-base head forward vs Circom fixture on same hidden vector.
     """
     result: dict[str, Any] = {
         "ezkl_full_model": None,
         "circom_head_subgraph": None,
+        "head_alignment": None,
         "comparable_note": (
-            "EZKL proves the full graph score; Circom proves only the output-head "
-            "logit accumulator. Full-score accuracy is not directly comparable — "
-            "see circom_head_subgraph for head-layer numeric check."
+            "EZKL full graph proves end-to-end risk score; Circom proves output-head logit_acc. "
+            "Use head_alignment for apples-to-apples hidden→logit comparison on sample_index=0."
         ),
     }
 
@@ -79,5 +123,7 @@ def collect_accuracy() -> dict[str, Any]:
             "dequantized_logit": dequant,
             "recompute_match": acc == payload["logit_acc"],
         }
+
+    result["head_alignment"] = _collect_head_alignment()
 
     return result
