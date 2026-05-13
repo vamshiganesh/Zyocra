@@ -51,11 +51,16 @@ library CircomProofJsonLib {
   }
 
   function _loadPublicSignals(string memory publicJson) private pure returns (uint256[] memory publicInputs) {
-    string[] memory signals = publicJson.readStringArray("$");
-    publicInputs = new uint256[](signals.length);
-    for (uint256 i = 0; i < signals.length; i++) {
-      publicInputs[i] = _decimalStringToUint(signals[i]);
-    }
+    publicInputs = new uint256[](PUBLIC_INPUT_COUNT);
+    publicInputs[0] = publicJson.readUint("[0]");
+    publicInputs[1] = publicJson.readUint("[1]");
+    publicInputs[2] = publicJson.readUint("[2]");
+    publicInputs[3] = publicJson.readUint("[3]");
+    publicInputs[4] = publicJson.readUint("[4]");
+    publicInputs[5] = publicJson.readUint("[5]");
+    publicInputs[6] = publicJson.readUint("[6]");
+    publicInputs[7] = publicJson.readUint("[7]");
+    publicInputs[8] = publicJson.readUint("[8]");
   }
 
   function toFixedPublicInputs(uint256[] memory publicInputs) internal pure returns (uint256[9] memory fixedInputs) {
@@ -65,18 +70,5 @@ library CircomProofJsonLib {
     for (uint256 i = 0; i < PUBLIC_INPUT_COUNT; i++) {
       fixedInputs[i] = publicInputs[i];
     }
-  }
-
-  function _decimalStringToUint(string memory decimalString) private pure returns (uint256) {
-    bytes memory chars = bytes(decimalString);
-    uint256 value;
-    for (uint256 i = 0; i < chars.length; i++) {
-      uint8 ch = uint8(chars[i]);
-      if (ch < uint8(bytes1("0")) || ch > uint8(bytes1("9"))) {
-        revert("CircomProofJsonLib: invalid decimal");
-      }
-      value = value * 10 + (ch - uint8(bytes1("0")));
-    }
-    return value;
   }
 }

@@ -25,7 +25,6 @@ contract CircomRiskScoreVerifier is IRiskScoreVerifier {
   /// @inheritdoc IRiskScoreVerifier
   function verify(bytes calldata proof, uint256[] calldata publicInputs)
     external
-    view
     returns (bool valid)
   {
     if (publicInputs.length != CircomProofJsonLib.PUBLIC_INPUT_COUNT) {
