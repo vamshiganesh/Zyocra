@@ -111,8 +111,8 @@ The consumer reads **only** scores that passed these checks for a verified epoch
 ### Operational
 
 - **Owner trust:** `owner` can rotate verifiers via `setVerifier` without timelock or governance in Phase 1.
-- **Submitter trust:** `submitScore` is permissionless; the first valid submission for a new epoch wins.
-- **Calldata consistency:** The oracle stores `payload.scoreBps` from calldata. It does **not** currently assert equality between `scoreBps` and the score encoded in `publicInputs` (EZKL output instance). Integrators must ensure off-chain alignment; on-chain binding is an open hardening item (see §9).
+- **Submitter trust:** `submitScore` requires `authorizedProvers[msg.sender]`; owner grants provers via `setAuthorizedProver`. Deploy-time owner is authorized by default.
+- **Calldata consistency:** `submitScore` asserts `payload.scoreBps == ScoreEncoding.scoreBpsFromEzklLimb(publicInputs[6])` after verification (7-element EZKL layout).
 - **Epoch semantics:** Epoch IDs are opaque monotonic counters; the contract does not validate wall-clock windows or calendar meaning.
 
 ### Out of scope for the oracle
