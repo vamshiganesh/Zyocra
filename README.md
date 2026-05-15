@@ -105,7 +105,7 @@ Zyocra separates **proof correctness** from **model quality** and **data honesty
 
 **Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
 
-**Known Phase 1 gaps:** `scoreBps` calldata is not cross-checked against proof public outputs on-chain; `applyVerifiedScore(borrower, …)` does not bind the borrower to proof inputs; `setVerifier` is owner-controlled without timelock.
+**Known Phase 1 gaps:** `applyVerifiedScore(borrower, …)` does not bind the borrower to proof inputs; `setVerifier` is owner-controlled without timelock; Circom path is not wired to `RiskOracle.submitScore` (adapter deployed standalone).
 
 Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
 

@@ -243,14 +243,14 @@ Benchmark scripts are first-class code (`benchmarks/zyocra_bench/`). Results sho
 
 ### High priority (implementation)
 
-1. **Bind `scoreBps` to `publicInputs` on-chain** — assert consistency with EZKL output instance before storing `ScoreRecord`.
+1. ~~**Bind `scoreBps` to `publicInputs` on-chain**~~ — **Done** (`ScoreEncoding` + `PublicInputLayout` in `RiskOracle.submitScore`).
 2. **Borrower / identity binding** — if per-borrower scores are required, extend public inputs and oracle schema.
 3. **Verifier governance** — timelock, multisig, or immutable verifier for production; document upgrade path for `setVerifier`.
-4. **Circom oracle adapter** — `IRiskScoreVerifier` wrapper for Groth16; clarify hybrid architecture (backbone trust + head proof).
+4. ~~**Circom oracle adapter**~~ — **Done** (`CircomRiskScoreVerifier` + `CircomProofJsonLib`); full `RiskOracle` wiring deferred (logit_acc vs scoreBps semantics).
 
 ### Medium priority
 
-5. **Access control on `submitScore`** — authorized prover set or stake/slash model.
+5. ~~**Access control on `submitScore`**~~ — **Done** (`authorizedProvers` + `setAuthorizedProver`).
 6. **Epoch time windows** — optional `validUntil` or minimum block spacing per epoch.
 7. **Feature commitment** — hash feature vector in public inputs with explicit layout versioning.
 8. **Consumer authorization** — restrict who may call `applyVerifiedScore` or tie to oracle events.
@@ -269,7 +269,7 @@ Benchmark scripts are first-class code (`benchmarks/zyocra_bench/`). Results sho
 | Layer | Trusts | Does not trust |
 |-------|--------|----------------|
 | **Proof** | Arithmetic, commitments in circuit, verifier soundness | Data sources, model quality, economic optimality |
-| **Oracle** | Verifier impl, deploy-time hashes, monotonic epochs | Submitter identity, calldata/score alignment (today), feature honesty |
+| **Oracle** | Verifier impl, deploy-time hashes, monotonic epochs, score↔public-input binding, authorized provers | Submitter identity beyond ACL, feature honesty, borrower in proof |
 | **Consumer** | Oracle verified scores, hard-coded policy | Borrower-feature linkage, position state, liquidation safety |
 | **Benchmarks** | Scripted harness, pinned versions | Cross-workload equivalence, statistical robustness |
 
