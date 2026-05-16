@@ -131,15 +131,27 @@ Root `make test` runs the Python tests when `circuits-custom/tests` is present.
 | Verifier | Halo2 / KZG (`Halo2Verifier.sol`) | Groth16 (`LoraHeadVerifier.sol`) |
 | Goal | End-to-end oracle demo | Constraint / prover economics benchmark |
 
-Milestone 5 compares both on constraints, RAM, prove time, verify gas, proof size, and quantization error.
+Milestone 5 compares both on constraints, RAM, prove time, verify gas, proof size, and quantization error. See also `workloads.ezkl_head` (comparable head subgraph) and `workloads.hybrid` in `bench-latest.json`.
 
 ## Solidity verifier
 
-`scripts/export_verifier.sh` writes `verifiers/LoraHeadVerifier.sol`. Integration with `RiskOracle` (via a thin `IRiskScoreVerifier` adapter) is a follow-up — the verifier is exported and ready for Foundry import.
+`scripts/export_verifier.sh` writes `verifiers/LoraHeadVerifier.sol` (GPL-3.0, snarkjs-generated).
+
+### Oracle integration (v0.4)
+
+| Component | Role |
+|-----------|------|
+| `CircomRiskScoreVerifier` | `IRiskScoreVerifier` adapter; proof bytes = `abi.encode(pA, pB, pC)` with EVM pi_b layout |
+| `CircomProofJsonLib` | Parse `proof.json` + `public.json` for tests and tooling |
+| `DeployCircom.s.sol` | Deploy Groth16 verifier + adapter (no `RiskOracle` wiring yet) |
+
+**Public layout:** `hidden[8]` + `logit_acc` (9 signals). **Not wired to `RiskOracle`** because the oracle stores `scoreBps` (post-sigmoid) while Circom proves `logit_acc`. Hybrid architecture: trust backbone hidden vector off-chain, prove head on-chain — see `docs/benchmarks.md` hybrid mode.
+
+**License:** Groth16 verifier is GPL-3.0; MIT adapter imports it for dev/benchmark only.
 
 ## Further work
 
 - Optional in-circuit bias with fixed-point rescale
 - Piecewise-linear sigmoid gadget (if benchmark scope expands)
-- `CircomRiskScoreVerifier` adapter + Anvil deploy script
-- Populate `benchmarks/raw-results/circom-*.json` in Milestone 5
+- `RiskOracle` v2 with Circom score semantics or on-chain sigmoid approx
+- Borrower binding in public inputs

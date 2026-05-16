@@ -12,9 +12,15 @@ contracts/
 │   │   └── IRiskScoreVerifier.sol   # verifier adapter (EZKL / Circom hookup)
 │   ├── libraries/
 │   │   ├── RiskBuckets.sol          # score → bucket thresholds
-│   │   └── RiskPolicies.sol         # bucket → collateral parameters
+│   │   ├── RiskPolicies.sol         # bucket → collateral parameters
+│   │   ├── PublicInputLayout.sol    # EZKL public input indices
+│   │   ├── ScoreEncoding.sol        # Q8.8 limb ↔ scoreBps
+│   │   ├── ProofJsonLib.sol         # EZKL proof.json parser
+│   │   └── CircomProofJsonLib.sol   # snarkjs Groth16 parser
 │   ├── verifiers/
-│   │   └── StubRiskScoreVerifier.sol  # local dev stub (Phase 1 only)
+│   │   ├── StubRiskScoreVerifier.sol    # local dev stub
+│   │   ├── EzklRiskScoreVerifier.sol    # Halo2 adapter
+│   │   └── CircomRiskScoreVerifier.sol  # Groth16 adapter (standalone)
 │   ├── RiskOracle.sol
 │   └── RiskConsumer.sol
 ├── script/
@@ -37,6 +43,8 @@ Stores verified liquidation-risk scores after proof verification.
 | Persist commitments | `modelHash`, `adapterHash`, `epoch`, `scoreBps`, `timestamp`, `blockNumber` |
 | Expose getters | `latestEpoch`, `getLatestScore`, `getScoreByEpoch`, `isEpochVerified` |
 | Verifier gate | Calls `IRiskScoreVerifier.verify(proof, publicInputs)` before storage |
+| Score binding | `scoreBps` must match EZKL public output limb at index 6 (`ScoreEncoding`) |
+| Prover ACL | `authorizedProvers`; owner `setAuthorizedProver(address, bool)` |
 | Stale protection | Rejects `epoch <= latestEpoch` |
 | Hash binding | Submissions must match immutable `committedModelHash` / `committedAdapterHash` |
 | Verifier rotation | Owner `setVerifier(address)` for EZKL/Circom rollout |
