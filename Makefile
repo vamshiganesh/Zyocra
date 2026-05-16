@@ -22,6 +22,11 @@ lint: ## Lightweight local lint (shell syntax, forge fmt, pnpm lint, optional ru
 benchmark: ## Run EZKL vs Circom benchmark harness (writes bench-latest.* + plots)
 	@./scripts/benchmark.sh
 
+head-benchmark: ## Export EZKL head ONNX, compile, and run full benchmark with ezkl_head row
+	@cd ml-base && .venv/bin/python scripts/export_head_onnx.py
+	@cd circuits-baseline && ../ml-base/.venv/bin/python scripts/prepare_head.py
+	@./scripts/benchmark.sh
+
 check-tools: ## Print versions of host tools and ml-base venv packages
 	@echo "node:    $$(node -v 2>/dev/null || echo missing)"
 	@echo "pnpm:    $$(pnpm -v 2>/dev/null || echo missing)"

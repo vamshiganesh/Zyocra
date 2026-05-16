@@ -45,20 +45,23 @@ make head-benchmark   # includes ezkl_head row in bench-latest.json
 | Peak RSS (KB) | `/usr/bin/time -v` on prove | same |
 | Verify gas | `BenchmarkGasTest` EZKL | `BenchmarkGasTest` Circom |
 | Accuracy | ml-base validation (full model) | head fixture integer recompute |
+| Head alignment | `accuracy.head_alignment` (ml-base vs Circom on same hidden) | same |
+| Normalized | constraints/matmul, gas/public input | constraints/matmul, constraints/rank |
 
 ## Normalized JSON schema
 
 `bench-latest.json` top-level fields:
 
-- `schema_version` — `"1.0"`
+- `schema_version` — `"1.1"`
 - `kind` — `"zyocra_benchmark"`
 - `environment` — host, CPU count, tool versions
-- `methodology` — sample index, prove runs, measurement policy
-- `workloads.ezkl` / `workloads.circom` — per-path raw measurements
+- `methodology` — sample indices, prove runs, measurement policy
+- `workloads.ezkl` / `workloads.ezkl_head` / `workloads.circom` / `workloads.hybrid`
 - `gas` — EVM verifier gas from Foundry
-- `accuracy` — quantization error where defined
-- `metrics` — flat table (also exported as CSV)
+- `accuracy` — full-model error + `head_alignment` comparable check
+- `metrics` — flat table with `ezkl_head` column (also exported as CSV)
 - `limitations` — explicit non-comparability notes
+- `raw-results/env-latest.txt` — pinned environment summary
 
 ## Methodology
 
@@ -84,7 +87,7 @@ Pinned in `environment.tools` and `environment.python_packages`:
 
 ### Assumptions
 
-- **Sample size:** one borrower vector (`sample_index=0`, epoch `2026-041`); prove timing uses **3 runs** (median).
+- **Sample size:** `sample_indices=[0,1,2,3]` recorded in methodology; prove timing uses **3 runs** (median + stdev).
 - **Quantization:** Q8.8 — `activation_scale=128`, `weight_scale=256` (matches `ml-base`).
 - **Public I/O:** EZKL uses settings visibility; Circom exposes `hidden[8]` + `logit_acc` publicly.
 - **Gas:** standalone `verify()` on deployed verifiers — not full `RiskOracle.submitScore` calldata.
@@ -103,11 +106,11 @@ Constraint count and prove time **are not end-to-end equivalent**. The research 
 
 1. Different proof systems: EZKL Halo2/KZG vs Circom Groth16 — verify gas and proof size are not directly comparable across curves/PCSs.
 2. EZKL `num_rows` ≠ Circom R1CS constraint count — different definitions; table includes notes per metric.
-3. Accuracy: EZKL reports full-model float vs fixed-point error on the test split; Circom reports integer recompute on a single head fixture — **not the same score endpoint**.
+3. Accuracy: EZKL full-model error on test split; use `accuracy.head_alignment` for comparable hidden→logit check.
 4. Local Circom `pot12` ceremony is for development benchmarks only.
 5. Peak RSS unavailable without `/usr/bin/time` (non-Linux hosts).
-6. No confidence intervals — medians of 3 runs on one machine.
-7. Oracle integration gas (storage, events) excluded.
+6. Prove stdev reported but not full multi-sample witness loops across all indices yet.
+7. Oracle integration gas (storage, events, score binding) excluded from gas table.
 
 ## Architecture
 
@@ -116,11 +119,13 @@ benchmarks/scripts/run.sh
         │
         ▼
 zyocra_bench/runner.py
-        ├── env.py           # host + versions
-        ├── ezkl_bench.py    # EZKL metrics
+        ├── env.py           # host + versions + env-latest.txt
+        ├── ezkl_bench.py    # EZKL full metrics
+        ├── ezkl_head_bench.py  # comparable head subgraph
         ├── circom_bench.py  # Circom metrics + gas-input.json
+        ├── hybrid_bench.py  # amortized hybrid cost model
         ├── gas_bench.py     # forge test BenchmarkGasTest
-        ├── accuracy.py      # ml-base + fixture checks
+        ├── accuracy.py      # ml-base + head_alignment
         ├── schema.py        # normalized report + limitations
         └── report.py        # JSON, CSV, MD, SVG
 ```
