@@ -88,7 +88,9 @@ Zyocra/
 | Milestone 2 — EZKL baseline | Done (`circuits-baseline/`, Halo2 verifier, e2e) |
 | Milestone 3 — Custom Circom | Done (`lora_output_head`, Groth16 pipeline) |
 | Milestone 4 — Consumer integration | Done (`RiskOracle` + `RiskConsumer`, Foundry tests) |
-| Milestone 5 — Benchmarks + report | Done (`make benchmark`, `docs/benchmarks.md`) |
+| Milestone 5 — Benchmarks + report | Done (`make benchmark`, `docs/technical-report.md`) |
+| CI (GitHub Actions) | Done (`.github/workflows/ci.yml`) |
+| Oracle hardening (score binding + prover ACL) | Done |
 | Demo UI + data binding | Done (live `phase1-demo.json`, `bench-latest.json`) |
 
 Roadmap: [`docs/roadmap.md`](docs/roadmap.md).
@@ -162,3 +164,17 @@ Full install and run commands: [`docs/setup.md`](docs/setup.md).
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+
+## Changelog
+
+### v0.4.0
+
+- **Security:** `RiskOracle` binds `scoreBps` to EZKL public output limb; `authorizedProvers` ACL on `submitScore`.
+- **Benchmarks:** normalized metrics, prove stdev, hybrid cost model, head alignment, optional EZKL head-only row (`make head-benchmark`).
+- **Contracts:** `CircomRiskScoreVerifier`, `CircomProofJsonLib`, `DeployCircom.s.sol`.
+- **CI:** GitHub Actions (Foundry, pytest, frontend tsc).
+- **Docs:** filled `docs/technical-report.md`.
+
+### v0.3.0
+
+- Frontend live data binding, benchmark harness, threat model polish.

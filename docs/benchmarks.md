@@ -23,6 +23,15 @@ Outputs land in `benchmarks/raw-results/bench-latest.{json,csv,md}` and `benchma
 ```bash
 bash benchmarks/scripts/run.sh --refresh-prove   # re-prove before timing
 bash benchmarks/scripts/run.sh --skip-gas          # skip Foundry gas tests
+bash benchmarks/scripts/run.sh --skip-ezkl-head    # skip comparable EZKL head row
+```
+
+### Comparable head subgraph (EZKL head)
+
+```bash
+cd ml-base && .venv/bin/python scripts/export_head_onnx.py
+cd circuits-baseline && ../ml-base/.venv/bin/python scripts/prepare_head.py
+make head-benchmark   # includes ezkl_head row in bench-latest.json
 ```
 
 ## Metrics
