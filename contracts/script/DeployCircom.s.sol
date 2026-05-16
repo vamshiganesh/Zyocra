@@ -34,9 +34,9 @@ contract DeployCircom is Script {
   }
 
   function _writeDeployment(Deployment memory d) internal {
-    string memory root = "deployment";
-    root = root.serialize("groth16Verifier", d.groth16Verifier);
-    root = root.serialize("circomAdapter", d.circomAdapter);
-    root.write("deployments/anvil-circom-latest.json");
+    string memory objectKey = "deployment";
+    objectKey.serialize("groth16Verifier", d.groth16Verifier);
+    string memory json = objectKey.serialize("circomAdapter", d.circomAdapter);
+    json.write("deployments/anvil-circom-latest.json");
   }
 }
