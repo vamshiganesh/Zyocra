@@ -78,7 +78,7 @@ contract IntegrationTest is Test {
 
     function _payload(uint64 epoch, uint256 scoreLimb)
         internal
-        view
+        pure
         returns (RiskOracle.ScoreUpdatePayload memory)
     {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);

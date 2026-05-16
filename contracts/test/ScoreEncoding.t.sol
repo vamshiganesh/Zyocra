@@ -22,11 +22,11 @@ contract ScoreEncodingTest is Test {
         assertEq(ScoreEncoding.scoreBpsFromEzklLimb(23), 1797);
     }
 
-    function test_requireScoreMatchesPublicInput_acceptsAlignedPayload() public {
+    function test_requireScoreMatchesPublicInput_acceptsAlignedPayload() public pure {
         uint256[] memory inputs = new uint256[](7);
         inputs[6] = 23;
 
-        harness.requireMatch(1797, inputs);
+        ScoreEncoding.requireScoreMatchesPublicInput(1797, inputs);
     }
 
     function test_requireScoreMatchesPublicInput_revertsOnMismatch() public {
