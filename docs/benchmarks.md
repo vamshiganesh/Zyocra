@@ -93,11 +93,16 @@ Pinned in `environment.tools` and `environment.python_packages`:
 - **Gas:** standalone `verify()` on deployed verifiers — not full `RiskOracle.submitScore` calldata.
 - **RAM:** peak resident set during prove subprocess only.
 
+### Hybrid mode
+
+`workloads.hybrid` models **one EZKL full-graph prove per epoch** plus **Circom head proves per update** (default 4 updates/epoch). Reports amortized `prove_time_ms_per_update`.
+
 ### Workload scope (critical)
 
 | Path | What is measured |
 |------|------------------|
-| EZKL | Full ONNX graph inference proof |
+| EZKL full | Full ONNX graph inference proof |
+| EZKL head | Head-only ONNX (`hidden[8]` → `logit`) — comparable to Circom |
 | Circom | LoRA output-head subgraph only (`lora_output_head.circom`) |
 
 Constraint count and prove time **are not end-to-end equivalent**. The research question is whether the structured subgraph is cheaper than embedding the same algebra inside a compiler-generated full graph.
