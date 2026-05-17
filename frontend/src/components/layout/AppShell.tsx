@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { DemoModeBanner } from "../product/DemoModeBanner";
-import { PipelineStrip } from "../product/PipelineStrip";
+import { PipelineChrome } from "../product/PipelineChrome";
 import { PIPELINE_SCREENS } from "../../config/screens";
 import { scrollToSection } from "../../lib/pipeline-tour";
 import { initNestedScrollbars } from "../../scrollbar/initScrollbar";
@@ -23,8 +22,12 @@ export function AppShell() {
   useEffect(() => {
     if (location.hash) {
       scrollToSection(location.hash);
+      return;
     }
-  }, [location.pathname, location.hash]);
+    if (pipelineScreen) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [location.pathname, location.hash, pipelineScreen]);
 
   return (
     <>

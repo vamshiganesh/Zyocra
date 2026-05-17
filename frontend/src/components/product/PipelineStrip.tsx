@@ -4,11 +4,12 @@ import "./product.css";
 
 type Props = {
   currentPath?: string;
+  compact?: boolean;
 };
 
-export function PipelineStrip({ currentPath }: Props) {
+export function PipelineStrip({ currentPath, compact = false }: Props) {
   return (
-    <ol className="pipeline-strip">
+    <ol className={`pipeline-strip${compact ? " pipeline-strip--compact" : ""}`}>
       {flowSteps.map((step) => (
         <li key={step.path}>
           <NavLink
