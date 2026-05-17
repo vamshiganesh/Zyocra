@@ -8,8 +8,29 @@ type Props = {
   onActiveChange?: (id: string) => void;
 };
 
+function LayerChevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      className="hero-layers__chevron"
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d={open ? "M3 9 L7 5 L11 9" : "M3 5 L7 9 L11 5"}
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function HeroLayerAccordion({ items, defaultOpen = 1, onActiveChange }: Props) {
-  const [openIndex, setOpenIndex] = useState(defaultOpen);
+  const [openIndex, setOpenIndex] = useState<number | null>(defaultOpen);
 
   const toggle = (index: number) => {
     const next = openIndex === index ? null : index;
@@ -38,9 +59,7 @@ export function HeroLayerAccordion({ items, defaultOpen = 1, onActiveChange }: P
                 <span className="hero-layers__index mono-label">{item.index}</span>
                 {item.title}
               </span>
-              <span className="hero-layers__chevron" aria-hidden="true">
-                {open ? "⌃" : "⌄"}
-              </span>
+              <LayerChevron open={open} />
             </button>
             {open ? (
               <ul className="hero-layers__bullets">

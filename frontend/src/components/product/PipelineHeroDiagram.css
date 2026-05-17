@@ -26,10 +26,10 @@
 
 .pipeline-diagram__label-text {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  fill: rgba(232, 227, 213, 0.4);
+  fill: rgba(232, 227, 213, 0.45);
 }
 
 .pipeline-diagram__label-text.is-active {

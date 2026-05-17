@@ -48,9 +48,12 @@
 
 .hero-layers__chevron {
   flex: 0 0 auto;
-  font-size: 0.85rem;
-  line-height: 1;
   color: var(--color-fog-faint);
+  transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+
+.hero-layers__item.is-open .hero-layers__chevron {
+  color: var(--color-fog-muted);
 }
 
 .hero-layers__bullets {
