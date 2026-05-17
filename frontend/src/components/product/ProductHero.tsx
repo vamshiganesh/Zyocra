@@ -47,7 +47,7 @@ export function ProductHero({
           />
         ) : null}
       </div>
-      {aside ? <div className="hero__aside">{aside}</div> : null}
+      {aside ? <div className="hero__aside hero__aside--diagram">{aside}</div> : null}
     </div>
   );
 }

@@ -57,6 +57,16 @@
   overflow: hidden;
 }
 
+.hero__aside--diagram {
+  padding: 0;
+  min-height: 100%;
+  align-self: stretch;
+  background-color: #181818;
+  background-image: radial-gradient(rgba(232, 227, 213, 0.055) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-left: 1px solid var(--color-line-dark);
+}
+
 .hero__aside-svg {
   width: min(100%, 16rem);
 }
