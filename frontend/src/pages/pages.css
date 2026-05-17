@@ -426,7 +426,8 @@
   }
 
   .hero__aside {
-    min-height: 20rem;
+    min-height: 22rem;
+    border-top: 1px solid var(--color-line-dark);
   }
 
   .feature-grid,

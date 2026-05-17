@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import type { HeroLayer } from "../../data/content";
 import { HeroLayerAccordion } from "./HeroLayerAccordion";
-import "./HeroLayerAccordion.css";
 
 type HeroProps = {
   eyebrow: string;
