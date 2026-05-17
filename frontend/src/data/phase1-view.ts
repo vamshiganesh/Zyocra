@@ -75,15 +75,15 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     {
       label: "Model hash",
       value: commitments.modelHashShort,
+      title: commitments.modelHash,
       mono: true,
-      hint: commitments.modelHash,
       description: "Committed ONNX graph identity registered on RiskOracle.",
     },
     {
       label: "Adapter hash",
       value: commitments.adapterHashShort,
+      title: commitments.adapterHash,
       mono: true,
-      hint: commitments.adapterHash,
       description: "LoRA adapter commitment for this scoring epoch.",
     },
     {

@@ -4,6 +4,8 @@ export type DataField = {
   value: string;
   /** Short note under the value (units, source) */
   hint?: string;
+  /** Native tooltip — e.g. full hash when value is abbreviated */
+  title?: string;
   /** What this field means — shown under the label */
   description?: string;
   mono?: boolean;

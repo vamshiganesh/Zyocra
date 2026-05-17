@@ -17,7 +17,7 @@ export function DataFieldGrid({ fields, columns = 2 }: Props) {
           ) : null}
           <dd
             className={`data-grid__value${field.mono ? " data-grid__value--mono" : ""}`}
-            title={field.mono ? (field.hint ?? field.value) : undefined}
+            title={field.title ?? (field.mono ? field.value : undefined)}
           >
             {field.value}
           </dd>
