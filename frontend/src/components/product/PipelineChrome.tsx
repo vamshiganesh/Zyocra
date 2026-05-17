@@ -5,8 +5,6 @@ import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { PipelineStrip } from "./PipelineStrip";
 import "./product.css";
 
-const META_HIDDEN_KEY = "zyocra-pipeline-meta-hidden";
-
 export function PipelineChrome() {
   const { pathname } = useLocation();
   const { status, view, reload } = usePhase1Data();
@@ -17,9 +15,6 @@ export function PipelineChrome() {
       ? PIPELINE_SCREENS[stepIndex + 1]
       : null;
   const [infoOpen, setInfoOpen] = useState(false);
-  const [metaHidden, setMetaHidden] = useState(
-    () => sessionStorage.getItem(META_HIDDEN_KEY) === "1",
-  );
   const infoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,12 +33,6 @@ export function PipelineChrome() {
     : null;
   const onChain = view?.raw.hasOnChain ?? false;
   const dataReady = status === "ready" && syncedAt;
-
-  const hideMeta = () => {
-    sessionStorage.setItem(META_HIDDEN_KEY, "1");
-    setMetaHidden(true);
-    setInfoOpen(false);
-  };
 
   return (
     <div className="pipeline-chrome">
@@ -96,7 +85,7 @@ export function PipelineChrome() {
                 </p>
                 {dataReady ? (
                   <p className="pipeline-chrome__popover-meta">
-                    <code>phase1-demo.json</code> · {syncedAt}
+                    <code>phase1-demo.json</code> · synced {syncedAt}
                     {onChain ? " · on-chain submission included" : " · off-chain only"}
                   </p>
                 ) : (
@@ -105,32 +94,11 @@ export function PipelineChrome() {
                     refresh.
                   </p>
                 )}
-                {!metaHidden ? (
-                  <button type="button" className="pipeline-chrome__popover-link" onClick={hideMeta}>
-                    Hide status line
-                  </button>
-                ) : null}
               </div>
             ) : null}
           </div>
         </div>
       </div>
-      {!metaHidden ? (
-        <p className="pipeline-chrome__meta mono-label">
-          <span>Read-only artifact replay</span>
-          <span className="pipeline-chrome__sep" aria-hidden="true">
-            ·
-          </span>
-          {dataReady ? (
-            <span>
-              synced {syncedAt}
-              {onChain ? " · on-chain" : ""}
-            </span>
-          ) : (
-            <span>run e2e_phase1.sh to populate</span>
-          )}
-        </p>
-      ) : null}
     </div>
   );
 }
