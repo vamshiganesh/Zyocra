@@ -242,6 +242,10 @@
 .epoch-table__mono {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .epoch-table__status {
