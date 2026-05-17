@@ -1,15 +1,29 @@
 import type { ReactNode } from "react";
-import "./product.css";
+import type { HeroLayer } from "../../data/content";
+import { HeroLayerAccordion } from "./HeroLayerAccordion";
+import "./HeroLayerAccordion.css";
 
 type HeroProps = {
   eyebrow: string;
   title: string;
   body: string;
   actions?: ReactNode;
+  layers?: HeroLayer[];
+  defaultLayerOpen?: number;
+  onLayerChange?: (id: string) => void;
   aside?: ReactNode;
 };
 
-export function ProductHero({ eyebrow, title, body, actions, aside }: HeroProps) {
+export function ProductHero({
+  eyebrow,
+  title,
+  body,
+  actions,
+  layers,
+  defaultLayerOpen = 1,
+  onLayerChange,
+  aside,
+}: HeroProps) {
   const titleLines = title.split("\n");
 
   return (
@@ -26,6 +40,13 @@ export function ProductHero({ eyebrow, title, body, actions, aside }: HeroProps)
         </h1>
         <p className="hero__body">{body}</p>
         {actions ? <div className="hero__actions">{actions}</div> : null}
+        {layers ? (
+          <HeroLayerAccordion
+            items={layers}
+            defaultOpen={defaultLayerOpen}
+            onActiveChange={onLayerChange}
+          />
+        ) : null}
       </div>
       {aside ? <div className="hero__aside">{aside}</div> : null}
     </div>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Shell } from "../components/layout/Shell";
 import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceholderPanel";
 import { DataStatus } from "../components/product/DataStatus";
@@ -19,15 +20,19 @@ export function OverviewPage() {
   const c = overviewCopy;
   const { status, error, reload, headlineMetrics, live } = usePipelineFields();
   const metrics = live && headlineMetrics ? headlineMetrics : benchmarkPlaceholders;
+  const [activeLayer, setActiveLayer] = useState(c.hero.layers[1]?.id ?? "prove");
 
   return (
     <div className="page">
-      <section className="band band--hero">
+      <section className="band band--hero band--hero-overview">
         <Shell>
           <ProductHero
             eyebrow={c.hero.eyebrow}
             title={c.hero.title}
             body={c.hero.body}
+            layers={c.hero.layers}
+            defaultLayerOpen={1}
+            onLayerChange={setActiveLayer}
             actions={
               <>
                 <PipelineStartButton variant="accent" size="lg">
@@ -38,7 +43,7 @@ export function OverviewPage() {
                 </ClippedButton>
               </>
             }
-            aside={<PipelineHeroDiagram />}
+            aside={<PipelineHeroDiagram activeStage={activeLayer} />}
           />
         </Shell>
       </section>

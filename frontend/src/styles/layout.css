@@ -131,7 +131,7 @@
   padding: 0 var(--page-pad-x);
 }
 
-.band--hero .shell__main {
+.band--hero-overview .shell__main {
   padding-top: 0;
   padding-bottom: 0;
 }

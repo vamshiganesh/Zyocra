@@ -1,29 +1,28 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
-  gap: clamp(var(--space-8), 3vw, var(--space-12));
+  grid-template-columns: minmax(0, 1.02fr) minmax(20rem, 1fr);
+  gap: 0;
   align-items: stretch;
-  min-height: min(72vh, 40rem);
+  min-height: min(88vh, 52rem);
 }
 
 .hero__copy {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-8)
-    clamp(var(--space-10), 5vw, var(--space-16)) 0;
+  padding: clamp(var(--space-12), 6vw, var(--space-20)) var(--space-10)
+    clamp(var(--space-12), 6vw, var(--space-20)) 0;
   border-right: 1px solid var(--color-line-dark);
 }
 
 .hero__eyebrow {
   color: var(--color-fog-muted);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
 }
 
 .hero__title {
-  /* Dispatch hero: Geist, ~72–80px, tracking -0.05em, line-height 1 */
   font-family: var(--font-sans);
-  font-size: clamp(2.75rem, 5.8vw, 4.75rem);
+  font-size: clamp(3rem, 6.2vw, 5.25rem);
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.05em;
@@ -33,10 +32,10 @@
 
 .hero__body {
   margin-top: var(--space-6);
-  max-width: 36rem;
+  max-width: 38rem;
   color: var(--color-fog-muted);
-  font-size: clamp(var(--text-md), 1.4vw, var(--text-lg));
-  line-height: 1.55;
+  font-size: clamp(var(--text-md), 1.5vw, 1.125rem);
+  line-height: 1.6;
 }
 
 .hero__actions {
@@ -48,28 +47,14 @@
 
 .hero__aside {
   position: relative;
-  border: 1px solid var(--color-line-dark);
-  background: var(--color-canvas-elevated);
-  min-height: 22rem;
+  border-left: 0;
+  background: #1a1a1a;
+  min-height: 26rem;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-  padding: clamp(var(--space-4), 2vw, var(--space-6));
+  padding: clamp(var(--space-6), 2.5vw, var(--space-10));
   overflow: hidden;
-}
-
-.hero__aside::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(
-    -45deg,
-    transparent,
-    transparent 2px,
-    rgba(232, 227, 213, 0.06) 2px,
-    rgba(232, 227, 213, 0.06) 3px
-  );
-  pointer-events: none;
 }
 
 .hero__aside-svg {
