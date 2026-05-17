@@ -11,7 +11,6 @@ import { ProofVerificationPage } from "./pages/ProofVerificationPage";
 import { ProtocolImpactPage } from "./pages/ProtocolImpactPage";
 import { RiskScorePage } from "./pages/RiskScorePage";
 import { ThreatModelPage } from "./pages/ThreatModelPage";
-import { TermsPage, PrivacyPage } from "./pages/LegalPages";
 import { UpdatesPage } from "./pages/UpdatesPage";
 
 export default function App() {

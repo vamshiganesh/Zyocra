@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { footerCopy } from "../../data/content";
 import { PipelineStartButton } from "../product/PipelineStartButton";
+import { LegalModal, type LegalKind } from "../ui/LegalModal";
 import "./SiteFooter.css";
 
 const pages = [

@@ -1,0 +1,90 @@
+.legal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6) var(--space-4);
+  background: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(4px);
+  animation: legal-modal-fade 180ms var(--ease-out);
+}
+
+@keyframes legal-modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.legal-modal__dialog {
+  width: min(100%, 40rem);
+  max-height: min(85vh, 44rem);
+  overflow: auto;
+  animation: legal-modal-rise 220ms var(--ease-out);
+}
+
+@keyframes legal-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.legal-modal__card {
+  margin: 0;
+}
+
+.legal-modal__header {
+  position: relative;
+  padding-right: 2.5rem;
+}
+
+.legal-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--color-line-light);
+  background: var(--color-surface-muted);
+  color: var(--color-ink);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.legal-modal__close:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.legal-modal__body {
+  margin-top: var(--space-4);
+  max-height: min(52vh, 28rem);
+  overflow: auto;
+  padding-right: var(--space-1);
+}
+
+.legal-modal__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
