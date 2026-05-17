@@ -42,7 +42,7 @@
       2,
       3
     ],
-    "timestamp_utc": "2026-07-07T11:08:35Z",
+    "timestamp_utc": "2026-07-07T11:04:06Z",
     "tools": {
       "circom": "circom compiler 2.2.3",
       "forge": "forge Version: 1.5.1-stable",
@@ -54,7 +54,7 @@
     }
   },
   "errors": [
-    "ezkl_head: Failed to run prove: [srs] failed to load srs from /home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/head/keys/kzg.srs"
+    "ezkl_head: missing /home/ubuntu/projects/zyocra/Zyocra/ml-base/artifacts/onnx/zyocra-head-v1.onnx \u2014 run ml-base/scripts/export_head_onnx.py first"
   ],
   "gas": {
     "circom_verify_gas": 244502,
@@ -101,40 +101,40 @@
       "unit": "count"
     },
     {
-      "circom": 1560.0,
-      "ezkl": 19480.0,
+      "circom": 1010.0,
+      "ezkl": 15930.0,
       "ezkl_head": null,
       "metric": "prove_time_ms",
       "notes": "median of 3 runs",
       "unit": "ms"
     },
     {
-      "circom": 68.07,
-      "ezkl": 1011.06,
+      "circom": 308.06,
+      "ezkl": 1725.47,
       "ezkl_head": null,
       "metric": "prove_time_stdev_ms",
       "notes": "sample stdev across prove runs",
       "unit": "ms"
     },
     {
-      "circom": 1600.0,
-      "ezkl": 331.02,
+      "circom": 820.0,
+      "ezkl": 327.78,
       "ezkl_head": null,
       "metric": "verify_time_ms",
       "notes": "off-chain verifier",
       "unit": "ms"
     },
     {
-      "circom": 804,
-      "ezkl": 21373,
+      "circom": 808,
+      "ezkl": 21476,
       "ezkl_head": null,
       "metric": "proof_size_bytes",
       "notes": "serialized proof file size",
       "unit": "bytes"
     },
     {
-      "circom": 189932,
-      "ezkl": 1765648,
+      "circom": 190176,
+      "ezkl": 1764296,
       "ezkl_head": null,
       "metric": "peak_rss_kb",
       "notes": "prove step peak RSS (Linux time -v)",
@@ -190,7 +190,7 @@
     }
   ],
   "schema_version": "1.1",
-  "timestamp_utc": "2026-07-07T11:08:35Z",
+  "timestamp_utc": "2026-07-07T11:04:06Z",
   "workloads": {
     "circom": {
       "artifacts": {
@@ -209,17 +209,17 @@
       "lora_rank_ops": 4,
       "matmul_count": 1,
       "path": "circom",
-      "peak_rss_kb": 189932,
-      "proof_size_bytes": 804,
-      "prove_ms_max": 1590.0,
-      "prove_ms_median": 1560.0,
-      "prove_ms_min": 1460.0,
-      "prove_ms_stdev": 68.07,
+      "peak_rss_kb": 190176,
+      "proof_size_bytes": 808,
+      "prove_ms_max": 1480.0,
+      "prove_ms_median": 1010.0,
+      "prove_ms_min": 900.0,
+      "prove_ms_stdev": 308.06,
       "prove_runs": 3,
       "public_input_count": 9,
       "scope": "LoRA output head only (8-dim hidden \u2192 logit_acc, rank-4 explicit A\u00b7B fusion)",
       "verify_kind": "off_chain_snarkjs_groth16",
-      "verify_ms": 1600.0
+      "verify_ms": 820.0
     },
     "ezkl": {
       "artifacts": {
@@ -234,31 +234,31 @@
       "constraint_metric_note": "num_rows from settings.json (EZKL PLONK rows); total_assignments also reported",
       "matmul_count": 3,
       "path": "ezkl",
-      "peak_rss_kb": 1765648,
-      "proof_size_bytes": 21373,
-      "prove_ms_max": 20860.0,
-      "prove_ms_median": 19480.0,
-      "prove_ms_min": 18890.0,
-      "prove_ms_stdev": 1011.06,
+      "peak_rss_kb": 1764296,
+      "proof_size_bytes": 21476,
+      "prove_ms_max": 18520.0,
+      "prove_ms_median": 15930.0,
+      "prove_ms_min": 15250.0,
+      "prove_ms_stdev": 1725.47,
       "prove_runs": 3,
       "public_input_count": 7,
       "scope": "Full ONNX graph (6\u219216\u21928\u21921 + sigmoid) via EZKL 23.0.5",
       "score_float_witness": 0.1796875,
       "verify_kind": "off_chain_ezkl",
-      "verify_ms": 331.02
+      "verify_ms": 327.78
     },
     "ezkl_head": null,
     "hybrid": {
-      "amortized_prove_ms_per_update": 6430.0,
+      "amortized_prove_ms_per_update": 4992.5,
       "assumptions": {
         "backbone_trust": "hidden vector from backbone is trusted input to head circuit",
         "ezkl_backbone_proxy": "EZKL full-graph prove time used as backbone cost proxy",
         "updates_per_epoch": 4
       },
-      "circom_head_prove_ms": 1560.0,
-      "ezkl_full_prove_ms": 19480.0,
+      "circom_head_prove_ms": 1010.0,
+      "ezkl_full_prove_ms": 15930.0,
       "scope": "Backbone once (EZKL full graph proxy) + Circom head per update",
-      "total_prove_ms_per_epoch": 25720.0
+      "total_prove_ms_per_epoch": 19970.0
     }
   }
 }

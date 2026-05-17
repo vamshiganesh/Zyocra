@@ -1,7 +1,7 @@
 {
   "benchmark": {
-    "note": "Run Milestone 5 benchmarks to populate EZKL vs Circom comparison rows.",
-    "populated": false
+    "note": "Run make benchmark from repo root. Workloads differ: EZKL full graph vs Circom head subgraph.",
+    "populated": true
   },
   "commitments": {
     "adapterHash": "0x5c840159cf800e89cc2fc5ff33164ec8aee75b5a20c7e15cbdc612c31d47993c",
@@ -22,7 +22,7 @@
   "epoch": {
     "id": "epoch-2026-041",
     "numeric": 2026041,
-    "status": "ready"
+    "status": "active"
   },
   "features": {
     "names": [
@@ -44,14 +44,14 @@
     ]
   },
   "hasArtifacts": true,
-  "hasOnChain": false,
+  "hasOnChain": true,
   "proof": {
     "artifactPath": "circuits-baseline/proofs/proof.json",
     "ezklVersion": "23.0.5",
-    "hashPrefix": "0x08df2311\u20265483c553",
+    "hashPrefix": "0x0273d592\u2026fbb87fd6",
     "lengthBytes": 3648,
     "offChainVerify": true,
-    "status": "generated"
+    "status": "verified"
   },
   "score": {
     "bps": 1797,
@@ -59,14 +59,14 @@
     "bucketRange": "0.00 \u2013 0.55",
     "float": 0.1796875
   },
-  "syncedAt": "2026-07-05T15:14:55Z",
+  "syncedAt": "2026-07-07T11:03:23Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0xb7f8bc63bbcad18155201308c8f3540b07f84f5e",
-    "halo2Verifier": "0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6",
-    "onChain": false,
-    "oracle": "0x610178da211fef7d417bc0e6fed39f05609ad788",
+    "consumer": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "halo2Verifier": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "onChain": true,
+    "oracle": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     "result": "pass",
-    "verifierAdapter": "0x8a791620dd6260079bf849dc5567adc3f2fdc318"
+    "verifierAdapter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
   }
 }

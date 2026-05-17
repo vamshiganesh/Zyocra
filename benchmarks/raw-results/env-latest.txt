@@ -1,0 +1,11 @@
+timestamp_utc: 2026-07-07T11:08:35Z
+platform: Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39
+hostname: DESKTOP-M7LTASU
+cpu_count: 8
+mem_total_kb: 8085716
+forge: forge Version: 1.5.1-stable
+circom: circom compiler 2.2.3
+node: v24.10.0
+python: Python 3.12.3
+ezkl: 23.0.5
+torch: 2.12.1+cpu

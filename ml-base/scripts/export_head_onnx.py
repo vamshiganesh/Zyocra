@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
 from zyocra_ml.config import MANIFESTS_DIR, MODEL_VERSION, MODELS_DIR, ONNX_DIR, ONNX_OPSET
 from zyocra_ml.inference import load_risk_mlp
 from zyocra_ml.manifest import build_manifest, write_manifest
+from zyocra_ml.quantization import quantization_summary
 
 
 class HeadOnly(nn.Module):
@@ -70,10 +71,15 @@ def main() -> None:
 
     onnx_sha256 = sha256_file(args.out)
     manifest = build_manifest(
-        kind="onnx_head_export",
-        paths={"onnx": str(args.out)},
-        metadata={
-            "sha256": onnx_sha256,
+        model_version=MODEL_VERSION,
+        parameter_counts=model.count_parameters(),
+        quantization_config=quantization_summary(),
+        metrics={},
+        extra={
+            "export_kind": "onnx_head_export",
+            "onnx_path": str(args.out.relative_to(ROOT)),
+            "onnx_sha256": onnx_sha256,
+            "onnx_opset": ONNX_OPSET,
             "input": "hidden[1,8] Q8.8 activations",
             "output": "logit[1,1] pre-sigmoid",
             "comparable_to": "circuits-custom/lora_output_head.circom",
