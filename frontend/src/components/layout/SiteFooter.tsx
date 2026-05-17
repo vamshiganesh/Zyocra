@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { footerCopy } from "../../data/content";
 import { PipelineStartButton } from "../product/PipelineStartButton";
 import { LegalModal, type LegalKind } from "../ui/LegalModal";
+import { scrollToTop as scrollPageToTop } from "../../scrollbar/smoothScroll";
 import "./SiteFooter.css";
 
 const pages = [
@@ -29,7 +30,7 @@ const badges = [
 ];
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  scrollPageToTop();
   document.getElementById("top")?.focus({ preventScroll: true });
 }
 

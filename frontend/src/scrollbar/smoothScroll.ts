@@ -1,85 +1,77 @@
+import Lenis from "lenis";
 import { OverlayScrollbars } from "overlayscrollbars";
 
-const NESTED_SCROLL_SELECTOR = ".site-rail, .bench-panel__table-wrap, [data-scroll-lock]";
-const EASE = 0.11;
-const WHEEL_SCALE = 1;
+/**
+ * Framer / Lenis defaults — responsive without the lag of ultra-low lerp values.
+ * @see https://github.com/darkroomengineering/lenis#settings
+ */
+export const LENIS_CONFIG = {
+  lerp: 0.1,
+  wheelMultiplier: 1,
+  touchMultiplier: 1,
+  smoothWheel: true,
+  syncTouch: false,
+  autoRaf: true,
+  autoResize: true,
+  stopInertiaOnNavigate: true,
+} as const;
 
-function isNestedScrollable(target: EventTarget | null, viewport: HTMLElement): boolean {
-  if (!(target instanceof Element)) return false;
+const NESTED_SCROLL_SELECTOR =
+  ".site-rail, .bench-panel__table-wrap, [data-scroll-lock], [data-lenis-prevent]";
 
-  let node: Element | null = target;
-  while (node && node !== viewport) {
-    if (node instanceof HTMLElement) {
-      if (node.matches(NESTED_SCROLL_SELECTOR)) return true;
-      const { overflowY } = getComputedStyle(node);
-      if (
-        (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") &&
-        node.scrollHeight > node.clientHeight + 1
-      ) {
-        return true;
-      }
-    }
-    node = node.parentElement;
-  }
+let lenis: Lenis | null = null;
 
-  return false;
+function shouldUseNativeScroll(node: HTMLElement): boolean {
+  return Boolean(node.closest(NESTED_SCROLL_SELECTOR));
 }
 
-/** Slight wheel inertia on the document viewport (pairs with OverlayScrollbars). */
+/** Initialize Lenis on the OverlayScrollbars document viewport. */
 export function initSmoothScroll(): () => void {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     return () => {};
   }
 
   const instance = OverlayScrollbars(document.body);
-  const viewport = instance?.elements().viewport;
-  if (!viewport) return () => {};
+  const { viewport, content } = instance?.elements() ?? {};
 
-  let target = viewport.scrollTop;
-  let current = target;
-  let raf: number | null = null;
-
-  const tick = () => {
-    const delta = target - current;
-    if (Math.abs(delta) < 0.5) {
-      current = target;
-      viewport.scrollTop = current;
-      raf = null;
-      return;
-    }
-
-    current += delta * EASE;
-    viewport.scrollTop = current;
-    raf = requestAnimationFrame(tick);
-  };
-
-  const queue = () => {
-    if (raf === null) raf = requestAnimationFrame(tick);
-  };
-
-  const onWheel = (event: WheelEvent) => {
-    if (event.ctrlKey || event.metaKey) return;
-    if (isNestedScrollable(event.target, viewport)) return;
-
-    event.preventDefault();
-
-    const max = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
-    target = Math.max(0, Math.min(max, target + event.deltaY * WHEEL_SCALE));
-    queue();
-  };
-
-  const onScroll = () => {
-    if (raf !== null) return;
-    target = viewport.scrollTop;
-    current = viewport.scrollTop;
-  };
-
-  viewport.addEventListener("wheel", onWheel, { passive: false });
-  viewport.addEventListener("scroll", onScroll, { passive: true });
+  lenis = new Lenis({
+    ...LENIS_CONFIG,
+    wrapper: viewport ?? window,
+    content: content ?? document.documentElement,
+    prevent: (node) => shouldUseNativeScroll(node),
+  });
 
   return () => {
-    viewport.removeEventListener("wheel", onWheel);
-    viewport.removeEventListener("scroll", onScroll);
-    if (raf !== null) cancelAnimationFrame(raf);
+    lenis?.destroy();
+    lenis = null;
   };
+}
+
+export function getLenis(): Lenis | null {
+  return lenis;
+}
+
+export function scrollToTop(immediate = false): void {
+  if (lenis) {
+    lenis.scrollTo(0, { immediate });
+    return;
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: immediate ? "auto" : "smooth" });
+}
+
+export function scrollToElement(id: string, immediate = false): void {
+  const element = document.getElementById(id);
+  if (!element) return;
+
+  if (lenis) {
+    lenis.scrollTo(element, { immediate, lerp: LENIS_CONFIG.lerp });
+    return;
+  }
+
+  element.scrollIntoView({ behavior: immediate ? "auto" : "smooth", block: "start" });
+}
+
+export function refreshSmoothScroll(): void {
+  lenis?.resize();
 }

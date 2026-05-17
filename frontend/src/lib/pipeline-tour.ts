@@ -8,10 +8,12 @@ export function isPipelineTourActive(): boolean {
   return sessionStorage.getItem(PIPELINE_TOUR_KEY) === "1";
 }
 
+import { scrollToElement } from "../scrollbar/smoothScroll";
+
 export function scrollToSection(hash: string) {
   const id = hash.startsWith("#") ? hash.slice(1) : hash;
   requestAnimationFrame(() => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToElement(id);
   });
 }
 

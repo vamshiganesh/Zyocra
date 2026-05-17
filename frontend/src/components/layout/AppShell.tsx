@@ -4,6 +4,7 @@ import { PipelineChrome } from "../product/PipelineChrome";
 import { PIPELINE_SCREENS } from "../../config/screens";
 import { scrollToSection } from "../../lib/pipeline-tour";
 import { initNestedScrollbars } from "../../scrollbar/initScrollbar";
+import { refreshSmoothScroll, scrollToTop } from "../../scrollbar/smoothScroll";
 import { LeftRail } from "./LeftRail";
 import { LogoMark } from "./LogoMark";
 import { SiteFooter } from "./SiteFooter";
@@ -16,6 +17,7 @@ export function AppShell() {
   useEffect(() => {
     requestAnimationFrame(() => {
       initNestedScrollbars();
+      refreshSmoothScroll();
     });
   }, [location.pathname]);
 
@@ -24,7 +26,7 @@ export function AppShell() {
       scrollToSection(location.hash);
       return;
     }
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    scrollToTop(true);
     document.getElementById("top")?.focus({ preventScroll: true });
   }, [location.pathname, location.hash]);
 
@@ -52,7 +54,7 @@ export function AppShell() {
         </div>
       ) : null}
 
-      <aside className="site-rail" aria-label="Section">
+      <aside className="site-rail" aria-label="Section" data-lenis-prevent>
         <LeftRail />
       </aside>
 

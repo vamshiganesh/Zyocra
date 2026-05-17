@@ -23,7 +23,7 @@ export function BenchmarkPanel({
         <p className="mono-label label-dot">{title}</p>
         <p className="bench-panel__note">{note}</p>
       </div>
-      <div className="bench-panel__table-wrap">
+      <div className="bench-panel__table-wrap" data-lenis-prevent>
         <table className="bench-panel__table">
           <thead>
             <tr>

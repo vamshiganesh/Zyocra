@@ -14,14 +14,6 @@ body,
 
 html {
   background: var(--color-canvas);
-  scroll-behavior: smooth;
-}
-
-@supports (-webkit-overflow-scrolling: touch) {
-  html,
-  body {
-    -webkit-overflow-scrolling: touch;
-  }
 }
 
 body {
@@ -127,10 +119,4 @@ ul {
   clip: path(inset(50%));
   white-space: nowrap;
   border: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
 }
