@@ -25,9 +25,7 @@
 }
 
 .top-nav__link.is-active {
-  text-decoration: underline;
-  text-underline-offset: 0.35rem;
-  text-decoration-thickness: 1px;
+  font-weight: 600;
 }
 
 @media (max-width: 720px) {
