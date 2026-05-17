@@ -129,3 +129,59 @@ export const footerCopy = {
     "Verifiable LoRA risk oracle for DeFi—benchmark-driven zkML with on-chain verification and collateral policy updates.",
   cta: "Walk pipeline",
 };
+
+export type LegalSection = { title: string; body: string };
+
+export const termsCopy = {
+  eyebrow: "Legal",
+  title: "Terms of use",
+  lede: "Zyocra is an open-source research and portfolio demonstration. By using this site or repository you agree to the terms below.",
+  updated: "Last updated · 7 July 2026",
+  sections: [
+    {
+      title: "Demonstration only",
+      body: "Zyocra is not a production service, custodian, or financial product. The dashboard replays local artifacts from your own machine. On-chain examples use local Anvil deployments unless you explicitly configure otherwise.",
+    },
+    {
+      title: "No warranty",
+      body: "Software, circuits, contracts, and documentation are provided as-is without warranty of any kind. You are responsible for reviewing code, running your own tests, and obtaining professional advice before any mainnet or production use.",
+    },
+    {
+      title: "Not financial advice",
+      body: "Risk scores, collateral parameters, and benchmark figures are illustrative outputs from a research stack. They do not constitute investment, lending, or risk-management advice.",
+    },
+    {
+      title: "License",
+      body: "Source code is distributed under the repository license. Third-party tools (EZKL, Foundry, Circom, PyTorch, and others) remain subject to their respective licenses.",
+    },
+    {
+      title: "Changes",
+      body: "These terms may be updated as the repository evolves. Material changes will be reflected in the changelog.",
+    },
+  ] satisfies LegalSection[],
+};
+
+export const privacyCopy = {
+  eyebrow: "Legal",
+  title: "Privacy policy",
+  lede: "This static demo site is designed to run locally with minimal data collection.",
+  updated: "Last updated · 7 July 2026",
+  sections: [
+    {
+      title: "What this site stores",
+      body: "The frontend reads JSON files from its public data directory (for example phase1-demo.json) that you generate on your own machine. No account system or cloud backend is required for the default workflow.",
+    },
+    {
+      title: "What this site does not do",
+      body: "The default build does not include third-party analytics, advertising trackers, or wallet fingerprinting. Social links open external profiles in a new tab; those sites have their own policies.",
+    },
+    {
+      title: "Local session preferences",
+      body: "Your browser may store lightweight preferences (for example pipeline tour state) in sessionStorage. This data never leaves your device.",
+    },
+    {
+      title: "Contact",
+      body: "Questions about this policy can be directed via the social links in the site footer.",
+    },
+  ] satisfies LegalSection[],
+};

@@ -168,8 +168,10 @@ export function SiteFooter() {
       </div>
 
       <div className="band band--footer site-footer__banner-band">
-        <div className="shell">
-          <div className="site-footer__banner">
+        <div className="shell shell--split">
+          <div className="shell__rail-slot site-footer__banner-rail" aria-hidden="true" />
+          <div className="shell__main">
+            <div className="site-footer__banner">
             <div className="site-footer__banner-top">
               <div className="site-footer__stats">
                 <div className="site-footer__stat">
@@ -198,22 +200,26 @@ export function SiteFooter() {
               </span>
             </p>
           </div>
+          </div>
         </div>
       </div>
 
       <div className="band band--footer-legal">
-        <div className="shell">
-          <div className="site-footer__legal">
-            <p className="site-footer__copyright">© Zyocra, 2026</p>
-            <div className="site-footer__legal-links">
-              <span>All rights reserved</span>
-              <a href="#terms">Terms of use</a>
-              <a href="#privacy">Privacy Policy</a>
-              <span className="site-footer__legal-mark" aria-hidden="true">
-                <svg viewBox="0 0 16 16" width="14" height="14">
-                  <path d="M8 1L14 8L8 15L2 8L8 1Z" fill="currentColor" />
-                </svg>
-              </span>
+        <div className="shell shell--split">
+          <div className="shell__rail-slot site-footer__legal-rail" aria-hidden="true" />
+          <div className="shell__main">
+            <div className="site-footer__legal">
+              <p className="site-footer__copyright">© Zyocra, 2026</p>
+              <div className="site-footer__legal-links">
+                <span>All rights reserved</span>
+                <Link to="/terms">Terms of use</Link>
+                <Link to="/privacy">Privacy Policy</Link>
+                <span className="site-footer__legal-mark" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" width="14" height="14">
+                    <path d="M8 1L14 8L8 15L2 8L8 1Z" fill="currentColor" />
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
         </div>
