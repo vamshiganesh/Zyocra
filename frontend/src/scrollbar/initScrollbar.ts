@@ -3,8 +3,11 @@ import {
   ScrollbarsHidingPlugin,
 } from "overlayscrollbars";
 import type { PartialOptions } from "overlayscrollbars";
+import { initSmoothScroll } from "./smoothScroll";
 
 OverlayScrollbars.plugin(ScrollbarsHidingPlugin);
+
+let disposeSmoothScroll: (() => void) | null = null;
 
 const BODY_OPTIONS: PartialOptions = {
   overflow: {
@@ -58,4 +61,6 @@ export function initNestedScrollbars(): void {
 export function initScrollbar(): void {
   initDocumentScrollbar();
   initNestedScrollbars();
+  disposeSmoothScroll?.();
+  disposeSmoothScroll = initSmoothScroll();
 }

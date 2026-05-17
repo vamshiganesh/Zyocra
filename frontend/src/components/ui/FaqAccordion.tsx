@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CollapsePanel } from "./CollapsePanel";
 import "./FaqAccordion.css";
 
 export type FaqItem = {
@@ -27,10 +28,13 @@ export function FaqAccordion({ items }: Props) {
             >
               <span>{item.question}</span>
               <span className="faq__icon" aria-hidden="true">
-                {open ? "−" : "+"}
+                <span className="faq__icon-bar faq__icon-bar--vertical" />
+                <span className="faq__icon-bar faq__icon-bar--horizontal" />
               </span>
             </button>
-            {open ? <p className="faq__answer">{item.answer}</p> : null}
+            <CollapsePanel open={open}>
+              <p className="faq__answer">{item.answer}</p>
+            </CollapsePanel>
           </div>
         );
       })}

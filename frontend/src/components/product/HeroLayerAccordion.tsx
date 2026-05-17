@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { HeroLayer } from "../../data/content";
+import { CollapsePanel } from "../ui/CollapsePanel";
 import "./HeroLayerAccordion.css";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 function LayerChevron({ open }: { open: boolean }) {
   return (
     <svg
-      className="hero-layers__chevron"
+      className={`hero-layers__chevron${open ? " is-open" : ""}`}
       width="14"
       height="14"
       viewBox="0 0 14 14"
@@ -19,7 +20,7 @@ function LayerChevron({ open }: { open: boolean }) {
       aria-hidden="true"
     >
       <path
-        d={open ? "M3 9 L7 5 L11 9" : "M3 5 L7 9 L11 5"}
+        d="M3 5 L7 9 L11 5"
         stroke="currentColor"
         strokeWidth="1.25"
         strokeLinecap="round"
@@ -61,13 +62,13 @@ export function HeroLayerAccordion({ items, defaultOpen = 1, onActiveChange }: P
               </span>
               <LayerChevron open={open} />
             </button>
-            {open ? (
+            <CollapsePanel open={open}>
               <ul className="hero-layers__bullets">
                 {item.bullets.map((bullet) => (
                   <li key={bullet}>{bullet}</li>
                 ))}
               </ul>
-            ) : null}
+            </CollapsePanel>
           </div>
         );
       })}
