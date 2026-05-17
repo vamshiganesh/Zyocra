@@ -11,7 +11,6 @@ import { SectionHeader } from "../components/ui/SectionHeader";
 import { StatTile } from "../components/ui/StatTile";
 import { headlineMetrics as benchmarkPlaceholders, overviewCopy, systemLayers } from "../data/content";
 import { usePipelineFields } from "../data/use-pipeline-fields";
-import { flowSteps } from "../data/product-placeholders";
 import { faqItems } from "../data/placeholders";
 import "./pages.css";
 
