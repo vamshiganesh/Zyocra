@@ -128,7 +128,12 @@
 
 .band--hero .shell__main,
 .band--panels .shell__main {
-  padding: var(--page-pad-y) var(--page-pad-x);
+  padding: 0 var(--page-pad-x);
+}
+
+.band--hero .shell__main {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .band--panels .shell__main {

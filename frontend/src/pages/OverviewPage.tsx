@@ -2,6 +2,7 @@ import { Shell } from "../components/layout/Shell";
 import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceholderPanel";
 import { DataStatus } from "../components/product/DataStatus";
 import { ProductHero } from "../components/product/ProductHero";
+import { PipelineHeroDiagram } from "../components/product/PipelineHeroDiagram";
 import { PipelineStrip } from "../components/product/PipelineStrip";
 import { PipelineStartButton } from "../components/product/PipelineStartButton";
 import { ClippedButton } from "../components/ui/ClippedButton";
@@ -37,13 +38,7 @@ export function OverviewPage() {
                 </ClippedButton>
               </>
             }
-            aside={
-              <svg className="hero__aside-svg" viewBox="0 0 240 160" fill="none" aria-hidden="true">
-                <path d="M10 130C50 40 90 40 130 130C170 220 210 40 230 80" stroke="currentColor" strokeWidth="1" />
-                <path d="M10 100C50 10 90 10 130 100C170 190 210 10 230 50" stroke="currentColor" strokeWidth="1" />
-                <path d="M10 70C50 -20 90 -20 130 70C170 160 210 -20 230 20" stroke="currentColor" strokeWidth="1" />
-              </svg>
-            }
+            aside={<PipelineHeroDiagram />}
           />
         </Shell>
       </section>

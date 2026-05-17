@@ -3,7 +3,7 @@
 export const overviewCopy = {
   hero: {
     eyebrow: "Verifiable risk oracle",
-    title: "Prove inference. Publish score. Adjust collateral.",
+    title: "Prove inference.\nPublish score.\nAdjust collateral.",
     body: "Zyocra attests that a quantized LoRA-adapted risk model executed correctly off-chain, verifies the result on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
     ctaPrimary: "Walk pipeline",
     ctaSecondary: "Benchmark comparison",

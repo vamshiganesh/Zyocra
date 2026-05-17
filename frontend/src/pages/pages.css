@@ -1,54 +1,75 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.85fr);
-  gap: clamp(var(--space-8), 4vw, var(--space-16));
-  align-items: end;
+  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+  gap: clamp(var(--space-8), 3vw, var(--space-12));
+  align-items: stretch;
+  min-height: min(72vh, 40rem);
+}
+
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(var(--space-10), 5vw, var(--space-16)) var(--space-8)
+    clamp(var(--space-10), 5vw, var(--space-16)) 0;
+  border-right: 1px solid var(--color-line-dark);
 }
 
 .hero__eyebrow {
   color: var(--color-fog-muted);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .hero__title {
   /* Dispatch hero: Geist, ~72–80px, tracking -0.05em, line-height 1 */
   font-family: var(--font-sans);
-  font-size: clamp(2.75rem, 6.5vw, 5rem);
+  font-size: clamp(2.75rem, 5.8vw, 4.75rem);
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.02;
   letter-spacing: -0.05em;
   color: var(--color-fog);
-  max-width: 12ch;
+  max-width: 11ch;
 }
 
 .hero__body {
-  margin-top: var(--space-5);
-  max-width: 34rem;
+  margin-top: var(--space-6);
+  max-width: 36rem;
   color: var(--color-fog-muted);
-  font-size: var(--text-md);
+  font-size: clamp(var(--text-md), 1.4vw, var(--text-lg));
+  line-height: 1.55;
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-top: var(--space-8);
+  margin-top: clamp(var(--space-8), 3vw, var(--space-10));
 }
 
 .hero__aside {
+  position: relative;
   border: 1px solid var(--color-line-dark);
-  border-left: 1px solid var(--color-line-dark);
   background: var(--color-canvas-elevated);
-  min-height: 14rem;
-  display: grid;
-  place-items: center;
-  color: var(--color-fog-muted);
-  padding: var(--space-6);
+  min-height: 22rem;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: clamp(var(--space-4), 2vw, var(--space-6));
+  overflow: hidden;
 }
 
-.hero > div:first-child:not(:only-child) {
-  padding-right: var(--space-8);
-  border-right: 1px solid var(--color-line-dark);
+.hero__aside::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 2px,
+    rgba(232, 227, 213, 0.06) 2px,
+    rgba(232, 227, 213, 0.06) 3px
+  );
+  pointer-events: none;
 }
 
 .hero__aside-svg {
@@ -408,7 +429,21 @@
 }
 
 @media (max-width: 900px) {
-  .hero,
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .hero__copy {
+    padding: var(--space-8) 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .hero__aside {
+    min-height: 20rem;
+  }
+
   .feature-grid,
   .blog-grid,
   .team-grid,
