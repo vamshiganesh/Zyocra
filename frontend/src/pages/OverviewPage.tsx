@@ -3,6 +3,7 @@ import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceh
 import { DataStatus } from "../components/product/DataStatus";
 import { ProductHero } from "../components/product/ProductHero";
 import { PipelineStrip } from "../components/product/PipelineStrip";
+import { PipelineStartButton } from "../components/product/PipelineStartButton";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { FaqAccordion } from "../components/ui/FaqAccordion";

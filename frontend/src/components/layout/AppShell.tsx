@@ -12,12 +12,19 @@ import { TopNav } from "./TopNav";
 
 export function AppShell() {
   const location = useLocation();
+  const pipelineScreen = PIPELINE_SCREENS.find((screen) => screen.path === location.pathname);
 
   useEffect(() => {
     requestAnimationFrame(() => {
       initNestedScrollbars();
     });
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.hash) {
+      scrollToSection(location.hash);
+    }
+  }, [location.pathname, location.hash]);
 
   return (
     <>
@@ -31,6 +38,18 @@ export function AppShell() {
           </div>
         </div>
       </header>
+
+      {pipelineScreen ? (
+        <div className="band band--pipeline">
+          <div className="shell shell--split">
+            <div className="shell__rail-slot" aria-hidden="true" />
+            <div className="shell__main band--pipeline__main">
+              <DemoModeBanner />
+              <PipelineStrip />
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <aside className="site-rail" aria-label="Section">
         <LeftRail />

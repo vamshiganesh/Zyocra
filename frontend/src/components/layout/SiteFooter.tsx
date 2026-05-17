@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { footerCopy } from "../../data/content";
-import { ClippedButton } from "../ui/ClippedButton";
+import { PipelineStartButton } from "../product/PipelineStartButton";
 import "./SiteFooter.css";
 
 const pages = [
@@ -104,9 +104,9 @@ export function SiteFooter() {
                 ))}
               </h2>
               <p className="site-footer__lede">{footerCopy.lede}</p>
-              <ClippedButton to="/epoch" variant="surface" size="lg">
+              <PipelineStartButton variant="surface" size="lg">
                 {footerCopy.cta}
-              </ClippedButton>
+              </PipelineStartButton>
             </div>
 
             <div className="site-footer__aside">

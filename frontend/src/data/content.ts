@@ -5,7 +5,7 @@ export const overviewCopy = {
     eyebrow: "Verifiable risk oracle",
     title: "Prove inference. Publish score. Adjust collateral.",
     body: "Zyocra attests that a quantized LoRA-adapted risk model executed correctly off-chain, verifies the result on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
-    ctaPrimary: "Inspect active epoch",
+    ctaPrimary: "Walk pipeline",
     ctaSecondary: "Benchmark comparison",
   },
   flow: {
@@ -28,9 +28,9 @@ export const overviewCopy = {
   },
   entry: {
     label: "Demo",
-    title: "Replay epoch-2026-041",
+    title: "Walk the six-step pipeline",
     description:
-      "Walk the pipeline with committed model and adapter hashes, fixed-point inputs, and a MEDIUM risk bucket outcome.",
+      "Read-only replay of epoch commitments → inputs → prove → verify → score → collateral impact. Regenerate artifacts with bash scripts/e2e_phase1.sh in the terminal.",
   },
   faq: {
     label: "FAQ",

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { ClippedButton } from "../ui/ClippedButton";
+import { PipelineStartButton } from "../product/PipelineStartButton";
 import "./TopNav.css";
 
 const links = [
@@ -27,9 +27,9 @@ export function TopNav() {
           </NavLink>
         ))}
       </div>
-      <ClippedButton to="/epoch" variant="accent" size="sm">
-        Run epoch
-      </ClippedButton>
+      <PipelineStartButton variant="accent" size="sm">
+        Walk pipeline
+      </PipelineStartButton>
     </nav>
   );
 }
