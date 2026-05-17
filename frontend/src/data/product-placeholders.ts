@@ -88,14 +88,16 @@ export const epochDetailFields: DataField[] = [
   },
   {
     label: "Model hash",
-    value: demoEpoch.modelHash,
+    value: "0x8f3c…a91e",
     mono: true,
+    hint: demoEpoch.modelHash,
     description: "Keccak256 of quantized ONNX graph bytes. Oracle rejects proofs for undeclared graphs.",
   },
   {
     label: "Adapter hash",
-    value: demoEpoch.adapterHash,
+    value: "0x45f1…c002",
     mono: true,
+    hint: demoEpoch.adapterHash,
     description: "Commitment to LoRA matrices A and B. Effective weights: W′ = W + AB.",
   },
   {
