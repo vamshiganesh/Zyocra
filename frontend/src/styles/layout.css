@@ -25,7 +25,11 @@
 }
 
 .band--pipeline__main {
-  padding: var(--space-4) var(--page-pad-x) var(--space-3);
+  padding: 0 var(--page-pad-x);
+}
+
+.site-main [id] {
+  scroll-margin-top: calc(var(--topnav-height) + var(--pipeline-chrome-height) + var(--space-4));
 }
 
 .band--hero {

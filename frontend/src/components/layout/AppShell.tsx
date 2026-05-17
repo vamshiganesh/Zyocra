@@ -47,8 +47,7 @@ export function AppShell() {
           <div className="shell shell--split">
             <div className="shell__rail-slot" aria-hidden="true" />
             <div className="shell__main band--pipeline__main">
-              <DemoModeBanner />
-              <PipelineStrip />
+              <PipelineChrome />
             </div>
           </div>
         </div>
