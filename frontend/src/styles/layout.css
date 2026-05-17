@@ -16,6 +16,18 @@
   background: var(--color-canvas-2);
 }
 
+.band--pipeline {
+  position: sticky;
+  top: var(--topnav-height);
+  z-index: 35;
+  background: var(--color-canvas-2);
+  border-bottom: 1px solid var(--color-line-dark);
+}
+
+.band--pipeline__main {
+  padding: var(--space-4) var(--page-pad-x) var(--space-3);
+}
+
 .band--hero {
   background: var(--color-canvas);
 }
