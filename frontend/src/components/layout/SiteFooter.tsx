@@ -34,6 +34,8 @@ function scrollToTop() {
 }
 
 export function SiteFooter() {
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
+
   return (
     <footer className="site-footer">
       <div className="band band--footer">
@@ -214,8 +216,20 @@ export function SiteFooter() {
               <p className="site-footer__copyright">© Zyocra, 2026</p>
               <div className="site-footer__legal-links">
                 <span>All rights reserved</span>
-                <Link to="/terms">Terms of use</Link>
-                <Link to="/privacy">Privacy Policy</Link>
+                <button
+                  type="button"
+                  className="site-footer__legal-link"
+                  onClick={() => setLegalOpen("terms")}
+                >
+                  Terms of use
+                </button>
+                <button
+                  type="button"
+                  className="site-footer__legal-link"
+                  onClick={() => setLegalOpen("privacy")}
+                >
+                  Privacy Policy
+                </button>
                 <span className="site-footer__legal-mark" aria-hidden="true">
                   <svg viewBox="0 0 16 16" width="14" height="14">
                     <path d="M8 1L14 8L8 15L2 8L8 1Z" fill="currentColor" />
@@ -226,6 +240,7 @@ export function SiteFooter() {
           </div>
         </div>
       </div>
+      {legalOpen ? <LegalModal kind={legalOpen} onClose={() => setLegalOpen(null)} /> : null}
     </footer>
   );
 }

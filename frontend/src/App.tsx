@@ -30,8 +30,6 @@ export default function App() {
           <Route path="benchmarks" element={<BenchmarkComparisonPage />} />
           <Route path="threat-model" element={<ThreatModelPage />} />
           <Route path="updates" element={<UpdatesPage />} />
-          <Route path="terms" element={<TermsPage />} />
-          <Route path="privacy" element={<PrivacyPage />} />
           {/* Legacy marketing routes */}
           <Route path="about" element={<Navigate to="/threat-model" replace />} />
           <Route path="blog" element={<Navigate to="/updates" replace />} />
