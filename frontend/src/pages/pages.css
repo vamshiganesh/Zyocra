@@ -45,6 +45,16 @@
   margin-top: clamp(var(--space-8), 3vw, var(--space-10));
 }
 
+.hero--solo {
+  grid-template-columns: 1fr;
+  min-height: auto;
+}
+
+.hero--solo .hero__copy {
+  border-right: 0;
+  padding-right: 0;
+}
+
 .hero__aside {
   position: relative;
   border-left: 0;

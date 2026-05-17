@@ -26,7 +26,6 @@ export function ProtocolImpactPage() {
     collateralBps,
     spreadBps,
     borrowAllowed,
-    onChain,
   } = usePipelineFields();
 
   const collateral = collateralBps !== undefined ? (collateralBps / 10_000).toFixed(2) : "0.72";
@@ -51,7 +50,6 @@ export function ProtocolImpactPage() {
                 </ClippedButton>
               </>
             }
-            aside={<p className="mono-label">RiskConsumer · {onChain ? "applied" : "preview"}</p>}
           />
         </Shell>
       </section>

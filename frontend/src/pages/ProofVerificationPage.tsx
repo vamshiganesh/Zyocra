@@ -49,11 +49,6 @@ export function ProofVerificationPage() {
                 View score
               </ClippedButton>
             }
-            aside={
-              <p className="mono-label">
-                verifier status · {onChain ? "on-chain pass" : verifyTitle.toLowerCase()}
-              </p>
-            }
           />
         </Shell>
       </section>

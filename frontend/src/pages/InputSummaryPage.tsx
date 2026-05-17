@@ -14,7 +14,7 @@ import "./pages.css";
 const screen = screenBySlug("inputs")!;
 
 export function InputSummaryPage() {
-  const { status, error, reload, epochId, inputFeatures, publicInputFields, borrowerShort } =
+  const { status, error, reload, epochId, inputFeatures, publicInputFields } =
     usePipelineFields();
 
   return (
@@ -30,7 +30,6 @@ export function InputSummaryPage() {
                 Run prover
               </ClippedButton>
             }
-            aside={<p className="mono-label">borrower · {borrowerShort}</p>}
           />
         </Shell>
       </section>

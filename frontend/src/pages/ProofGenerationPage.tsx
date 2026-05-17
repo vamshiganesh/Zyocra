@@ -49,7 +49,6 @@ export function ProofGenerationPage() {
                 Verify proof
               </ClippedButton>
             }
-            aside={<p className="mono-label">proof status · {proofTitle.toLowerCase()}</p>}
           />
         </Shell>
       </section>

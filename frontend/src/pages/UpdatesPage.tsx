@@ -17,7 +17,6 @@ export function UpdatesPage() {
             eyebrow={screen.eyebrow}
             title={screen.headline}
             body={screen.lede}
-            aside={<p className="mono-label">zyocra://updates</p>}
           />
         </Shell>
       </section>

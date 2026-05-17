@@ -28,7 +28,6 @@ export function BenchmarkComparisonPage() {
                 Replay epoch demo
               </ClippedButton>
             }
-            aside={<p className="mono-label">benchmarks/raw-results/</p>}
           />
         </Shell>
       </section>

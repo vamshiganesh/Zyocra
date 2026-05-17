@@ -8,7 +8,6 @@ import { ProductHero } from "../components/product/ProductHero";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
-import { demoEpoch } from "../data/product-placeholders";
 import { usePipelineFields } from "../data/use-pipeline-fields";
 import "./pages.css";
 
@@ -19,7 +18,6 @@ export function EpochExplorerPage() {
     status,
     error,
     reload,
-    live,
     epochId,
     epochDetailFields,
     epochRegistry,
@@ -41,11 +39,6 @@ export function EpochExplorerPage() {
               <ClippedButton to="/inputs" variant="accent" size="lg">
                 Review inputs
               </ClippedButton>
-            }
-            aside={
-              <p className="mono-label">
-                {epochId} · {onChain ? "active" : live ? "ready" : demoEpoch.status}
-              </p>
             }
           />
         </Shell>

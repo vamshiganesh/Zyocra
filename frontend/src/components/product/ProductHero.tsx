@@ -26,7 +26,7 @@ export function ProductHero({
   const titleLines = title.split("\n");
 
   return (
-    <div className="hero">
+    <div className={`hero${aside ? "" : " hero--solo"}`}>
       <div className="hero__copy">
         <p className="hero__eyebrow mono-label label-dot">{eyebrow}</p>
         <h1 className="hero__title">

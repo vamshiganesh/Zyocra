@@ -38,7 +38,6 @@ export function RiskScorePage() {
                 Protocol impact
               </ClippedButton>
             }
-            aside={<p className="mono-label">risk bucket · {scoreBucket}</p>}
           />
         </Shell>
       </section>

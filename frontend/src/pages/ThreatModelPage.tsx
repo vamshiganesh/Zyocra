@@ -40,7 +40,6 @@ export function ThreatModelPage() {
                 Run pipeline demo
               </ClippedButton>
             }
-            aside={<p className="mono-label">docs/threat-model.md</p>}
           />
         </Shell>
       </section>
