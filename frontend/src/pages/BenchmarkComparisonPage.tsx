@@ -37,7 +37,9 @@ export function BenchmarkComparisonPage() {
           <DataStatus status={status} error={error} onRetry={reload} variant="benchmark" />
           <div className="panel-stack">
             <ClippedCard>
-              <BenchmarkPlaceholderPanel />
+              <div id="comparison">
+                <BenchmarkPlaceholderPanel />
+              </div>
             </ClippedCard>
 
             <ClippedCard>
