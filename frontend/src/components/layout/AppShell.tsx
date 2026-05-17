@@ -24,10 +24,9 @@ export function AppShell() {
       scrollToSection(location.hash);
       return;
     }
-    if (pipelineScreen) {
-      window.scrollTo({ top: 0, behavior: "instant" });
-    }
-  }, [location.pathname, location.hash, pipelineScreen]);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.getElementById("top")?.focus({ preventScroll: true });
+  }, [location.pathname, location.hash]);
 
   return (
     <>
