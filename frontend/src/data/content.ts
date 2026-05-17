@@ -67,7 +67,7 @@ export const overviewCopy = {
     label: "Stack",
     title: "Monorepo boundaries",
     description:
-      "Each layer owns artifacts with reproducible hashes—no hosted prover or paid RPC required.",
+      "Each layer owns artifacts with reproducible hashes. No hosted prover or paid RPC required.",
   },
   metrics: {
     label: "Benchmark axes",
@@ -113,12 +113,12 @@ export const systemLayers = [
 ];
 
 export const headlineMetrics = [
-  { label: "Constraint count", value: "—", detail: "R1CS / PLONK constraints, both paths" },
-  { label: "Peak RAM", value: "—", detail: "Prover process high-water mark", accent: true },
-  { label: "Proof time", value: "—", detail: "Wall clock, single borrower vector" },
-  { label: "Verify gas", value: "—", detail: "Foundry snapshot on Anvil", accent: false },
-  { label: "Proof size", value: "—", detail: "Serialized proof bytes", accent: true },
-  { label: "Quant error", value: "—", detail: "|float32 − fixed-point| on score" },
+  { label: "Constraint count", value: "N/A", detail: "R1CS / PLONK constraints, both paths" },
+  { label: "Peak RAM", value: "N/A", detail: "Prover process high-water mark", accent: true },
+  { label: "Proof time", value: "N/A", detail: "Wall clock, single borrower vector" },
+  { label: "Verify gas", value: "N/A", detail: "Foundry snapshot on Anvil", accent: false },
+  { label: "Proof size", value: "N/A", detail: "Serialized proof bytes", accent: true },
+  { label: "Quant error", value: "N/A", detail: "|float32 − fixed-point| on score" },
 ];
 
 export const bucketThresholds = [
@@ -160,7 +160,7 @@ export const provePaths = {
 export const benchmarkMethodology = [
   "Single machine spec recorded in benchmarks/scripts/env.txt.",
   "Same borrower vector, quantization profile, and public-input policy on both paths.",
-  "Gas from Foundry `gas_report` on local Anvil—no mainnet fork.",
+  "Gas from Foundry `gas_report` on local Anvil, with no mainnet fork.",
   "Proof size and peak RAM read from prover logs, not self-reported.",
 ];
 
@@ -175,7 +175,7 @@ export const footerCopy = {
   status: "Local-first · Foundry + EZKL + Circom",
   headline: "Prove inference.\nPublish parameters.",
   lede:
-    "Verifiable LoRA risk oracle for DeFi—benchmark-driven zkML with on-chain verification and collateral policy updates.",
+    "Verifiable LoRA risk oracle for DeFi with benchmark-driven zkML, on-chain verification, and collateral policy updates.",
   cta: "Walk pipeline",
 };
 

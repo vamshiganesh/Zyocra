@@ -1,3 +1,4 @@
+import { EMPTY_VALUE } from "../lib/display";
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
@@ -53,7 +54,7 @@ export function EpochExplorerPage() {
                 <SectionHeader
                   label="Active epoch"
                   title={epochId}
-                  description={`${onChain ? "On-chain submission" : "Local artifacts"} · proof ${proofField?.value ?? "—"} · verifier ${verifierField?.value ?? "—"}`}
+                  description={`${onChain ? "On-chain submission" : "Local artifacts"} · proof ${proofField?.value ?? EMPTY_VALUE} · verifier ${verifierField?.value ?? EMPTY_VALUE}`}
                 />
                 <DataFieldGrid fields={epochDetailFields} columns={3} />
               </div>

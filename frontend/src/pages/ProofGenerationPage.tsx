@@ -62,7 +62,7 @@ export function ProofGenerationPage() {
                 <SectionHeader
                   label="Proving path"
                   title="Dual-path comparison"
-                  description="Same borrower vector and commitments—different circuit implementations."
+                  description="Same borrower vector and commitments with different circuit implementations."
                 />
                 <div className="path-toggle">
                   <article className="path-toggle__card path-toggle__card--active">
@@ -88,7 +88,7 @@ export function ProofGenerationPage() {
                 <PlaceholderPanel label="Proof status" title={proofTitle} status={proofPanelStatus}>
                   <p className="data-grid__hint">
                     {live
-                      ? "Proof bytes from circuits-baseline/proofs/proof.json — off-chain ezkl.verify() reflected in artifacts panel."
+                      ? "Proof bytes from circuits-baseline/proofs/proof.json. Off-chain ezkl.verify() reflected in artifacts panel."
                       : "Run bash scripts/sync-frontend-data.sh after the EZKL pipeline to populate proof status."}
                   </p>
                 </PlaceholderPanel>
@@ -106,7 +106,7 @@ export function ProofGenerationPage() {
                 <SectionHeader
                   label="Circom path"
                   title="Parallel artifact slot"
-                  description="Identical public inputs—compare prover economics, not workload semantics."
+                  description="Identical public inputs. Compare prover economics, not workload semantics."
                 />
                 <DataFieldGrid fields={circomArtifactFields} columns={2} />
               </div>

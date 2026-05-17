@@ -55,7 +55,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Inputs",
     eyebrow: "Feature vector",
     headline: "Deterministic borrower features.",
-    lede: "Tabular inputs from ml-base—fixed-point tensors aligned with the ONNX export and both proving paths.",
+    lede: "Tabular inputs from ml-base with fixed-point tensors aligned with the ONNX export and both proving paths.",
     pipelineStep: 2,
     sections: [
       { id: "vector", label: "Features", index: "01" },
@@ -115,7 +115,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Impact",
     eyebrow: "Consumer contract",
     headline: "Collateral policy after verification.",
-    lede: "RiskConsumer applies bucket policy—collateral factor, spread, borrow gate—without model-triggered liquidation.",
+    lede: "RiskConsumer applies bucket policy (collateral factor, spread, borrow gate) without model-triggered liquidation.",
     pipelineStep: 6,
     sections: [
       { id: "consumer", label: "Consumer", index: "01" },
@@ -130,7 +130,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Benchmarks",
     eyebrow: "Research artifact",
     headline: "EZKL vs Circom on one workload.",
-    lede: "Constraint count, peak RAM, proof time, verification gas, proof size, and score quantization error—same inputs, documented machine spec.",
+    lede: "Constraint count, peak RAM, proof time, verification gas, proof size, and score quantization error on the same inputs, documented machine spec.",
     sections: [
       { id: "comparison", label: "Comparison", index: "01" },
       { id: "methodology", label: "Methodology", index: "02" },
@@ -158,7 +158,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Updates",
     eyebrow: "Release notes",
     headline: "Milestone log.",
-    lede: "Oracle contract, EZKL pipeline, Circom benchmark path, and consumer risk logic—as each milestone lands in the repo.",
+    lede: "Oracle contract, EZKL pipeline, Circom benchmark path, and consumer risk logic as each milestone lands in the repo.",
     sections: [{ id: "changelog", label: "Changelog", index: "01" }],
   },
 ];

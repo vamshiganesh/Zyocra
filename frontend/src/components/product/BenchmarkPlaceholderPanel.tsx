@@ -17,7 +17,7 @@ export function BenchmarkPlaceholderPanel() {
         title={live ? "EZKL vs Circom (local run)" : "EZKL vs Circom"}
         description={
           live
-            ? "From make benchmark — see docs/benchmarks.md for workload scope and limitations."
+            ? "From make benchmark. See docs/benchmarks.md for workload scope and limitations."
             : "Run make benchmark, then sync or copy bench-latest.json to frontend/public/data/."
         }
       />

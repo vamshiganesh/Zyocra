@@ -2,12 +2,12 @@ import type { BenchmarkRow } from "../components/ui/BenchmarkPanel";
 import type { FaqItem } from "../components/ui/FaqAccordion";
 
 export const benchmarkRows: BenchmarkRow[] = [
-  { metric: "Constraint count", ezkl: "—", circom: "—" },
-  { metric: "Peak RAM (prover)", ezkl: "—", circom: "—" },
-  { metric: "Proof generation time", ezkl: "—", circom: "—" },
-  { metric: "Verification gas", ezkl: "—", circom: "—" },
-  { metric: "Proof size (bytes)", ezkl: "—", circom: "—" },
-  { metric: "Score quant error", ezkl: "—", circom: "—" },
+  { metric: "Constraint count", ezkl: "N/A", circom: "N/A" },
+  { metric: "Peak RAM (prover)", ezkl: "N/A", circom: "N/A" },
+  { metric: "Proof generation time", ezkl: "N/A", circom: "N/A" },
+  { metric: "Verification gas", ezkl: "N/A", circom: "N/A" },
+  { metric: "Proof size (bytes)", ezkl: "N/A", circom: "N/A" },
+  { metric: "Score quant error", ezkl: "N/A", circom: "N/A" },
 ];
 
 export const faqItems: FaqItem[] = [
@@ -19,7 +19,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "Why benchmark EZKL against Circom?",
     answer:
-      "Compiler-generated zkML hides arithmetic structure. A hand-optimized low-rank circuit tests whether LoRA's algebra is cheaper to prove than a generic ONNX compile—constraint count, RAM, proof time, gas, and proof size are measured on identical inputs.",
+      "Compiler-generated zkML hides arithmetic structure. A hand-optimized low-rank circuit tests whether LoRA's algebra is cheaper to prove than a generic ONNX compile on identical inputs: constraint count, RAM, proof time, gas, and proof size.",
   },
   {
     question: "What is an epoch?",
@@ -29,7 +29,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "What does the consumer contract do?",
     answer:
-      "RiskConsumer maps verified risk buckets to collateral factor, borrow spread, and borrow-freeze flags. It does not liquidate—policy tightening only, aligned with how risk oracles are used in production lending design.",
+      "RiskConsumer maps verified risk buckets to collateral factor, borrow spread, and borrow-freeze flags. It does not liquidate; policy tightening only, aligned with how risk oracles are used in production lending design.",
   },
   {
     question: "What do model hash and adapter hash bind?",
@@ -57,7 +57,7 @@ export const changelog = [
     items: [
       { tag: "EZKL", text: "circuits-baseline pipeline, Halo2Verifier, e2e_phase1.sh on Anvil." },
       { tag: "CIRCOM", text: "lora_output_head circuit, Groth16 prove/verify, docs/circom.md." },
-      { tag: "BENCH", text: "make benchmark — normalized JSON/CSV/MD + plots; EZKL vs Circom metrics." },
+      { tag: "BENCH", text: "make benchmark: normalized JSON/CSV/MD + plots; EZKL vs Circom metrics." },
       { tag: "UI", text: "phase1-demo.json + bench-latest.json wired to pipeline and benchmark screens." },
       { tag: "DOCS", text: "threat-model.md, benchmarks.md, frontend-data.md." },
     ],
@@ -77,11 +77,11 @@ export const changelog = [
     version: "0.1.0",
     date: "Jul 4, 2026",
     title: "Monorepo foundation",
-    description: "Repository layout, design system, and local toolchain—no live prover wiring.",
+    description: "Repository layout, design system, and local toolchain with no live prover wiring.",
     items: [
       { tag: "REPO", text: "ml-base, circuits-baseline, circuits-custom, contracts, benchmarks layout." },
       { tag: "UI", text: "Dispatch-inspired design system; yellow accent; clipped geometry components." },
-      { tag: "ORACLE", text: "RiskOracle.sol scaffold—commitment storage, proof gate stub (Milestone 2)." },
+      { tag: "ORACLE", text: "RiskOracle.sol scaffold: commitment storage, proof gate stub (Milestone 2)." },
       { tag: "EZKL", text: "circuits-baseline/ directory and settings placeholder for ONNX compile path." },
       { tag: "CIRCOM", text: "circuits-custom/ LoRA gadget stubs for benchmark path (Milestone 3)." },
       { tag: "CONSUMER", text: "RiskConsumer risk-bucket mapping in contracts/ (Foundry tests)." },

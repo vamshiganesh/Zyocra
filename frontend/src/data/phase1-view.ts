@@ -1,5 +1,6 @@
 import type { DataField, EpochRow } from "./product-placeholders";
 import type { Phase1DemoJson } from "../types/phase1";
+import { EMPTY_VALUE } from "../lib/display";
 
 export type Phase1View = {
   raw: Phase1DemoJson;
@@ -28,7 +29,7 @@ function fmtBpsFactor(bps: number): string {
 }
 
 function addrOrDash(v?: string): string {
-  return v && v.startsWith("0x") ? v : "—";
+  return v && v.startsWith("0x") ? v : EMPTY_VALUE;
 }
 
 export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
@@ -115,7 +116,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
 
   const inputFeatures: DataField[] = features.names.map((name, i) => ({
     label: name,
-    value: features.values[i] !== undefined ? fmtFloat(features.values[i], 4) : "—",
+    value: features.values[i] !== undefined ? fmtFloat(features.values[i], 4) : EMPTY_VALUE,
     description: "Min-max normalized feature from ml-base test split.",
     hint: `sample row ${features.sampleIndex}`,
   }));
@@ -156,7 +157,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     },
     {
       label: "Proof size",
-      value: proof.lengthBytes > 0 ? String(proof.lengthBytes) : "—",
+      value: proof.lengthBytes > 0 ? String(proof.lengthBytes) : EMPTY_VALUE,
       mono: true,
       description: "Serialized proof byte length.",
       hint: "bytes",
@@ -169,7 +170,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     },
     {
       label: "Off-chain verify",
-      value: proof.offChainVerify ? "PASS" : "—",
+      value: proof.offChainVerify ? "PASS" : EMPTY_VALUE,
       mono: true,
       description: "ezkl.verify() on local artifacts.",
     },
@@ -242,7 +243,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     },
     {
       label: "Result",
-      value: proof.offChainVerify ? "verify() → true" : "—",
+      value: proof.offChainVerify ? "verify() → true" : EMPTY_VALUE,
       mono: true,
       description: "Verifier outcome for attached proof bytes.",
     },
@@ -327,13 +328,13 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     },
     {
       label: "Verified at epoch",
-      value: verification.onChain ? String(consumer.lastEpoch) : "—",
+      value: verification.onChain ? String(consumer.lastEpoch) : EMPTY_VALUE,
       mono: true,
       description: "Latest committed epoch on oracle.",
     },
     {
       label: "Consumer update",
-      value: verification.onChain ? "applyVerifiedScore()" : "—",
+      value: verification.onChain ? "applyVerifiedScore()" : EMPTY_VALUE,
       mono: true,
       description: "Policy applied after ScoreVerified.",
     },
@@ -378,7 +379,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     {
       label: "Proof status",
       value: proofStatusLabel,
-      detail: proof.lengthBytes > 0 ? `${proof.lengthBytes} bytes` : "—",
+      detail: proof.lengthBytes > 0 ? `${proof.lengthBytes} bytes` : EMPTY_VALUE,
     },
     {
       label: "Verification",

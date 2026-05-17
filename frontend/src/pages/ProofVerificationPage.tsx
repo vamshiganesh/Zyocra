@@ -88,7 +88,7 @@ export function ProofVerificationPage() {
                   description={
                     onChain
                       ? "submitScore and applyVerifiedScore executed on local Anvil."
-                      : "No broadcast in demo shell—confirms verifier and public inputs align before oracle wiring."
+                      : "No broadcast in demo shell. Confirms verifier and public inputs align before oracle wiring."
                   }
                 />
                 <PlaceholderPanel label="Verifier status" title={verifyTitle} status={verifyPanelStatus}>

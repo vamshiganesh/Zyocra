@@ -46,7 +46,7 @@ export function PricingTable({ plans }: Props) {
                     {feature.included === true
                       ? "✓"
                       : feature.included === false
-                        ? "—"
+                        ? "No"
                         : feature.included}
                   </span>
                 </li>

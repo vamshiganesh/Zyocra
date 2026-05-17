@@ -1,3 +1,4 @@
+import { EMPTY_VALUE } from "../lib/display";
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
 import { DataFieldGrid } from "../components/product/DataFieldGrid";
@@ -63,7 +64,7 @@ export function ProtocolImpactPage() {
                 <SectionHeader
                   label="Consumer"
                   title={`Borrower ${borrowerShort}`}
-                  description={`Collateral factor is the primary lever—${scoreBucket} bucket sets borrow power and spread.`}
+                  description={`Collateral factor is the primary lever. The ${scoreBucket} bucket sets borrow power and spread.`}
                 />
                 <DataFieldGrid fields={impactFields} columns={2} />
               </div>
@@ -78,14 +79,14 @@ export function ProtocolImpactPage() {
                   description={
                     live
                       ? "Policy output from RiskConsumer after verified score admission."
-                      : "Placeholder deltas from static demo — sync artifacts for live values."
+                      : "Placeholder deltas from static demo. Sync artifacts for live values."
                   }
                 />
                 <div className="stats-grid">
                   <StatTile
                     label="Collateral factor"
                     value={collateral}
-                    detail={collateralBps !== undefined ? `${collateralBps} bps` : "—"}
+                    detail={collateralBps !== undefined ? `${collateralBps} bps` : EMPTY_VALUE}
                     accent
                   />
                   <StatTile label="Borrow spread" value={spreadLabel} detail="Applied on next borrow" />

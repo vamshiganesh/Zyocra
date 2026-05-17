@@ -52,7 +52,7 @@ export function ThreatModelPage() {
                 <SectionHeader
                   label="Guarantees"
                   title="Cryptographic and on-chain bounds"
-                  description="Claims limited to correct inference under committed artifacts—not economic optimality."
+                  description="Claims limited to correct inference under committed artifacts, not economic optimality."
                 />
                 <ProseList items={guaranteeItems} />
               </div>

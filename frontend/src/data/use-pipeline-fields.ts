@@ -1,3 +1,4 @@
+import { EMPTY_VALUE } from "../lib/display";
 import { usePhase1Data } from "../hooks/usePhase1Data";
 import * as ph from "./product-placeholders";
 
@@ -32,13 +33,13 @@ export function usePipelineFields() {
       },
       {
         label: "Consumer",
-        value: "—",
+        value: EMPTY_VALUE,
         mono: true,
         description: "RiskConsumer applying verified bucket policy.",
       },
       {
         label: "Result",
-        value: "—",
+        value: EMPTY_VALUE,
         mono: true,
         description: "Simulated verifier outcome for attached proof bytes.",
       },

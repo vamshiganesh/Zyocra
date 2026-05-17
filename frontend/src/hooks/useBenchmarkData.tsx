@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { BenchmarkRow } from "../components/ui/BenchmarkPanel";
+import { EMPTY_VALUE } from "../lib/display";
 import type { DataLoadStatus } from "../types/phase1";
 
 const DATA_URL = "/data/bench-latest.json";
@@ -25,7 +26,7 @@ const LABELS: Record<string, string> = {
 };
 
 function fmt(v: number | string | null | undefined): string {
-  if (v === null || v === undefined) return "—";
+  if (v === null || v === undefined) return EMPTY_VALUE;
   if (typeof v === "number") {
     if (Number.isInteger(v)) return v.toLocaleString();
     return v.toFixed(2);
@@ -46,17 +47,17 @@ function rowsFromJson(raw: BenchJson): BenchmarkRow[] {
   return order.map((key) => {
     const m = byKey.get(key);
     if (!m) {
-      return { metric: LABELS[key] ?? key, ezkl: "—", circom: "—" };
+      return { metric: LABELS[key] ?? key, ezkl: EMPTY_VALUE, circom: EMPTY_VALUE };
     }
     let ezkl = fmt(m.ezkl);
     let circom = fmt(m.circom);
     if (key === "prove_time_ms" || key === "verify_time_ms") {
-      ezkl = m.ezkl != null ? `${ezkl} ms` : "—";
-      circom = m.circom != null ? `${circom} ms` : "—";
+      ezkl = m.ezkl != null ? `${ezkl} ms` : EMPTY_VALUE;
+      circom = m.circom != null ? `${circom} ms` : EMPTY_VALUE;
     }
     if (key === "peak_rss_kb" && m.ezkl != null) {
       ezkl = `${(Number(m.ezkl) / 1024).toFixed(1)} MB`;
-      circom = m.circom != null ? `${(Number(m.circom) / 1024).toFixed(1)} MB` : "—";
+      circom = m.circom != null ? `${(Number(m.circom) / 1024).toFixed(1)} MB` : EMPTY_VALUE;
     }
     return { metric: LABELS[key] ?? m.metric, ezkl, circom };
   });

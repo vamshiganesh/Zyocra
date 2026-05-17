@@ -55,7 +55,7 @@ export function InputSummaryPage() {
                 <SectionHeader
                   label="Quantization"
                   title="Fixed-point profile"
-                  description="Scales must match ml-base export, EZKL settings, and Circom constants—misalignment is a benchmark failure mode."
+                  description="Scales must match ml-base export, EZKL settings, and Circom constants. Misalignment is a benchmark failure mode."
                 />
                 <DataFieldGrid fields={quantizationFields} columns={3} />
               </div>

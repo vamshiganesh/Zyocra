@@ -63,7 +63,7 @@ export function RiskScorePage() {
                 <SectionHeader
                   label="Risk bucket"
                   title="Consumer threshold map"
-                  description="Discrete bands drive collateral factor and spread—documented in RiskConsumer, not inferred at runtime."
+                  description="Discrete bands drive collateral factor and spread, documented in RiskConsumer, not inferred at runtime."
                 />
                 <div className="layer-list">
                   {bucketThresholds.map((row) => (
@@ -85,7 +85,7 @@ export function RiskScorePage() {
                 <SectionHeader
                   label="Quant drift"
                   title="Float vs fixed-point"
-                  description="Score error is reported alongside circuit size—precision and cost are coupled in zkML."
+                  description="Score error is reported alongside circuit size. Precision and cost are coupled in zkML."
                 />
                 <div className="stats-grid">
                   <StatTile label="Float reference" value={floatRef} detail="ml-base / witness rescaled" />

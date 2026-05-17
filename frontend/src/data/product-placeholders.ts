@@ -178,7 +178,7 @@ export const quantizationFields: DataField[] = [
     label: "activation_scale",
     value: "128",
     mono: true,
-    description: "Scale for intermediate activations—overflow bounds checked in export.",
+    description: "Scale for intermediate activations; overflow bounds checked in export.",
   },
   {
     label: "accumulator_bits",
@@ -230,20 +230,20 @@ export const publicInputFields: DataField[] = [
 export const proveRun = {
   path: "ezkl" as const,
   status: "ready" as const,
-  constraints: "—",
-  peakRam: "—",
-  proofTime: "—",
-  proofSize: "—",
+  constraints: "N/A",
+  peakRam: "N/A",
+  proofTime: "N/A",
+  proofSize: "N/A",
   artifactPath: "circuits-baseline/proofs/epoch-2026-041.json",
 };
 
 export const circomRun = {
   path: "circom" as const,
   status: "ready" as const,
-  constraints: "—",
-  peakRam: "—",
-  proofTime: "—",
-  proofSize: "—",
+  constraints: "N/A",
+  peakRam: "N/A",
+  proofTime: "N/A",
+  proofSize: "N/A",
   artifactPath: "circuits-custom/proofs/epoch-2026-041.json",
 };
 
@@ -342,9 +342,9 @@ export const verifyFields: DataField[] = [
   },
   {
     label: "Gas used",
-    value: "—",
+    value: "N/A",
     mono: true,
-    description: "Gas consumed by verify()—primary on-chain cost axis in benchmarks.",
+    description: "Gas consumed by verify(); primary on-chain cost axis in benchmarks.",
     hint: "from gas_report",
   },
   {
@@ -377,7 +377,7 @@ export const scoreOutput: DataField[] = [
   {
     label: "Absolute error",
     value: "0.003",
-    description: "Quantization drift on score—benchmark axis alongside constraint count.",
+    description: "Quantization drift on score; benchmark axis alongside constraint count.",
     hint: "|float − fixed|",
   },
   {
@@ -417,7 +417,7 @@ export const impactFields: DataField[] = [
     label: "New borrow allowed",
     value: "true",
     mono: true,
-    description: "HIGH bucket would set false—no model-triggered liquidation in scope.",
+    description: "HIGH bucket would set false; no model-triggered liquidation in scope.",
   },
   {
     label: "Consumer tx",
@@ -436,7 +436,7 @@ export const auditTrail: DataField[] = [
   },
   {
     label: "Verified at block",
-    value: "—",
+    value: "N/A",
     mono: true,
     description: "Block number when verifier returned true on-chain.",
   },
@@ -463,7 +463,7 @@ export const auditTrail: DataField[] = [
 export const guaranteeItems = [
   {
     title: "Inference integrity",
-    body: "The published score equals the output of the declared quantized graph (EZKL) or LoRA subgraph (Circom) for the committed public inputs—no undisclosed weights or adapters.",
+    body: "The published score equals the output of the declared quantized graph (EZKL) or LoRA subgraph (Circom) for the committed public inputs, with no undisclosed weights or adapters.",
   },
   {
     title: "Oracle admission",
@@ -478,7 +478,7 @@ export const guaranteeItems = [
 export const nonGuaranteeItems = [
   {
     title: "Model alpha",
-    body: "Zyocra does not claim the risk model maximizes PnL or predicts black-swan events—only that inference was executed as committed.",
+    body: "Zyocra does not claim the risk model maximizes PnL or predicts black-swan events, only that inference was executed as committed.",
   },
   {
     title: "Input provenance",

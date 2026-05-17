@@ -195,7 +195,7 @@ export function SiteFooter() {
               <p className="site-footer__banner-copy">
                 Zyocra is a zkML operator for DeFi risk controls. It proves
                 LoRA-adapted inference off-chain and updates collateral parameters
-                on-chain—with full verification and control.
+                on-chain, with full verification and control.
               </p>
             </div>
             <p className="site-footer__wordmark" aria-label="Zyocra">

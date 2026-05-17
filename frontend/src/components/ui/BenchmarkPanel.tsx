@@ -15,7 +15,7 @@ type Props = {
 export function BenchmarkPanel({
   title = "Benchmark headline",
   rows,
-  note = "Placeholder metrics — filled in Milestone 5.",
+  note = "Placeholder metrics, filled in Milestone 5.",
 }: Props) {
   return (
     <div className="bench-panel">
