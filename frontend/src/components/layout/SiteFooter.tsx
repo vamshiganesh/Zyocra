@@ -12,12 +12,12 @@ const pages = [
 ];
 
 const social = [
-  { href: "#", label: "Telegram" },
-  { href: "#", label: "Youtube" },
-  { href: "#", label: "Linkedin" },
-  { href: "#", label: "Discord" },
-  { href: "#", label: "Github" },
-  { href: "#", label: "X" },
+  { href: "https://t.me/vamshiganesh274", label: "Telegram" },
+  { href: "https://www.youtube.com/@VamshiGaneshB", label: "Youtube" },
+  { href: "https://www.linkedin.com/in/vamshiganeshb/", label: "Linkedin" },
+  { href: "https://discord.com/users/1047391947909767168", label: "Discord" },
+  { href: "https://github.com/vamshiganesh", label: "Github" },
+  { href: "https://x.com/VamshiGaneshB", label: "X" },
 ];
 
 const badges = [
@@ -150,7 +150,13 @@ export function SiteFooter() {
                   <ul className="site-footer__link-list">
                     {social.map((item) => (
                       <li key={item.label}>
-                        <a href={item.href}>{item.label}</a>
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.label}
+                        </a>
                       </li>
                     ))}
                   </ul>
