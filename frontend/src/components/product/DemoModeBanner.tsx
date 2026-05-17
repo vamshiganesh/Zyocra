@@ -8,7 +8,12 @@ import "./product.css";
 export function DemoModeBanner() {
   const { pathname } = useLocation();
   const { status, view, reload } = usePhase1Data();
-  const step = PIPELINE_SCREENS.find((screen) => screen.path === pathname);
+  const stepIndex = PIPELINE_SCREENS.findIndex((screen) => screen.path === pathname);
+  const step = stepIndex >= 0 ? PIPELINE_SCREENS[stepIndex] : undefined;
+  const nextStep =
+    stepIndex >= 0 && stepIndex < PIPELINE_SCREENS.length - 1
+      ? PIPELINE_SCREENS[stepIndex + 1]
+      : null;
   const [visible, setVisible] = useState(() => isPipelineTourActive() || step !== undefined);
   const [pulse, setPulse] = useState(false);
 
@@ -61,12 +66,9 @@ export function DemoModeBanner() {
         <button type="button" className="demo-banner__btn" onClick={() => reload()}>
           Refresh data
         </button>
-        {step && step.pipelineStep < PIPELINE_SCREENS.length ? (
-          <Link
-            to={PIPELINE_SCREENS[step.pipelineStep].path}
-            className="demo-banner__link"
-          >
-            Next step →
+        {nextStep ? (
+          <Link to={nextStep.path} className="demo-banner__link">
+            Next: {nextStep.shortLabel} →
           </Link>
         ) : step ? (
           <Link to="/benchmarks" className="demo-banner__link">
