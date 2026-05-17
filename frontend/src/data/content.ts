@@ -127,5 +127,5 @@ export const footerCopy = {
   headline: "Prove inference.\nPublish parameters.",
   lede:
     "Verifiable LoRA risk oracle for DeFi—benchmark-driven zkML with on-chain verification and collateral policy updates.",
-  cta: "Run epoch demo",
+  cta: "Walk pipeline",
 };

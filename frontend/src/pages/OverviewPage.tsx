@@ -30,9 +30,9 @@ export function OverviewPage() {
             body={c.hero.body}
             actions={
               <>
-                <ClippedButton to="/epoch" variant="accent" size="lg">
+                <PipelineStartButton variant="accent" size="lg">
                   {c.hero.ctaPrimary}
-                </ClippedButton>
+                </PipelineStartButton>
                 <ClippedButton to="/benchmarks" variant="ghost" size="lg">
                   {c.hero.ctaSecondary}
                 </ClippedButton>
@@ -120,9 +120,9 @@ export function OverviewPage() {
                   description={c.entry.description}
                 />
                 <div className="hero__actions" style={{ marginTop: "var(--space-6)" }}>
-                  <ClippedButton to={flowSteps[0].path} variant="accent" size="md">
+                  <PipelineStartButton variant="accent" size="md">
                     Start pipeline
-                  </ClippedButton>
+                  </PipelineStartButton>
                   <ClippedButton to="/threat-model" variant="surface" size="md">
                     Threat model
                   </ClippedButton>
