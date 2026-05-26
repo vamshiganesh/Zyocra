@@ -1,0 +1,13 @@
+metric,unit,ezkl,ezkl_head,circom,notes
+constraint_count,count,964,—,89,EZKL: settings num_rows; Circom: R1CS total
+prove_time_ms,ms,2.486e+04,—,2070,median of 3 runs
+prove_time_stdev_ms,ms,5040,—,471.6,sample stdev across prove runs
+verify_time_ms,ms,446.6,—,1720,off-chain verifier
+proof_size_bytes,bytes,21391,—,804,serialized proof file size
+peak_rss_kb,KB,1753208,—,189720,prove step peak RSS (Linux time -v)
+verify_gas,gas,536109,—,244502,EVM verifier only (Foundry)
+constraints_per_matmul,count,321.3,—,89,constraint_count / matmul_count
+constraints_per_lora_rank_op,count,—,—,22.25,Circom head only: constraints / rank
+verify_gas_per_public_input,gas,76587,—,27167,standalone verify gas / public signals
+accuracy_max_abs_error,score,0.006406,—,—,EZKL full model test split; see head_alignment for comparable head check
+engineering_complexity,notes,ONNX export + EZKL compile/setup; large pk (~600MB),Head ONNX + EZKL compile; comparable scope to Circom,Hand gates + snarkjs; local pot12; subgraph only,qualitative — not a numeric score

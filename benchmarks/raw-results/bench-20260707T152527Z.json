@@ -1,0 +1,264 @@
+{
+  "accuracy": {
+    "circom_head_subgraph": {
+      "dequantized_logit": 51.21868896484375,
+      "fixture": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/fixtures/head-v1.json",
+      "logit_acc": 1678334,
+      "metric": "integer logit_acc vs reference recompute on fixture",
+      "recompute_match": true
+    },
+    "comparable_note": "EZKL full graph proves end-to-end risk score; Circom proves output-head logit_acc. Use head_alignment for apples-to-apples hidden\u2192logit comparison on sample_index=0.",
+    "ezkl_demo_sample": {
+      "sample_index": 0,
+      "witness_score_float": 0.1796875
+    },
+    "ezkl_full_model": {
+      "max_abs_error": 0.006406337022781372,
+      "max_rel_error": 0.02072142883127122,
+      "mean_abs_error": 0.0013714569693358688,
+      "mean_rel_error": 0.005376760389347188,
+      "metric": "float32 vs Q8.8 fixed-point inference (ml-base test split)",
+      "test_rows": 308
+    },
+    "head_alignment": {
+      "circom_logit_acc": 1678334,
+      "comparable": false,
+      "note": "ml-base checkpoint missing \u2014 cannot run forward alignment"
+    }
+  },
+  "environment": {
+    "cpu_count": 8,
+    "hostname": "DESKTOP-M7LTASU",
+    "mem_total_kb": 8085716,
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python_packages": {
+      "ezkl": "23.0.5",
+      "torch": "2.12.1+cpu"
+    },
+    "repo_root": "/home/ubuntu/projects/zyocra/Zyocra",
+    "sample_indices": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "timestamp_utc": "2026-07-07T15:23:44Z",
+    "tools": {
+      "circom": "circom compiler 2.2.3",
+      "forge": "forge Version: 1.5.1-stable",
+      "node": "v24.10.0",
+      "pnpm": "11.5.1",
+      "python": "Python 3.12.3",
+      "rustc": "rustc 1.94.0 (4a4ef493e 2026-03-02)",
+      "snarkjs": null
+    }
+  },
+  "errors": [
+    "ezkl_head: Failed to run prove: [srs] failed to load srs from /home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/head/keys/kzg.srs"
+  ],
+  "gas": {
+    "circom_verify_gas": 244502,
+    "ezkl_verify_gas": 536109,
+    "harness": "contracts/test/BenchmarkGas.t.sol",
+    "note": "Standalone verifier.verifyProof / IRiskScoreVerifier.verify \u2014 not full oracle path"
+  },
+  "kind": "zyocra_benchmark",
+  "limitations": [
+    "EZKL full graph proves 6\u219216\u21928\u21921 + sigmoid; Circom proves only the LoRA output-head subgraph \u2014 full-graph constraint and prove-time rows are not end-to-end equivalent.",
+    "EZKL head-only row (when present) is comparable to Circom on the same hidden\u2192logit statement; full-graph EZKL remains a separate workload.",
+    "EZKL constraint metric uses settings.json num_rows (PLONK rows); Circom uses snarkjs R1CS constraint count \u2014 different proof systems (Halo2/KZG vs Groth16).",
+    "Off-chain verify time for EZKL uses ezkl.verify(); Circom uses snarkjs groth16 verify \u2014 not EVM gas.",
+    "Peak RSS requires /usr/bin/time on Linux; macOS/Windows runs may omit RAM metrics.",
+    "Gas figures measure standalone verifier contracts on Foundry, excluding RiskOracle.submitScore overhead.",
+    "Accuracy: full-model quantization error applies to EZKL; head_alignment compares ml-base vs Circom on one hidden vector.",
+    "Prove times are medians of 3 runs with stdev reported; sample_indices=[0, 1, 2, 3].",
+    "Local pot12 ceremony for Circom is not production-grade trusted setup."
+  ],
+  "methodology": {
+    "epoch_label": "epoch-2026-041",
+    "gas_measurement": "Foundry gasleft() delta in BenchmarkGasTest",
+    "hybrid_model": "one EZKL full prove per epoch + Circom head prove per update (see workloads.hybrid)",
+    "prove_aggregation": "median wall time (+ min, max, stdev)",
+    "prove_runs": 3,
+    "public_input_policy": "EZKL: 6 features + 1 score; Circom: hidden[8] + logit_acc",
+    "quantization": "Q8.8 \u2014 activation_scale=128, weight_scale=256 (ml-base)",
+    "ram_measurement": "/usr/bin/time -v Maximum resident set size (Linux)",
+    "sample_index": 0,
+    "sample_indices": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "metrics": [
+    {
+      "circom": 89,
+      "ezkl": 964,
+      "ezkl_head": null,
+      "metric": "constraint_count",
+      "notes": "EZKL: settings num_rows; Circom: R1CS total",
+      "unit": "count"
+    },
+    {
+      "circom": 2070.0,
+      "ezkl": 24860.0,
+      "ezkl_head": null,
+      "metric": "prove_time_ms",
+      "notes": "median of 3 runs",
+      "unit": "ms"
+    },
+    {
+      "circom": 471.59,
+      "ezkl": 5039.86,
+      "ezkl_head": null,
+      "metric": "prove_time_stdev_ms",
+      "notes": "sample stdev across prove runs",
+      "unit": "ms"
+    },
+    {
+      "circom": 1720.0,
+      "ezkl": 446.55,
+      "ezkl_head": null,
+      "metric": "verify_time_ms",
+      "notes": "off-chain verifier",
+      "unit": "ms"
+    },
+    {
+      "circom": 804,
+      "ezkl": 21391,
+      "ezkl_head": null,
+      "metric": "proof_size_bytes",
+      "notes": "serialized proof file size",
+      "unit": "bytes"
+    },
+    {
+      "circom": 189720,
+      "ezkl": 1753208,
+      "ezkl_head": null,
+      "metric": "peak_rss_kb",
+      "notes": "prove step peak RSS (Linux time -v)",
+      "unit": "KB"
+    },
+    {
+      "circom": 244502,
+      "ezkl": 536109,
+      "ezkl_head": null,
+      "metric": "verify_gas",
+      "notes": "EVM verifier only (Foundry)",
+      "unit": "gas"
+    },
+    {
+      "circom": 89.0,
+      "ezkl": 321.33,
+      "ezkl_head": null,
+      "metric": "constraints_per_matmul",
+      "notes": "constraint_count / matmul_count",
+      "unit": "count"
+    },
+    {
+      "circom": 22.25,
+      "ezkl": null,
+      "ezkl_head": null,
+      "metric": "constraints_per_lora_rank_op",
+      "notes": "Circom head only: constraints / rank",
+      "unit": "count"
+    },
+    {
+      "circom": 27167,
+      "ezkl": 76587,
+      "ezkl_head": null,
+      "metric": "verify_gas_per_public_input",
+      "notes": "standalone verify gas / public signals",
+      "unit": "gas"
+    },
+    {
+      "circom": null,
+      "ezkl": 0.006406337022781372,
+      "ezkl_head": null,
+      "metric": "accuracy_max_abs_error",
+      "notes": "EZKL full model test split; see head_alignment for comparable head check",
+      "unit": "score"
+    },
+    {
+      "circom": "Hand gates + snarkjs; local pot12; subgraph only",
+      "ezkl": "ONNX export + EZKL compile/setup; large pk (~600MB)",
+      "ezkl_head": "Head ONNX + EZKL compile; comparable scope to Circom",
+      "metric": "engineering_complexity",
+      "notes": "qualitative \u2014 not a numeric score",
+      "unit": "notes"
+    }
+  ],
+  "schema_version": "1.1",
+  "timestamp_utc": "2026-07-07T15:23:44Z",
+  "workloads": {
+    "circom": {
+      "artifacts": {
+        "fixture": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/fixtures/head-v1.json",
+        "proof": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/proofs/proof.json",
+        "public": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/proofs/public.json",
+        "r1cs": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/build/lora_output_head.r1cs",
+        "witness": "/home/ubuntu/projects/zyocra/Zyocra/circuits-custom/witnesses/witness.wtns"
+      },
+      "available": true,
+      "constraint_count": 89,
+      "constraint_count_secondary": 44,
+      "constraint_metric_note": "R1CS constraints from snarkjs r1cs info; secondary = non-linear (circom compiler)",
+      "hidden_dim": 8,
+      "logit_acc_public": 1678334,
+      "lora_rank_ops": 4,
+      "matmul_count": 1,
+      "path": "circom",
+      "peak_rss_kb": 189720,
+      "proof_size_bytes": 804,
+      "prove_ms_max": 2710.0,
+      "prove_ms_median": 2070.0,
+      "prove_ms_min": 1790.0,
+      "prove_ms_stdev": 471.59,
+      "prove_runs": 3,
+      "public_input_count": 9,
+      "scope": "LoRA output head only (8-dim hidden \u2192 logit_acc, rank-4 explicit A\u00b7B fusion)",
+      "verify_kind": "off_chain_snarkjs_groth16",
+      "verify_ms": 1720.0
+    },
+    "ezkl": {
+      "artifacts": {
+        "compiled": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/settings/network.ezkl",
+        "proof": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/proofs/proof.json",
+        "settings": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/settings/settings.json",
+        "witness": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/witnesses/witness.json"
+      },
+      "available": true,
+      "constraint_count": 964,
+      "constraint_count_secondary": 1929,
+      "constraint_metric_note": "num_rows from settings.json (EZKL PLONK rows); total_assignments also reported",
+      "matmul_count": 3,
+      "path": "ezkl",
+      "peak_rss_kb": 1753208,
+      "proof_size_bytes": 21391,
+      "prove_ms_max": 30890.0,
+      "prove_ms_median": 24860.0,
+      "prove_ms_min": 20880.0,
+      "prove_ms_stdev": 5039.86,
+      "prove_runs": 3,
+      "public_input_count": 7,
+      "scope": "Full ONNX graph (6\u219216\u21928\u21921 + sigmoid) via EZKL 23.0.5",
+      "score_float_witness": 0.1796875,
+      "verify_kind": "off_chain_ezkl",
+      "verify_ms": 446.55
+    },
+    "ezkl_head": null,
+    "hybrid": {
+      "amortized_prove_ms_per_update": 8285.0,
+      "assumptions": {
+        "backbone_trust": "hidden vector from backbone is trusted input to head circuit",
+        "ezkl_backbone_proxy": "EZKL full-graph prove time used as backbone cost proxy",
+        "updates_per_epoch": 4
+      },
+      "circom_head_prove_ms": 2070.0,
+      "ezkl_full_prove_ms": 24860.0,
+      "scope": "Backbone once (EZKL full graph proxy) + Circom head per update",
+      "total_prove_ms_per_epoch": 33140.0
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "artifacts": {
+    "compiled": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/settings/network.ezkl",
+    "proof": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/proofs/proof.json",
+    "settings": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/settings/settings.json",
+    "witness": "/home/ubuntu/projects/zyocra/Zyocra/circuits-baseline/witnesses/witness.json"
+  },
+  "available": true,
+  "constraint_count": 964,
+  "constraint_count_secondary": 1929,
+  "constraint_metric_note": "num_rows from settings.json (EZKL PLONK rows); total_assignments also reported",
+  "kind": "ezkl_bench",
+  "matmul_count": 3,
+  "path": "ezkl",
+  "peak_rss_kb": 1753208,
+  "proof_size_bytes": 21391,
+  "prove_ms_max": 30890.0,
+  "prove_ms_median": 24860.0,
+  "prove_ms_min": 20880.0,
+  "prove_ms_stdev": 5039.86,
+  "prove_runs": 3,
+  "public_input_count": 7,
+  "scope": "Full ONNX graph (6\u219216\u21928\u21921 + sigmoid) via EZKL 23.0.5",
+  "score_float_witness": 0.1796875,
+  "verify_kind": "off_chain_ezkl",
+  "verify_ms": 446.55
+}
