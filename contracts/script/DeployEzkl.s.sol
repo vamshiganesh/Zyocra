@@ -61,7 +61,8 @@ contract DeployEzkl is Script {
     objectKey.serialize("consumer", d.consumer);
     objectKey.serialize("modelHash", d.modelHash);
     string memory json = objectKey.serialize("adapterHash", d.adapterHash);
-    json.write("deployments/anvil-ezkl-latest.json");
+    string memory outfile = vm.envOr("DEPLOY_OUTFILE", string("deployments/anvil-ezkl-latest.json"));
+    json.write(outfile);
   }
 
   function _logDeployment(Deployment memory d) internal pure {

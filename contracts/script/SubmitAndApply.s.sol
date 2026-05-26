@@ -22,13 +22,17 @@ contract SubmitAndApply is Script {
     address consumerAddr = vm.envAddress("CONSUMER_ADDRESS");
 
     ProofJsonLib.Artifacts memory artifacts =
-      ProofJsonLib.load(vm.readFile(_proofJsonPath()));
+      ProofJsonLib.loadWithBorrower(vm.readFile(_proofJsonPath()), DEMO_BORROWER);
 
     string memory payloadJson = vm.readFile(_payloadJsonPath());
     bytes32 modelHash = payloadJson.readBytes32(".modelHash");
     bytes32 adapterHash = payloadJson.readBytes32(".adapterHash");
     uint256 scoreBps = payloadJson.readUint(".scoreBps");
     uint64 epoch = uint64(payloadJson.readUint(".epoch"));
+    address borrower = vm.parseJsonAddress(payloadJson, ".borrower");
+    if (borrower == address(0)) {
+      borrower = DEMO_BORROWER;
+    }
 
     RiskOracle oracle = RiskOracle(oracleAddr);
     RiskConsumer consumer = RiskConsumer(consumerAddr);
@@ -53,19 +57,20 @@ contract SubmitAndApply is Script {
         adapterHash: adapterHash,
         epoch: epoch,
         scoreBps: scoreBps,
+        borrower: borrower,
         proof: artifacts.proof,
         publicInputs: artifacts.publicInputs
       })
     );
 
     console2.log("==> applyVerifiedScore");
-    console2.log("  borrower", DEMO_BORROWER);
+    console2.log("  borrower", borrower);
 
-    consumer.applyVerifiedScore(DEMO_BORROWER, epoch);
+    consumer.applyVerifiedScore(borrower, epoch);
 
     vm.stopBroadcast();
 
-    RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(DEMO_BORROWER);
+    RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
     console2.log("==> consumer policy");
     console2.log("  bucket", uint8(policy.bucket));
     console2.log("  collateralFactorBps", policy.collateralFactorBps);
@@ -77,7 +82,7 @@ contract SubmitAndApply is Script {
     string memory objectKey = "result";
     objectKey.serialize("epoch", uint256(epoch));
     objectKey.serialize("scoreBps", scoreBps);
-    objectKey.serialize("borrower", DEMO_BORROWER);
+    objectKey.serialize("borrower", borrower);
     objectKey.serialize("bucket", uint256(uint8(policy.bucket)));
     objectKey.serialize("collateralFactorBps", policy.collateralFactorBps);
     objectKey.serialize("borrowSpreadBps", policy.borrowSpreadBps);

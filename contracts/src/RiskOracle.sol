@@ -19,6 +19,7 @@ contract RiskOracle is IRiskOracle {
         bytes32 adapterHash;
         uint64 epoch;
         uint256 scoreBps;
+        address borrower;
         bytes proof;
         uint256[] publicInputs;
     }
@@ -106,6 +107,7 @@ contract RiskOracle is IRiskOracle {
         }
 
         ScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
+        ScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
 
         uint64 timestamp = uint64(block.timestamp);
         ScoreRecord memory record = ScoreRecord({
@@ -113,6 +115,7 @@ contract RiskOracle is IRiskOracle {
             adapterHash: payload.adapterHash,
             epoch: payload.epoch,
             scoreBps: payload.scoreBps,
+            borrower: payload.borrower,
             timestamp: timestamp,
             blockNumber: uint64(block.number)
         });

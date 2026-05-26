@@ -22,6 +22,14 @@ contract EzklRiskScoreVerifier is IRiskScoreVerifier {
     external
     returns (bool valid)
   {
+    // Halo2 verifier expects 7 EZKL circuit instances; borrower binding is checked in RiskOracle.
+    if (publicInputs.length == 8) {
+      uint256[] memory circuitInputs = new uint256[](7);
+      for (uint256 i = 0; i < 7; i++) {
+        circuitInputs[i] = publicInputs[i];
+      }
+      return halo2.verifyProof(proof, circuitInputs);
+    }
     return halo2.verifyProof(proof, publicInputs);
   }
 }

@@ -10,6 +10,7 @@ interface IRiskOracle {
         bytes32 adapterHash;
         uint64 epoch;
         uint256 scoreBps;
+        address borrower;
         uint64 timestamp;
         uint64 blockNumber;
     }

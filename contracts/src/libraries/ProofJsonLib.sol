@@ -24,6 +24,21 @@ library ProofJsonLib {
     return Artifacts({proof: proof, publicInputs: publicInputs});
   }
 
+  /// @notice Load EZKL proof artifacts and append borrower binding as the 8th public input.
+  function loadWithBorrower(string memory proofJson, address borrower)
+    internal
+    pure
+    returns (Artifacts memory)
+  {
+    Artifacts memory base = load(proofJson);
+    uint256[] memory extended = new uint256[](base.publicInputs.length + 1);
+    for (uint256 i = 0; i < base.publicInputs.length; i++) {
+      extended[i] = base.publicInputs[i];
+    }
+    extended[base.publicInputs.length] = uint256(uint160(borrower));
+    return Artifacts({proof: base.proof, publicInputs: extended});
+  }
+
   function _hexStringToUint(string memory hexString) private pure returns (uint256) {
     bytes memory chars = bytes(hexString);
     uint256 value;

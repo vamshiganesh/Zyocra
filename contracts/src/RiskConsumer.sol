@@ -26,6 +26,7 @@ contract RiskConsumer {
 
     error EpochNotVerified(uint64 epoch);
     error AlreadyApplied(address borrower, uint64 epoch);
+    error BorrowerMismatch(address expected, address provided);
 
     event RiskBucketChanged(
         address indexed borrower,
@@ -77,6 +78,9 @@ contract RiskConsumer {
         if (policy.lastEpoch >= epoch) revert AlreadyApplied(borrower, epoch);
 
         IRiskOracle.ScoreRecord memory score = oracle.getScoreByEpoch(epoch);
+        if (score.borrower != borrower) {
+            revert BorrowerMismatch(score.borrower, borrower);
+        }
         RiskBuckets.Bucket newBucket = score.scoreBps.bucketForScore();
         RiskPolicies.Policy memory params = RiskPolicies.policyFor(newBucket);
 

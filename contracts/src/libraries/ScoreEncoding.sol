@@ -11,6 +11,7 @@ library ScoreEncoding {
     uint256 internal constant BPS_DENOMINATOR = 10_000;
 
     error ScoreMismatch(uint256 calldataBps, uint256 provedBps);
+    error BorrowerMismatch(address calldataBorrower, address provedBorrower);
 
     /// @notice Convert decomposed EZKL score limb to basis points (round half up).
     /// @dev scoreBps = round(limb / 128 * 10_000). Demo: limb 23 -> 1797 bps (0.1796875).
@@ -27,6 +28,18 @@ library ScoreEncoding {
         uint256 provedBps = scoreBpsFromEzklLimb(publicInputs[PublicInputLayout.EZKL_SCORE_INDEX]);
         if (scoreBps != provedBps) {
             revert ScoreMismatch(scoreBps, provedBps);
+        }
+    }
+
+    /// @notice Assert calldata borrower matches the proved public input limb (stub binding slot).
+    function requireBorrowerMatchesPublicInput(address borrower, uint256[] memory publicInputs)
+        internal
+        pure
+    {
+        PublicInputLayout.requireEzklLayout(publicInputs);
+        address provedBorrower = address(uint160(publicInputs[PublicInputLayout.EZKL_BORROWER_INDEX]));
+        if (borrower != provedBorrower) {
+            revert BorrowerMismatch(borrower, provedBorrower);
         }
     }
 }
