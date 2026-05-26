@@ -1,7 +1,7 @@
 # Zyocra — common local commands (Ubuntu WSL, no cloud).
 # Run from repo root: make <target>
 
-.PHONY: help install dev test lint benchmark check-tools
+.PHONY: help install dev operator test lint benchmark check-tools
 
 help: ## Show available targets
 	@awk 'BEGIN {FS = ":.*##"; printf "Zyocra commands:\n" } \
