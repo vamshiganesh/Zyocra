@@ -1,22 +1,39 @@
 #!/usr/bin/env bash
-# dev.sh — start local development processes that exist.
-# Currently only the frontend when scaffolded; no cloud services.
+# dev.sh — start operator API + frontend dev server.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 info() { printf '==> %s\n' "$*"; }
-warn() { printf '!!  %s\n' "$*" >&2; }
 
-if [[ -f "$ROOT/frontend/package.json" ]]; then
-  info "Starting frontend dev server (pnpm dev)"
-  # pnpm dev: Vite/Next local HMR server — binds to localhost only by default
-  cd "$ROOT/frontend"
-  exec pnpm dev
+if [[ -f "$ROOT/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT/.env"
+  set +a
 fi
 
-warn "frontend/ is not scaffolded yet — nothing to run for dev."
-echo "When the UI lands, this script will run: (cd frontend && pnpm dev)"
-echo "Optional local chain (after contracts exist): (cd contracts && anvil)"
-exit 0
+OPERATOR_PORT="${OPERATOR_PORT:-8787}"
+
+cleanup() {
+  kill "${OPERATOR_PID:-}" "${FRONTEND_PID:-}" 2>/dev/null || true
+}
+trap cleanup EXIT INT TERM
+
+if [[ -f "$ROOT/frontend/package.json" ]]; then
+  info "Starting operator API on port ${OPERATOR_PORT}"
+  bash "$ROOT/scripts/operator.sh" &
+  OPERATOR_PID=$!
+  sleep 1
+
+  info "Starting frontend dev server (pnpm dev)"
+  cd "$ROOT/frontend"
+  pnpm dev &
+  FRONTEND_PID=$!
+
+  wait
+else
+  info "frontend/ missing — starting operator only"
+  exec bash "$ROOT/scripts/operator.sh"
+fi
