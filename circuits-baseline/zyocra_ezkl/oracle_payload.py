@@ -8,6 +8,7 @@ from typing import Any
 
 from zyocra_ezkl.config import (
     ADAPTER_HASH_HEX,
+    DEMO_BORROWER_HEX,
     DEMO_EPOCH,
     MODEL_HASH_HEX,
     ORACLE_PAYLOAD_JSON,
