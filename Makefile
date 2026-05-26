@@ -10,8 +10,11 @@ help: ## Show available targets
 install: ## Verify host tools; create ml-base/.venv; install PyTorch CPU, ONNX, EZKL
 	@./scripts/install.sh
 
-dev: ## Start optional frontend dev server when frontend/ exists
+dev: ## Start operator API + frontend dev servers
 	@./scripts/dev.sh
+
+operator: ## Start FastAPI operator service on OPERATOR_PORT (default 8787)
+	@./scripts/operator.sh
 
 test: ## Run Foundry / Python / frontend tests that exist
 	@./scripts/test.sh
