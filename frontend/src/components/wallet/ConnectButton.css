@@ -1,0 +1,10 @@
+.connect-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.connect-btn__meta {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+}
