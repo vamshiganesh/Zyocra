@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { useOperatorJobs } from "../../hooks/useOperatorJobs";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { useBenchmarkData } from "../../hooks/useBenchmarkData";
 import { useChainStatus } from "../../hooks/useChainStatus";
@@ -17,6 +17,8 @@ const JOB_LABELS: Record<string, string> = {
 };
 
 export function OperatorPanel() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { reload: reloadPhase1 } = usePhase1Data();
   const { reload: reloadBench } = useBenchmarkData();
   const { live, enabled, refresh: refreshChain } = useChainStatus();
@@ -36,6 +38,14 @@ export function OperatorPanel() {
   });
 
   const logRef = useRef<HTMLPreElement>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("run") === "epoch" && !busy) {
+      void runJob("run_full_epoch");
+      navigate("/operator", { replace: true });
+    }
+  }, [location.search, runJob, busy, navigate]);
 
   useEffect(() => {
     if (logRef.current) {

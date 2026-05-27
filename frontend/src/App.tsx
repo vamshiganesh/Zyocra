@@ -1,10 +1,13 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppShell } from "./components/layout/AppShell";
+import { Web3Provider } from "./config/wagmi";
 import { BenchmarkDataProvider } from "./hooks/useBenchmarkData";
 import { Phase1DataProvider } from "./hooks/usePhase1Data";
 import { BenchmarkComparisonPage } from "./pages/BenchmarkComparisonPage";
 import { EpochExplorerPage } from "./pages/EpochExplorerPage";
 import { InputSummaryPage } from "./pages/InputSummaryPage";
+import { OperatorPage } from "./pages/OperatorPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { ProofGenerationPage } from "./pages/ProofGenerationPage";
 import { ProofVerificationPage } from "./pages/ProofVerificationPage";
@@ -13,15 +16,20 @@ import { RiskScorePage } from "./pages/RiskScorePage";
 import { ThreatModelPage } from "./pages/ThreatModelPage";
 import { UpdatesPage } from "./pages/UpdatesPage";
 
+const queryClient = new QueryClient();
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <Phase1DataProvider>
-        <BenchmarkDataProvider>
-        <Routes>
-          <Route element={<AppShell />}>
-          <Route index element={<OverviewPage />} />
-          <Route path="epoch" element={<EpochExplorerPage />} />
+    <QueryClientProvider client={queryClient}>
+      <Web3Provider>
+        <BrowserRouter>
+          <Phase1DataProvider>
+            <BenchmarkDataProvider>
+              <Routes>
+                <Route element={<AppShell />}>
+                  <Route index element={<OverviewPage />} />
+                  <Route path="operator" element={<OperatorPage />} />
+                  <Route path="epoch" element={<EpochExplorerPage />} />
           <Route path="inputs" element={<InputSummaryPage />} />
           <Route path="prove" element={<ProofGenerationPage />} />
           <Route path="verify" element={<ProofVerificationPage />} />
@@ -35,9 +43,11 @@ export default function App() {
           <Route path="blog" element={<Navigate to="/updates" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
-        </Routes>
-        </BenchmarkDataProvider>
-      </Phase1DataProvider>
-    </BrowserRouter>
+              </Routes>
+            </BenchmarkDataProvider>
+          </Phase1DataProvider>
+        </BrowserRouter>
+      </Web3Provider>
+    </QueryClientProvider>
   );
 }

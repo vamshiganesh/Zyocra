@@ -1,9 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { PipelineStartButton } from "../product/PipelineStartButton";
+import { ConnectButton } from "../wallet/ConnectButton";
+import { RunEpochDemoButton } from "../product/RunEpochDemoButton";
 import "./TopNav.css";
 
 const links = [
   { to: "/", label: "Overview", end: true },
+  { to: "/operator", label: "Operator" },
   { to: "/epoch", label: "Epoch" },
   { to: "/benchmarks", label: "Benchmarks" },
   { to: "/threat-model", label: "Threat model" },
@@ -27,9 +29,12 @@ export function TopNav() {
           </NavLink>
         ))}
       </div>
-      <PipelineStartButton variant="accent" size="sm">
-        Walk pipeline
-      </PipelineStartButton>
+      <div className="top-nav__actions">
+        <ConnectButton />
+        <RunEpochDemoButton variant="accent" size="sm" autoRun>
+          Run epoch demo
+        </RunEpochDemoButton>
+      </div>
     </nav>
   );
 }
