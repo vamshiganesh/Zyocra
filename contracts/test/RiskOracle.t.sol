@@ -15,6 +15,7 @@ contract RiskOracleTest is Test {
     address internal owner = makeAddr("owner");
     address internal relayer = makeAddr("relayer");
     address internal stranger = makeAddr("stranger");
+    address internal borrower = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     StubRiskScoreVerifier internal verifier;
     RiskOracle internal oracle;
@@ -35,12 +36,14 @@ contract RiskOracleTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
         uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
         inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(borrower));
 
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
+            borrower: borrower,
             proof: hex"deadbeef",
             publicInputs: inputs
         });
@@ -60,6 +63,7 @@ contract RiskOracleTest is Test {
         assertEq(record.adapterHash, ADAPTER_HASH);
         assertEq(record.epoch, 202_604_1);
         assertEq(record.scoreBps, scoreBps);
+        assertEq(record.borrower, borrower);
         assertEq(record.timestamp, uint64(block.timestamp));
         assertEq(record.blockNumber, uint64(block.number));
 
@@ -111,6 +115,65 @@ contract RiskOracleTest is Test {
         vm.prank(relayer);
         vm.expectRevert(RiskOracle.VerificationFailed.selector);
         oracle.submitScore(_payload(1, 64));
+    }
+
+    function test_submitScore_revertsOnAdapterHashMismatch() public {
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
+        payload.adapterHash = keccak256("wrong-adapter");
+
+        vm.prank(relayer);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                RiskOracle.HashMismatch.selector,
+                MODEL_HASH,
+                ADAPTER_HASH,
+                MODEL_HASH,
+                payload.adapterHash
+            )
+        );
+        oracle.submitScore(payload);
+    }
+
+    function test_submitScore_revertsOnInvalidPublicInputLength() public {
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
+        payload.publicInputs = new uint256[](7);
+
+        vm.prank(relayer);
+        vm.expectRevert(
+            abi.encodeWithSelector(PublicInputLayout.InvalidPublicInputs.selector, 8, 7)
+        );
+        oracle.submitScore(payload);
+    }
+
+    function test_submitScore_revertsOnBorrowerMismatch() public {
+        RiskOracle.ScoreUpdatePayload memory payload = _payload(1, 64);
+        payload.borrower = makeAddr("other-borrower");
+
+        vm.prank(relayer);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ScoreEncoding.BorrowerMismatch.selector, payload.borrower, borrower
+            )
+        );
+        oracle.submitScore(payload);
+    }
+
+    function test_setVerifier_emitsEvent() public {
+        StubRiskScoreVerifier next = new StubRiskScoreVerifier(owner);
+
+        vm.expectEmit(true, true, true, true);
+        emit RiskOracle.VerifierUpdated(address(verifier), address(next));
+
+        vm.prank(owner);
+        oracle.setVerifier(address(next));
+    }
+
+    function test_setAuthorizedProver_emitsEvent() public {
+        vm.expectEmit(true, true, true, true);
+        emit RiskOracle.AuthorizedProverUpdated(stranger, true);
+
+        vm.prank(owner);
+        oracle.setAuthorizedProver(stranger, true);
     }
 
     function test_submitScore_revertsOnHashMismatch() public {

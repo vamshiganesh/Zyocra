@@ -61,17 +61,27 @@ def load_public_inputs_uint256(proof_path: Path = PROOF_JSON) -> list[int]:
     return [_parse_field_element(x) >> 248 for x in instances[0]]
 
 
+def borrower_uint256(borrower_hex: str = DEMO_BORROWER_HEX) -> int:
+    """Encode borrower address as public input limb (lower 160 bits)."""
+    text = borrower_hex.strip().lower()
+    if text.startswith("0x"):
+        text = text[2:]
+    return int(text, 16)
+
+
 def build_oracle_payload(
     *,
     epoch: int = DEMO_EPOCH,
     model_hash_hex: str = MODEL_HASH_HEX,
     adapter_hash_hex: str = ADAPTER_HASH_HEX,
+    borrower_hex: str = DEMO_BORROWER_HEX,
     score_float: float,
     proof_path: Path = PROOF_JSON,
     witness_path: Path = WITNESS_JSON,
 ) -> dict[str, Any]:
     """RiskOracle.ScoreUpdatePayload-compatible dict for later Foundry integration."""
     public_inputs = load_public_inputs_uint256(proof_path)
+    public_inputs.append(borrower_uint256(borrower_hex))
     proof_bytes = load_proof_bytes(proof_path)
     score_bps = score_bps_from_float(score_float)
 
@@ -79,6 +89,7 @@ def build_oracle_payload(
         "epoch": epoch,
         "modelHash": model_hash_hex,
         "adapterHash": adapter_hash_hex,
+        "borrower": borrower_hex,
         "scoreBps": score_bps,
         "scoreFloat": score_float,
         "proofHex": "0x" + proof_bytes.hex(),
@@ -89,7 +100,7 @@ def build_oracle_payload(
         "proofPath": str(proof_path),
         "notes": {
             "verifier": "EzklRiskScoreVerifier + Halo2Verifier (e2e_phase1.sh)",
-            "public_layout": "6 input features (public) + 1 output score (public)",
+            "public_layout": "6 input features + 1 output score + 1 borrower binding limb",
         },
     }
 
