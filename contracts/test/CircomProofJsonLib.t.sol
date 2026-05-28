@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {CircomProofJsonLib} from "../src/libraries/CircomProofJsonLib.sol";
 
 contract CircomProofJsonHarness {
-  function fixed(uint256[] memory inputs) external pure returns (uint256[9] memory) {
+  function toFixed(uint256[] memory inputs) external pure returns (uint256[9] memory) {
     return CircomProofJsonLib.toFixedPublicInputs(inputs);
   }
 }
@@ -38,6 +38,6 @@ contract CircomProofJsonLibTest is Test {
   function test_toFixedPublicInputs_revertsOnWrongLength() public {
     uint256[] memory shortInputs = new uint256[](3);
     vm.expectRevert("CircomProofJsonLib: expected 9 public signals");
-    harness.fixed(shortInputs);
+    harness.toFixed(shortInputs);
   }
 }
