@@ -151,7 +151,8 @@ contract RiskConsumerTest is Test {
     }
 
     function test_applyVerifiedScore_revertsWhenLastEpochGreater() public {
-        _submit(10, 77);
+        _submit(9, 77);
+        _submit(10, 83);
         consumer.applyVerifiedScore(borrower, 10);
 
         vm.expectRevert(abi.encodeWithSelector(RiskConsumer.AlreadyApplied.selector, borrower, 9));
