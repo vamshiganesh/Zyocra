@@ -15,4 +15,17 @@ contract ProofJsonLibTest is Test {
     assertEq(artifacts.publicInputs[6], 23);
     assertEq(artifacts.proof.length, 3648);
   }
+
+  function test_loadWithBorrower_appendsBindingLimb() public {
+    string memory path = string.concat(vm.projectRoot(), "/../circuits-baseline/proofs/proof.json");
+    vm.skip(!vm.exists(path));
+
+    address borrower = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+    ProofJsonLib.Artifacts memory artifacts =
+      ProofJsonLib.loadWithBorrower(vm.readFile(path), borrower);
+
+    assertEq(artifacts.publicInputs.length, 8);
+    assertEq(artifacts.publicInputs[6], 23);
+    assertEq(artifacts.publicInputs[7], uint256(uint160(borrower)));
+  }
 }

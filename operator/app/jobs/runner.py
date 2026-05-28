@@ -24,6 +24,7 @@ def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "e
         return ["bash", str(root / "scripts" / "e2e_phase1.sh")]
 
     if job_type == JobType.DEPLOY_ONLY:
+        env_extra["DEPLOY_OUTFILE"] = f"deployments/{settings.deploy_json_name}"
         return [
             "forge",
             "script",
@@ -83,6 +84,7 @@ def command_env(job_type: JobType, settings: Settings) -> dict[str, str]:
     env["RPC_URL"] = settings.rpc_url
     env["PRIVATE_KEY"] = settings.private_key
     env["DEPLOY_CHAIN"] = settings.deploy_chain
+    env["DEPLOY_OUTFILE"] = f"deployments/{settings.deploy_json_name}"
 
     if job_type == JobType.SUBMIT_APPLY:
         deploy = _load_deploy_addresses(settings)

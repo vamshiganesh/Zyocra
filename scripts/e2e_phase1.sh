@@ -37,12 +37,13 @@ else
 fi
 
 info "[5/8] Deploy EZKL oracle stack"
+export DEPLOY_OUTFILE="${DEPLOY_OUTFILE:-anvil-ezkl-latest.json}"
 (cd "${ROOT}/contracts" && forge script script/DeployEzkl.s.sol:DeployEzkl \
   --rpc-url "${RPC_URL}" \
   --broadcast \
   --private-key "${PRIVATE_KEY}")
 
-DEPLOY_JSON="${ROOT}/contracts/deployments/anvil-ezkl-latest.json"
+DEPLOY_JSON="${ROOT}/contracts/deployments/${DEPLOY_OUTFILE:-anvil-ezkl-latest.json}"
 if [[ ! -f "${DEPLOY_JSON}" ]]; then
   echo "deployment json missing: ${DEPLOY_JSON}" >&2
   exit 1
