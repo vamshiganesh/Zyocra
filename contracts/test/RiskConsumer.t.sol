@@ -31,12 +31,14 @@ contract RiskConsumerTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
         uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
         inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(borrower));
 
         RiskOracle.ScoreUpdatePayload memory payload = RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
+            borrower: borrower,
             proof: hex"01",
             publicInputs: inputs
         });
@@ -117,6 +119,43 @@ contract RiskConsumerTest is Test {
         assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.CRITICAL));
         assertFalse(policy.borrowAllowed);
         assertTrue(policy.mitigationFlag);
+    }
+
+    function test_getBorrowerPolicy_zeroBeforeApply() public view {
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        assertEq(policy.lastEpoch, 0);
+        assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.LOW));
+    }
+
+    function test_previewPolicy_allBuckets() public view {
+        RiskPolicies.Policy memory low = consumer.previewPolicy(RiskBuckets.Bucket.LOW);
+        assertEq(low.collateralFactorBps, 8_000);
+
+        RiskPolicies.Policy memory high = consumer.previewPolicy(RiskBuckets.Bucket.HIGH);
+        assertEq(high.collateralFactorBps, 6_500);
+        assertFalse(high.borrowAllowed);
+
+        RiskPolicies.Policy memory critical = consumer.previewPolicy(RiskBuckets.Bucket.CRITICAL);
+        assertEq(critical.borrowSpreadBps, 250);
+        assertTrue(critical.mitigationFlag);
+    }
+
+    function test_applyVerifiedScore_revertsOnBorrowerMismatch() public {
+        _submit(9, 77);
+        address other = makeAddr("other");
+
+        vm.expectRevert(
+            abi.encodeWithSelector(RiskConsumer.BorrowerMismatch.selector, borrower, other)
+        );
+        consumer.applyVerifiedScore(other, 9);
+    }
+
+    function test_applyVerifiedScore_revertsWhenLastEpochGreater() public {
+        _submit(10, 77);
+        consumer.applyVerifiedScore(borrower, 10);
+
+        vm.expectRevert(abi.encodeWithSelector(RiskConsumer.AlreadyApplied.selector, borrower, 9));
+        consumer.applyVerifiedScore(borrower, 9);
     }
 
     function test_applyVerifiedScore_revertsIfEpochNotVerified() public {

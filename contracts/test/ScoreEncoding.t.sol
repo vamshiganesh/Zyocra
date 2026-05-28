@@ -9,6 +9,10 @@ contract ScoreEncodingHarness {
     function requireMatch(uint256 scoreBps, uint256[] memory publicInputs) external pure {
         ScoreEncoding.requireScoreMatchesPublicInput(scoreBps, publicInputs);
     }
+
+    function requireBorrower(address borrower, uint256[] memory publicInputs) external pure {
+        ScoreEncoding.requireBorrowerMatchesPublicInput(borrower, publicInputs);
+    }
 }
 
 contract ScoreEncodingTest is Test {
@@ -23,10 +27,18 @@ contract ScoreEncodingTest is Test {
     }
 
     function test_requireScoreMatchesPublicInput_acceptsAlignedPayload() public pure {
-        uint256[] memory inputs = new uint256[](7);
+        uint256[] memory inputs = new uint256[](8);
         inputs[6] = 23;
+        inputs[7] = uint256(uint160(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
 
         ScoreEncoding.requireScoreMatchesPublicInput(1797, inputs);
+    }
+
+    function test_requireBorrowerMatchesPublicInput_acceptsAlignedBorrower() public {
+        uint256[] memory inputs = new uint256[](8);
+        inputs[7] = uint256(uint160(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
+
+        harness.requireBorrower(0x70997970C51812dc3A010C7d01b50e0d17dc79C8, inputs);
     }
 
     function test_requireScoreMatchesPublicInput_revertsOnMismatch() public {

@@ -17,7 +17,7 @@ import {stdJson} from "forge-std/StdJson.sol";
 contract EzklIntegrationTest is Test {
   using stdJson for string;
 
-  address internal borrower = makeAddr("borrower-demo");
+  address internal borrower = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
   bytes internal proof;
   uint256[] internal publicInputs;
