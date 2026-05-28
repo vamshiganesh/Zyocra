@@ -43,7 +43,7 @@ contract EzklIntegrationTest is Test {
     vm.skip(!vm.exists(_proofJsonPath()));
 
     ProofJsonLib.Artifacts memory artifacts =
-      ProofJsonLib.load(vm.readFile(_proofJsonPath()));
+      ProofJsonLib.loadWithBorrower(vm.readFile(_proofJsonPath()), borrower);
     proof = artifacts.proof;
     publicInputs = artifacts.publicInputs;
 

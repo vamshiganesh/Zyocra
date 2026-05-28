@@ -84,12 +84,14 @@ contract IntegrationTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
         uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
         inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
+        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(borrower));
 
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
+            borrower: borrower,
             proof: hex"01",
             publicInputs: inputs
         });

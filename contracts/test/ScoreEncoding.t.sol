@@ -42,8 +42,9 @@ contract ScoreEncodingTest is Test {
     }
 
     function test_requireScoreMatchesPublicInput_revertsOnMismatch() public {
-        uint256[] memory inputs = new uint256[](7);
+        uint256[] memory inputs = new uint256[](8);
         inputs[6] = 23;
+        inputs[7] = uint256(uint160(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
 
         vm.expectRevert(abi.encodeWithSelector(ScoreEncoding.ScoreMismatch.selector, 6200, 1797));
         harness.requireMatch(6200, inputs);
@@ -53,7 +54,7 @@ contract ScoreEncodingTest is Test {
         uint256[] memory inputs = new uint256[](3);
 
         vm.expectRevert(
-            abi.encodeWithSelector(PublicInputLayout.InvalidPublicInputs.selector, 7, 3)
+            abi.encodeWithSelector(PublicInputLayout.InvalidPublicInputs.selector, 8, 3)
         );
         harness.requireMatch(1000, inputs);
     }
