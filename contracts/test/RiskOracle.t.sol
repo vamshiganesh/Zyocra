@@ -64,7 +64,7 @@ contract RiskOracleTest is Test {
         assertEq(record.adapterHash, ADAPTER_HASH);
         assertEq(record.epoch, 202_604_1);
         assertEq(record.scoreBps, scoreBps);
-        assertEq(record.borrower, borrower);
+        assertEq(record.borrower, BORROWER);
         assertEq(record.timestamp, uint64(block.timestamp));
         assertEq(record.blockNumber, uint64(block.number));
 
@@ -153,7 +153,7 @@ contract RiskOracleTest is Test {
         vm.prank(relayer);
         vm.expectRevert(
             abi.encodeWithSelector(
-                ScoreEncoding.BorrowerMismatch.selector, payload.borrower, borrower
+                ScoreEncoding.BorrowerMismatch.selector, payload.borrower, BORROWER
             )
         );
         oracle.submitScore(payload);

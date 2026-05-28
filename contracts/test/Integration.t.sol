@@ -74,7 +74,7 @@ contract IntegrationTest is Test {
 
         assertEq(oracle.latestEpoch(), 1);
         vm.expectRevert(abi.encodeWithSelector(RiskConsumer.EpochNotVerified.selector, 2));
-        consumer.applyVerifiedScore(borrower, 2);
+        consumer.applyVerifiedScore(BORROWER, 2);
     }
 
     function _payload(uint64 epoch, uint256 scoreLimb)
@@ -85,14 +85,14 @@ contract IntegrationTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
         uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
         inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
-        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(borrower));
+        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(BORROWER));
 
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
-            borrower: borrower,
+            borrower: BORROWER,
             proof: hex"01",
             publicInputs: inputs
         });
