@@ -14,8 +14,9 @@ contract IntegrationTest is Test {
     bytes32 internal constant MODEL_HASH = keccak256("zyocra-demo-model-v1");
     bytes32 internal constant ADAPTER_HASH = keccak256("zyocra-demo-adapter-v1");
 
+    address internal constant BORROWER = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+
     address internal owner = makeAddr("owner");
-    address internal borrower = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     StubRiskScoreVerifier internal verifier;
     RiskOracle internal oracle;
@@ -38,9 +39,9 @@ contract IntegrationTest is Test {
         assertEq(oracle.latestEpoch(), epoch);
         assertEq(oracle.getLatestScore().scoreBps, scoreBps);
 
-        consumer.applyVerifiedScore(borrower, epoch);
+        consumer.applyVerifiedScore(BORROWER, epoch);
 
-        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(borrower);
+        RiskConsumer.BorrowerPolicy memory policy = consumer.getBorrowerPolicy(BORROWER);
         assertEq(uint8(policy.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
         assertEq(policy.collateralFactorBps, 7_200);
         assertEq(policy.borrowSpreadBps, 45);

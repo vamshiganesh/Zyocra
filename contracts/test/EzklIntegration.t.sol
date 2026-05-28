@@ -115,6 +115,7 @@ contract EzklIntegrationTest is Test {
         adapterHash: adapterHash,
         epoch: nextEpoch,
         scoreBps: scoreBps,
+        borrower: borrower,
         proof: proof,
         publicInputs: publicInputs
       })
@@ -139,6 +140,7 @@ contract EzklIntegrationTest is Test {
         adapterHash: adapterHash,
         epoch: epoch,
         scoreBps: scoreBps + 1,
+        borrower: borrower,
         proof: proof,
         publicInputs: publicInputs
       })

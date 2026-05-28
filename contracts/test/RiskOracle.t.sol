@@ -13,9 +13,10 @@ contract RiskOracleTest is Test {
     bytes32 internal constant ADAPTER_HASH = keccak256("zyocra-demo-adapter-v1");
 
     address internal owner = makeAddr("owner");
+    address internal constant BORROWER = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
+
     address internal relayer = makeAddr("relayer");
     address internal stranger = makeAddr("stranger");
-    address internal borrower = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
 
     StubRiskScoreVerifier internal verifier;
     RiskOracle internal oracle;
@@ -36,14 +37,14 @@ contract RiskOracleTest is Test {
         uint256 scoreBps = ScoreEncoding.scoreBpsFromEzklLimb(scoreLimb);
         uint256[] memory inputs = new uint256[](PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT);
         inputs[PublicInputLayout.EZKL_SCORE_INDEX] = scoreLimb;
-        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(borrower));
+        inputs[PublicInputLayout.EZKL_BORROWER_INDEX] = uint256(uint160(BORROWER));
 
         return RiskOracle.ScoreUpdatePayload({
             modelHash: MODEL_HASH,
             adapterHash: ADAPTER_HASH,
             epoch: epoch,
             scoreBps: scoreBps,
-            borrower: borrower,
+            borrower: BORROWER,
             proof: hex"deadbeef",
             publicInputs: inputs
         });
