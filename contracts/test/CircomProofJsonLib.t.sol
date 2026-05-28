@@ -4,7 +4,18 @@ pragma solidity ^0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {CircomProofJsonLib} from "../src/libraries/CircomProofJsonLib.sol";
 
+contract CircomProofJsonHarness {
+  function fixed(uint256[] memory inputs) external pure returns (uint256[9] memory) {
+    return CircomProofJsonLib.toFixedPublicInputs(inputs);
+  }
+}
+
 contract CircomProofJsonLibTest is Test {
+  CircomProofJsonHarness internal harness;
+
+  function setUp() public {
+    harness = new CircomProofJsonHarness();
+  }
   function _proofPath() internal view returns (string memory) {
     return string.concat(vm.projectRoot(), "/../circuits-custom/proofs/proof.json");
   }
@@ -26,7 +37,7 @@ contract CircomProofJsonLibTest is Test {
 
   function test_toFixedPublicInputs_revertsOnWrongLength() public {
     uint256[] memory shortInputs = new uint256[](3);
-    vm.expectRevert();
-    CircomProofJsonLib.toFixedPublicInputs(shortInputs);
+    vm.expectRevert("CircomProofJsonLib: expected 9 public signals");
+    harness.fixed(shortInputs);
   }
 }
