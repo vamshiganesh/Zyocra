@@ -63,7 +63,7 @@ contract EzklIntegrationTest is Test {
 
   function test_ezklVerifier_acceptsGeneratedProof() public {
     bool ok = ezklVerifier.verify(proof, publicInputs);
-    assertTrue(ok, "EZKL proof should verify on-chain");
+    assertTrue(ok, "EZKL proof should verify on-chain with borrower binding limb");
   }
 
   function test_fullLoop_proofToConsumerPolicy() public {
@@ -75,6 +75,7 @@ contract EzklIntegrationTest is Test {
         adapterHash: adapterHash,
         epoch: epoch,
         scoreBps: scoreBps,
+        borrower: borrower,
         proof: proof,
         publicInputs: publicInputs
       })
@@ -101,6 +102,7 @@ contract EzklIntegrationTest is Test {
         adapterHash: adapterHash,
         epoch: epoch,
         scoreBps: scoreBps,
+        borrower: borrower,
         proof: proof,
         publicInputs: publicInputs
       })
