@@ -8,6 +8,7 @@ importantData/
 # Dependencies
 node_modules/
 ml-base/.venv/
+operator/.venv/
 .venv/
 venv/
 __pycache__/
