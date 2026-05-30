@@ -94,14 +94,18 @@ export function EpochExplorerPage() {
                   fields={[
                     {
                       label: "Committed model hash",
-                      value: hashPreflight.committedModel?.slice(0, 14) + "…" ?? EMPTY_VALUE,
+                      value: hashPreflight.committedModel
+                        ? `${hashPreflight.committedModel.slice(0, 14)}…`
+                        : EMPTY_VALUE,
                       title: hashPreflight.committedModel,
                       mono: true,
                       hint: chainEnabled ? "live" : "json",
                     },
                     {
                       label: "Committed adapter hash",
-                      value: hashPreflight.committedAdapter?.slice(0, 14) + "…" ?? EMPTY_VALUE,
+                      value: hashPreflight.committedAdapter
+                        ? `${hashPreflight.committedAdapter.slice(0, 14)}…`
+                        : EMPTY_VALUE,
                       title: hashPreflight.committedAdapter,
                       mono: true,
                       hint: chainEnabled ? "live" : "json",

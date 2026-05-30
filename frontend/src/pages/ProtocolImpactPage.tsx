@@ -79,10 +79,7 @@ export function ProtocolImpactPage() {
                   title={`${scoreBucket} bucket application`}
                   description={
                     live
-                      ? `${chainEnabled ? "Live viem reads merged over synced JSON where configured." : "Values from phase1-demo.json after e2e sync."} Collateral factor is the primary lever.`
-                      : "Static placeholder until e2e artifacts are synced."
-                  }
-                      ? "Policy output from RiskConsumer after verified score admission."
+                      ? `${chainEnabled ? "Live viem reads merged over synced JSON where configured." : "Values from phase1-demo.json after e2e sync."} Policy output from RiskConsumer after verified score admission.`
                       : "Placeholder deltas from static demo. Sync artifacts for live values."
                   }
                 />
