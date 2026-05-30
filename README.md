@@ -134,7 +134,35 @@ make check-tools
 make test          # Foundry + pytest (ml-base, circuits-custom, benchmarks) + frontend tsc
 make lint
 make benchmark     # EZKL vs Circom metrics → benchmarks/raw-results/
+
+# Operator dashboard (FastAPI + frontend)
+cp .env.example .env   # edit RPC_URL / keys as needed
+make operator          # API on :8787
+make dev               # operator + Vite frontend
 ```
+
+Open **Operator** in the UI (`/operator`) to run `e2e_phase1.sh`, deploy, submit, and benchmark jobs with streaming logs.
+
+### Testnet (Ethereum Sepolia)
+
+```bash
+cp .env.example .env
+# Set SEPOLIA_RPC_URL, DEPLOYER_PRIVATE_KEY, ETHERSCAN_API_KEY
+
+bash scripts/deploy_testnet.sh          # prove + deploy + verify
+# Or skip reprove: SKIP_PROVE=1 bash scripts/deploy_testnet.sh
+```
+
+After deploy, copy addresses from `contracts/deployments/sepolia-ezkl-latest.json` into `.env`:
+
+- `VITE_ORACLE_ADDRESS`, `VITE_CONSUMER_ADDRESS`, `VITE_RPC_URL`
+
+| Contract | Address (fill after deploy) |
+|----------|----------------------------|
+| RiskOracle | _see sepolia-ezkl-latest.json_ |
+| RiskConsumer | _see sepolia-ezkl-latest.json_ |
+| EzklRiskScoreVerifier | _see sepolia-ezkl-latest.json_ |
+| Halo2Verifier | _see sepolia-ezkl-latest.json_ |
 
 ### Test commands
 
@@ -144,6 +172,8 @@ make benchmark     # EZKL vs Circom metrics → benchmarks/raw-results/
 | `cd contracts && forge test` | Solidity only |
 | `cd ml-base && pytest -q` | ML pipeline unit tests |
 | `bash circuits-custom/tests/test_prove_verify.sh` | Full Circom Groth16 loop |
+| `make operator` | FastAPI operator service (`:8787`) |
+| `make dev` | Operator + frontend dev servers |
 | `bash scripts/e2e_phase1.sh` | EZKL → Anvil → oracle → consumer |
 | `cd frontend && pnpm test` | TypeScript typecheck |
 

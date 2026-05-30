@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { OperatorJob } from "../../lib/operator";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useOperatorJobs } from "../../hooks/useOperatorJobs";
