@@ -5,6 +5,7 @@ import { DataStatus } from "../components/product/DataStatus";
 import { benchmarkArtifacts, benchmarkMethodology } from "../data/content";
 import { ProductHero } from "../components/product/ProductHero";
 import { RunEpochDemoButton } from "../components/product/RunEpochDemoButton";
+import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { useBenchmarkData } from "../hooks/useBenchmarkData";
@@ -24,9 +25,14 @@ export function BenchmarkComparisonPage() {
             title={screen.headline}
             body={screen.lede}
             actions={
-              <ClippedButton to="/epoch" variant="accent" size="lg">
-                Replay epoch demo
-              </ClippedButton>
+              <>
+                <RunEpochDemoButton variant="accent" size="lg">
+                  Operator dashboard
+                </RunEpochDemoButton>
+                <ClippedButton to="/epoch" variant="ghost" size="lg">
+                  Epoch registry
+                </ClippedButton>
+              </>
             }
           />
         </Shell>
