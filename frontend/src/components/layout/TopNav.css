@@ -13,6 +13,12 @@
   gap: var(--space-6);
 }
 
+.top-nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .top-nav__link {
   font-size: var(--text-sm);
   color: var(--color-fog-muted);

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { useBenchmarkData } from "../../hooks/useBenchmarkData";

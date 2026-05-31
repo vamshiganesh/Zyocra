@@ -5,7 +5,7 @@ import { DataStatus } from "../components/product/DataStatus";
 import { ProductHero } from "../components/product/ProductHero";
 import { PipelineHeroDiagram } from "../components/product/PipelineHeroDiagram";
 import { PipelineStrip } from "../components/product/PipelineStrip";
-import { PipelineStartButton } from "../components/product/PipelineStartButton";
+import { RunEpochDemoButton, TourPipelineLink } from "../components/product/RunEpochDemoButton";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { FaqAccordion } from "../components/ui/FaqAccordion";
@@ -35,12 +35,13 @@ export function OverviewPage() {
             onLayerChange={setActiveLayer}
             actions={
               <>
-                <PipelineStartButton variant="accent" size="lg">
+                <RunEpochDemoButton variant="accent" size="lg" autoRun>
                   {c.hero.ctaPrimary}
-                </PipelineStartButton>
+                </RunEpochDemoButton>
                 <ClippedButton to="/benchmarks" variant="ghost" size="lg">
                   {c.hero.ctaSecondary}
                 </ClippedButton>
+                <TourPipelineLink />
               </>
             }
             aside={<PipelineHeroDiagram activeStage={activeLayer} />}
@@ -119,11 +120,11 @@ export function OverviewPage() {
                   description={c.entry.description}
                 />
                 <div className="hero__actions" style={{ marginTop: "var(--space-6)" }}>
-                  <PipelineStartButton variant="accent" size="md">
-                    Start pipeline
-                  </PipelineStartButton>
-                  <ClippedButton to="/threat-model" variant="surface" size="md">
-                    Threat model
+                  <RunEpochDemoButton variant="accent" size="md" autoRun>
+                    Run epoch demo
+                  </RunEpochDemoButton>
+                  <ClippedButton to="/epoch#active" variant="surface" size="md">
+                    Tour screens
                   </ClippedButton>
                 </div>
               </div>

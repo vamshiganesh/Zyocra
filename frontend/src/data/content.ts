@@ -12,7 +12,7 @@ export const overviewCopy = {
     eyebrow: "Verifiable risk oracle",
     title: "Prove inference.\nPublish score.\nAdjust collateral.",
     body: "Zyocra attests that a quantized LoRA-adapted risk model executed correctly off-chain, verifies the result on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
-    ctaPrimary: "Walk pipeline",
+    ctaPrimary: "Run epoch demo",
     ctaSecondary: "Benchmark comparison",
     layers: [
       {
@@ -176,7 +176,7 @@ export const footerCopy = {
   headline: "Prove inference.\nPublish parameters.",
   lede:
     "Verifiable LoRA risk oracle for DeFi with benchmark-driven zkML, on-chain verification, and collateral policy updates.",
-  cta: "Walk pipeline",
+  cta: "Run epoch demo",
 };
 
 export type LegalSection = { title: string; body: string };
