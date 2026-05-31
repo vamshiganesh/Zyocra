@@ -4,7 +4,7 @@ import { BenchmarkPlaceholderPanel } from "../components/product/BenchmarkPlaceh
 import { DataStatus } from "../components/product/DataStatus";
 import { benchmarkArtifacts, benchmarkMethodology } from "../data/content";
 import { ProductHero } from "../components/product/ProductHero";
-import { ClippedButton } from "../components/ui/ClippedButton";
+import { RunEpochDemoButton } from "../components/product/RunEpochDemoButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
 import { useBenchmarkData } from "../hooks/useBenchmarkData";

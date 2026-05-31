@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { EMPTY_VALUE } from "../lib/display";
 import { Shell } from "../components/layout/Shell";
 import { screenBySlug } from "../config/screens";
@@ -6,6 +7,7 @@ import { DataStatus } from "../components/product/DataStatus";
 import { EpochTable } from "../components/product/EpochTable";
 import { FlowNav } from "../components/product/FlowNav";
 import { ProductHero } from "../components/product/ProductHero";
+import { RunEpochDemoButton } from "../components/product/RunEpochDemoButton";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
@@ -23,7 +25,22 @@ export function EpochExplorerPage() {
     epochDetailFields,
     epochRegistry,
     onChain,
+    chainLive,
+    chainEnabled,
   } = usePipelineFields();
+
+  const modelField = epochDetailFields.find((f) => f.label === "Model hash");
+  const adapterField = epochDetailFields.find((f) => f.label === "Adapter hash");
+
+  const hashPreflight = useMemo(() => {
+    const committedModel = chainLive?.modelHash ?? modelField?.title ?? modelField?.value;
+    const committedAdapter = chainLive?.adapterHash ?? adapterField?.title ?? adapterField?.value;
+    return {
+      committedModel,
+      committedAdapter,
+      ready: Boolean(committedModel && committedAdapter),
+    };
+  }, [adapterField, chainLive, modelField]);
 
   const proofField = epochDetailFields.find((f) => f.label === "Proof status");
   const verifierField = epochDetailFields.find((f) => f.label === "Verifier status");
@@ -37,9 +54,14 @@ export function EpochExplorerPage() {
             title={screen.headline}
             body={screen.lede}
             actions={
-              <ClippedButton to="/inputs" variant="accent" size="lg">
-                Review inputs
-              </ClippedButton>
+              <>
+                <RunEpochDemoButton variant="accent" size="lg" autoRun>
+                  Run epoch demo
+                </RunEpochDemoButton>
+                <ClippedButton to="/inputs" variant="ghost" size="lg">
+                  Review inputs
+                </ClippedButton>
+              </>
             }
           />
         </Shell>
@@ -62,9 +84,46 @@ export function EpochExplorerPage() {
             </ClippedCard>
 
             <ClippedCard>
+              <div id="registry-preflight">
+                <SectionHeader
+                  label="Epoch registry"
+                  title="Model / adapter commitments"
+                  description="Hashes are immutable at RiskOracle deploy. Proofs must match these commitments before submitScore."
+                />
+                <DataFieldGrid
+                  fields={[
+                    {
+                      label: "Committed model hash",
+                      value: hashPreflight.committedModel?.slice(0, 14) + "…" ?? EMPTY_VALUE,
+                      title: hashPreflight.committedModel,
+                      mono: true,
+                      hint: chainEnabled ? "live" : "json",
+                    },
+                    {
+                      label: "Committed adapter hash",
+                      value: hashPreflight.committedAdapter?.slice(0, 14) + "…" ?? EMPTY_VALUE,
+                      title: hashPreflight.committedAdapter,
+                      mono: true,
+                      hint: chainEnabled ? "live" : "json",
+                    },
+                    {
+                      label: "Pre-flight",
+                      value: hashPreflight.ready ? "Hashes loaded" : "Missing commitments",
+                      mono: true,
+                      description: hashPreflight.ready
+                        ? "Operator run epoch demo checks oracle-payload.json against these hashes."
+                        : "Deploy oracle stack or sync phase1-demo.json first.",
+                    },
+                  ]}
+                  columns={3}
+                />
+              </div>
+            </ClippedCard>
+
+            <ClippedCard>
               <div id="registry">
                 <SectionHeader
-                  label="Registry"
+                  label="History"
                   title="Prior epochs"
                   description="Sealed epochs freeze verifier addresses and commitments for audit replay."
                 />

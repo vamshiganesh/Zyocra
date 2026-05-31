@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { footerCopy } from "../../data/content";
-import { PipelineStartButton } from "../product/PipelineStartButton";
+import { RunEpochDemoButton } from "../product/RunEpochDemoButton";
 import { LegalModal, type LegalKind } from "../ui/LegalModal";
 import { scrollToTop as scrollPageToTop } from "../../scrollbar/smoothScroll";
 import "./SiteFooter.css";
@@ -109,9 +109,9 @@ export function SiteFooter() {
                 ))}
               </h2>
               <p className="site-footer__lede">{footerCopy.lede}</p>
-              <PipelineStartButton variant="surface" size="lg">
+              <RunEpochDemoButton variant="surface" size="lg" autoRun>
                 {footerCopy.cta}
-              </PipelineStartButton>
+              </RunEpochDemoButton>
             </div>
 
             <div className="site-footer__aside">

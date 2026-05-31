@@ -1,19 +1,55 @@
 import { EMPTY_VALUE } from "../lib/display";
 import { usePhase1Data } from "../hooks/usePhase1Data";
+import { useChainStatus } from "../hooks/useChainStatus";
 import * as ph from "./product-placeholders";
 
 /** Live phase-1 fields with static fallbacks when demo JSON is absent. */
 export function usePipelineFields() {
   const { status, view, error, reload } = usePhase1Data();
+  const { live: chainLive, enabled: chainEnabled } = useChainStatus();
+
+  const epochDetailFields = (view?.epochDetailFields ?? ph.epochDetailFields).map((field) => {
+    if (!chainEnabled || !chainLive) return field;
+    if (field.label === "Epoch ID" && chainLive.latestEpoch > 0) {
+      return { ...field, value: `epoch-live-${chainLive.latestEpoch}`, hint: "live viem read" };
+    }
+    if (field.label === "Model hash" && chainLive.modelHash) {
+      return { ...field, value: chainLive.modelHash.slice(0, 10) + "…", title: chainLive.modelHash, hint: "live" };
+    }
+    if (field.label === "Adapter hash" && chainLive.adapterHash) {
+      return { ...field, value: chainLive.adapterHash.slice(0, 10) + "…", title: chainLive.adapterHash, hint: "live" };
+    }
+    return field;
+  });
+
+  const impactFields = (view?.impactFields ?? ph.impactFields).map((field) => {
+    if (!chainEnabled || !chainLive) return field;
+    if (field.label === "Collateral factor" && chainLive.collateralFactorBps !== undefined) {
+      return {
+        ...field,
+        value: `${(chainLive.collateralFactorBps / 10_000).toFixed(2)}`,
+        hint: "live",
+      };
+    }
+    if (field.label === "Borrow spread" && chainLive.borrowSpreadBps !== undefined) {
+      return { ...field, value: `${chainLive.borrowSpreadBps} bps`, hint: "live" };
+    }
+    if (field.label === "Borrow gate" && chainLive.borrowAllowed !== undefined) {
+      return { ...field, value: chainLive.borrowAllowed ? "Allowed" : "Frozen", hint: "live" };
+    }
+    return field;
+  });
 
   return {
     status,
     error,
     reload,
     live: view !== null,
+    chainLive,
+    chainEnabled,
     epochId: view?.epochId ?? ph.demoEpoch.id,
     epochRegistry: view?.epochRegistry ?? ph.epochRegistry,
-    epochDetailFields: view?.epochDetailFields ?? ph.epochDetailFields,
+    epochDetailFields,
     inputFeatures: view?.inputFeatures ?? ph.inputFeatures,
     publicInputFields: view?.publicInputFields ?? ph.publicInputFields,
     ezklArtifactFields: view?.ezklArtifactFields ?? ph.ezklArtifactFields,
@@ -45,7 +81,7 @@ export function usePipelineFields() {
       },
     ],
     scoreOutput: view?.scoreOutput ?? ph.scoreOutput,
-    impactFields: view?.impactFields ?? ph.impactFields,
+    impactFields,
     auditTrail: view?.auditTrail ?? ph.auditTrail,
     headlineMetrics: view?.headlineMetrics,
     proofPanelStatus: view?.proofPanelStatus ?? ("idle" as const),

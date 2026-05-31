@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { PIPELINE_SCREENS } from "../../config/screens";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
+import { listJobs } from "../../lib/operator";
 import { PipelineStrip } from "./PipelineStrip";
 import "./product.css";
 
@@ -15,7 +16,22 @@ export function PipelineChrome() {
       ? PIPELINE_SCREENS[stepIndex + 1]
       : null;
   const [infoOpen, setInfoOpen] = useState(false);
+  const [jobBusy, setJobBusy] = useState(false);
   const infoRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const jobs = await listJobs();
+        setJobBusy(jobs.some((job) => job.status === "queued" || job.status === "running"));
+      } catch {
+        setJobBusy(false);
+      }
+    };
+    void poll();
+    const timer = window.setInterval(() => void poll(), 4000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!infoOpen) return;
@@ -43,6 +59,11 @@ export function PipelineChrome() {
             <span className="pipeline-chrome__step mono-label">
               {step.pipelineStep}/{PIPELINE_SCREENS.length}
             </span>
+          ) : null}
+          {jobBusy ? (
+            <Link to="/operator" className="pipeline-chrome__job-chip mono-label">
+              Job running
+            </Link>
           ) : null}
           <span
             className={`pipeline-chrome__dot${dataReady ? " is-live" : ""}`}
@@ -80,8 +101,8 @@ export function PipelineChrome() {
             {infoOpen ? (
               <div className="pipeline-chrome__popover" role="dialog" aria-label="Demo info">
                 <p>
-                  Read-only replay of your local EZKL + Foundry pipeline. Nothing here runs
-                  proofs or transactions in the browser.
+                  Operator dashboard runs prove, deploy, and benchmark jobs via the local FastAPI
+                  service. Use <strong>Run epoch demo</strong> on the Operator page.
                 </p>
                 {dataReady ? (
                   <p className="pipeline-chrome__popover-meta">
