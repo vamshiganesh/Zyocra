@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import type { OperatorJob } from "../../lib/operator";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useOperatorJobs } from "../../hooks/useOperatorJobs";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { useBenchmarkData } from "../../hooks/useBenchmarkData";
 import { useChainStatus } from "../../hooks/useChainStatus";

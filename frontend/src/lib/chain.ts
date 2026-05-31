@@ -133,8 +133,8 @@ export async function readLiveChainStatus(): Promise<LiveChainStatus | null> {
       abi: riskOracleAbi,
       functionName: "getLatestScore",
     });
-    live.scoreBps = Number(score[3]);
-    live.borrower = score[4];
+    live.scoreBps = Number(score.scoreBps);
+    live.borrower = score.borrower;
   }
 
   if (consumerAddress) {
@@ -144,9 +144,9 @@ export async function readLiveChainStatus(): Promise<LiveChainStatus | null> {
       functionName: "getBorrowerPolicy",
       args: [DEMO_BORROWER],
     });
-    live.collateralFactorBps = Number(policy[1]);
-    live.borrowSpreadBps = Number(policy[2]);
-    live.borrowAllowed = policy[3];
+    live.collateralFactorBps = Number(policy.collateralFactorBps);
+    live.borrowSpreadBps = Number(policy.borrowSpreadBps);
+    live.borrowAllowed = policy.borrowAllowed;
   }
 
   return live;
