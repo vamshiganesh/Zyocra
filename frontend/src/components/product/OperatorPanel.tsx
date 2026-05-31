@@ -147,7 +147,7 @@ export function OperatorPanel() {
           {jobs.length === 0 ? (
             <li className="operator-panel__job operator-panel__job--empty">No jobs yet</li>
           ) : (
-            jobs.map((job) => (
+            jobs.map((job: OperatorJob) => (
               <li
                 key={job.id}
                 className={`operator-panel__job${job.id === activeJobId ? " is-active" : ""}`}
