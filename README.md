@@ -107,7 +107,7 @@ Zyocra separates **proof correctness** from **model quality** and **data honesty
 
 **Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
 
-**Known Phase 1 gaps:** `applyVerifiedScore(borrower, …)` does not bind the borrower to proof inputs; `setVerifier` is owner-controlled without timelock; Circom path is not wired to `RiskOracle.submitScore` (adapter deployed standalone).
+**Known Phase 1 gaps:** borrower binding uses an 8th public-input limb (prover-attested stub, not yet in EZKL circuit); `setVerifier` is owner-controlled without timelock; Circom path is not wired to `RiskOracle.submitScore` (head benchmark only).
 
 Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
 
@@ -196,6 +196,14 @@ Full install and run commands: [`docs/setup.md`](docs/setup.md).
 MIT — see [`LICENSE`](LICENSE).
 
 ## Changelog
+
+### v0.5.0
+
+- **Operator:** FastAPI service (`operator/`) wrapping e2e, deploy, submit, benchmark with SSE log streaming.
+- **UI:** `/operator` dashboard, Run epoch demo CTAs, job queue, EZKL/Circom prover toggle.
+- **Security:** borrower field on `ScoreRecord`, public input index 7 binding, consumer `BorrowerMismatch` guard.
+- **Testnet:** `scripts/deploy_testnet.sh`, `.env.example`, Sepolia foundry/etherscan config.
+- **Frontend:** wagmi/viem live chain reads, wallet connect, epoch registry pre-flight.
 
 ### v0.4.0
 
