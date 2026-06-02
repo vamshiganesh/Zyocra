@@ -5,6 +5,9 @@ import {IRiskOracle} from "./interfaces/IRiskOracle.sol";
 import {IRiskScoreVerifier} from "./interfaces/IRiskScoreVerifier.sol";
 import {RiskBuckets} from "./libraries/RiskBuckets.sol";
 import {ScoreEncoding} from "./libraries/ScoreEncoding.sol";
+import {CircomScoreEncoding} from "./libraries/CircomScoreEncoding.sol";
+import {PublicInputLayout} from "./libraries/PublicInputLayout.sol";
+import {CircomPublicInputLayout} from "./libraries/CircomPublicInputLayout.sol";
 
 /// @title RiskOracle
 /// @notice Stores verified liquidation-risk scores after proof verification.
@@ -106,8 +109,7 @@ contract RiskOracle is IRiskOracle {
             revert VerificationFailed();
         }
 
-        ScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
-        ScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
+        _requireBindingChecks(payload);
 
         uint64 timestamp = uint64(block.timestamp);
         ScoreRecord memory record = ScoreRecord({
@@ -147,5 +149,23 @@ contract RiskOracle is IRiskOracle {
 
     function _isVerified(uint64 epoch) private view returns (bool) {
         return epoch != 0 && epoch <= latestEpoch && _scores[epoch].timestamp != 0;
+    }
+
+    function _requireBindingChecks(ScoreUpdatePayload calldata payload) private pure {
+        uint256 len = payload.publicInputs.length;
+        if (len == PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT) {
+            ScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
+            ScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
+            return;
+        }
+        if (
+            len == CircomPublicInputLayout.CIRCOM_PUBLIC_INPUT_COUNT
+                || len == CircomPublicInputLayout.CIRCOM_EXTENDED_INPUT_COUNT
+        ) {
+            CircomScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
+            CircomScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
+            return;
+        }
+        revert PublicInputLayout.InvalidPublicInputs(PublicInputLayout.EZKL_PUBLIC_INPUT_COUNT, len);
     }
 }
