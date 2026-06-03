@@ -60,7 +60,7 @@ export function OperatorPanel() {
       <SectionHeader
         label="Operator"
         title="Run epoch demo"
-        description="Local FastAPI service wrapping e2e_phase1.sh, forge deploy/submit, and make benchmark. Logs stream over SSE."
+        description="Local FastAPI service wrapping e2e_phase1.sh / e2e_circom.sh, forge deploy/submit, and make benchmark. Logs stream over SSE."
       />
 
       <div className="operator-panel__toggle" role="group" aria-label="Prover path">

@@ -45,10 +45,20 @@ def collateral_bps_for_bucket(bucket: str) -> int:
 def spread_bps_for_bucket(bucket: str) -> int:
     return {"LOW": 0, "MEDIUM": 45, "HIGH": 120, "CRITICAL": 250}[bucket]
 
-demo = load_json(root / "circuits-baseline/logs/demo-latest.json") or {}
-oracle = load_json(root / "circuits-baseline/proofs/oracle-payload.json") or {}
-deploy = load_json(root / "contracts/deployments/anvil-ezkl-latest.json") or {}
-loop = load_json(root / "contracts/deployments/phase1-loop-latest.json") or {}
+if prover == "circom":
+    demo = {}
+    oracle = load_json(root / "circuits-custom/proofs/oracle-payload.json") or {}
+    deploy = load_json(root / "contracts/deployments/anvil-circom-oracle-latest.json") or {}
+    loop = load_json(root / "contracts/deployments/circom-loop-latest.json") or {}
+    proof_artifact = "circuits-custom/proofs/proof.json"
+    prover_label = "circom"
+else:
+    demo = load_json(root / "circuits-baseline/logs/demo-latest.json") or {}
+    oracle = load_json(root / "circuits-baseline/proofs/oracle-payload.json") or {}
+    deploy = load_json(root / "contracts/deployments/anvil-ezkl-latest.json") or {}
+    loop = load_json(root / "contracts/deployments/phase1-loop-latest.json") or {}
+    proof_artifact = "circuits-baseline/proofs/proof.json"
+    prover_label = "ezkl"
 
 # Fallback: broadcast CREATE order halo2, ezkl, oracle, consumer
 if not deploy:
@@ -126,14 +136,15 @@ out = {
         "lengthBytes": proof_len,
         "hashPrefix": short_hex(proof_hex, 8) if proof_hex else "—",
         "ezklVersion": demo.get("ezkl_version", "23.0.5"),
-        "artifactPath": "circuits-baseline/proofs/proof.json",
+        "artifactPath": proof_artifact,
+        "prover": prover_label,
     },
     "verification": {
         "result": "pass" if verify_passed else "pending",
         "onChain": on_chain,
         "chainId": 31337,
-        "verifierAdapter": deploy.get("ezklVerifier"),
-        "halo2Verifier": deploy.get("halo2Verifier"),
+        "verifierAdapter": deploy.get("circomVerifier") or deploy.get("ezklVerifier"),
+        "halo2Verifier": deploy.get("halo2Verifier") or deploy.get("groth16Verifier"),
         "oracle": deploy.get("oracle"),
         "consumer": deploy.get("consumer"),
     },

@@ -107,7 +107,7 @@ Zyocra separates **proof correctness** from **model quality** and **data honesty
 
 **Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
 
-**Known Phase 1 gaps:** borrower binding uses an 8th public-input limb (prover-attested stub, not yet in EZKL circuit); `setVerifier` is owner-controlled without timelock; Circom path is not wired to `RiskOracle.submitScore` (head benchmark only).
+**Known Phase 1 gaps:** borrower binding uses an appended public-input limb (not yet inside either circuit); Circom score uses Taylor sigmoid over dequantized `logit_acc`; `setVerifier` is owner-controlled without timelock.
 
 Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
 
@@ -141,7 +141,7 @@ make operator          # API on :8787
 make dev               # operator + Vite frontend
 ```
 
-Open **Operator** in the UI (`/operator`) to run `e2e_phase1.sh`, deploy, submit, and benchmark jobs with streaming logs.
+Open **Operator** in the UI (`/operator`) to run `e2e_phase1.sh` or `e2e_circom.sh`, deploy, submit, and benchmark jobs with streaming logs.
 
 ### Testnet (Ethereum Sepolia)
 
