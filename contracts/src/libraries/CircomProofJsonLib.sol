@@ -26,11 +26,30 @@ library CircomProofJsonLib {
   function load(string memory proofJson, string memory publicJson) internal pure returns (Artifacts memory) {
     Groth16Proof memory groth16 = _loadGroth16(proofJson);
     uint256[] memory publicInputs = _loadPublicSignals(publicJson);
-    return Artifacts({
-      proof: abi.encode(groth16.pA, groth16.pB, groth16.pC),
-      publicInputs: publicInputs,
-      groth16: groth16
-    });
+    return Artifacts({proof: abi.encode(groth16.pA, groth16.pB, groth16.pC), publicInputs: publicInputs, groth16: groth16});
+  }
+
+  /// @notice Load Groth16 artifacts and append borrower binding as the 10th public input.
+  function loadWithBorrower(string memory proofJson, string memory publicJson, address borrower)
+    internal
+    pure
+    returns (Artifacts memory)
+  {
+    Artifacts memory base = load(proofJson, publicJson);
+    uint256[] memory extended = new uint256[](base.publicInputs.length + 1);
+    for (uint256 i = 0; i < base.publicInputs.length; i++) {
+      extended[i] = base.publicInputs[i];
+    }
+    extended[base.publicInputs.length] = uint256(uint160(borrower));
+    return Artifacts({proof: base.proof, publicInputs: extended, groth16: base.groth16});
+  }
+
+  function load(string memory proofJson, string memory publicJson, bool _)
+    internal
+    pure
+    returns (Artifacts memory)
+  {
+    return load(proofJson, publicJson);
   }
 
   function _loadGroth16(string memory proofJson) private pure returns (Groth16Proof memory groth16) {
