@@ -44,14 +44,6 @@ library CircomProofJsonLib {
     return Artifacts({proof: base.proof, publicInputs: extended, groth16: base.groth16});
   }
 
-  function load(string memory proofJson, string memory publicJson, bool _)
-    internal
-    pure
-    returns (Artifacts memory)
-  {
-    return load(proofJson, publicJson);
-  }
-
   function _loadGroth16(string memory proofJson) private pure returns (Groth16Proof memory groth16) {
     groth16.pA[0] = proofJson.readUint(".pi_a[0]");
     groth16.pA[1] = proofJson.readUint(".pi_a[1]");
