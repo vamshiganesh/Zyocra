@@ -19,8 +19,7 @@ def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "e
 
     if job_type == JobType.RUN_FULL_EPOCH:
         if prover == "circom":
-            # Circom scope A: head prove + benchmark, not full oracle e2e.
-            return ["bash", str(root / "scripts" / "operator_circom_bench.sh")]
+            return ["bash", str(root / "scripts" / "e2e_circom.sh")]
         return ["bash", str(root / "scripts" / "e2e_phase1.sh")]
 
     if job_type == JobType.DEPLOY_ONLY:

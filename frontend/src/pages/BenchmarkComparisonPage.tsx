@@ -53,12 +53,12 @@ export function BenchmarkComparisonPage() {
                 <SectionHeader
                   label="Prover paths"
                   title="EZKL full graph vs Circom head"
-                  description="EZKL runs the full oracle e2e via Operator. Circom is head-only benchmark (Groth16) and is not wired to RiskOracle submitScore."
+                  description="EZKL runs the full-graph oracle e2e. Circom runs the LoRA head Groth16 path through RiskOracle (logit_acc → scoreBps binding)."
                 />
                 <ul className="assumption-list">
                   <li>EZKL: full MLP + sigmoid score, 8 public inputs (features + score + borrower binding limb).</li>
-                  <li>Circom: LoRA output head only, 9 public signals (hidden + logit_acc), benchmark comparison row.</li>
-                  <li>Use the Operator prover toggle to run the matching job path.</li>
+                  <li>Circom: LoRA head, 10 public inputs (hidden[8] + logit_acc + borrower), CircomScoreEncoding on-chain.</li>
+                  <li>Use the Operator prover toggle to run e2e_phase1.sh or e2e_circom.sh.</li>
                 </ul>
               </div>
             </ClippedCard>

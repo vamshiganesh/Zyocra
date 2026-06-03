@@ -82,7 +82,7 @@ export function OperatorPanel() {
 
       {prover === "circom" ? (
         <p className="operator-panel__note">
-          Circom path runs head-only prove + benchmark. Not wired to RiskOracle submitScore.
+          Circom path runs head prove + Groth16 oracle deploy + submitScore via e2e_circom.sh.
         </p>
       ) : null}
 
