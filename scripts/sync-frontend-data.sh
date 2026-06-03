@@ -8,6 +8,7 @@ mkdir -p "$(dirname "$OUT")"
 
 python3 <<PY
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 

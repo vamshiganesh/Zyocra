@@ -174,6 +174,7 @@ After deploy, copy addresses from `contracts/deployments/sepolia-ezkl-latest.jso
 | `bash circuits-custom/tests/test_prove_verify.sh` | Full Circom Groth16 loop |
 | `make operator` | FastAPI operator service (`:8787`) |
 | `make dev` | Operator + frontend dev servers |
+| `bash scripts/e2e_phase1.sh` | EZKL → Anvil → oracle → consumer |
 | `bash scripts/e2e_circom.sh` | Circom head → Anvil → oracle → consumer |
 | `cd frontend && pnpm test` | TypeScript typecheck |
 
