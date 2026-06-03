@@ -71,4 +71,3 @@ print(f"  consumer:        ${CONSUMER}")
 PY
 
 bash "${ROOT}/scripts/sync-frontend-data.sh"
-info "Circom oracle e2e complete"

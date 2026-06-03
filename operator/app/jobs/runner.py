@@ -9,6 +9,14 @@ from ..config import Settings
 from .types import JobType, ProverKind
 
 
+def _deploy_json_name(settings: Settings, prover: ProverKind) -> str:
+    if prover == "circom":
+        return "anvil-circom-oracle-latest.json"
+    if settings.deploy_chain == "sepolia":
+        return "sepolia-ezkl-latest.json"
+    return "anvil-ezkl-latest.json"
+
+
 def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "ezkl") -> list[str]:
     root = settings.repo_root
     env_extra: dict[str, str] = {
@@ -23,7 +31,18 @@ def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "e
         return ["bash", str(root / "scripts" / "e2e_phase1.sh")]
 
     if job_type == JobType.DEPLOY_ONLY:
-        env_extra["DEPLOY_OUTFILE"] = f"deployments/{settings.deploy_json_name}"
+        env_extra["DEPLOY_OUTFILE"] = f"deployments/{_deploy_json_name(settings, prover)}"
+        if prover == "circom":
+            return [
+                "forge",
+                "script",
+                "script/DeployCircomOracle.s.sol:DeployCircomOracle",
+                "--rpc-url",
+                settings.rpc_url,
+                "--broadcast",
+                "--private-key",
+                settings.private_key,
+            ]
         return [
             "forge",
             "script",
@@ -36,9 +55,20 @@ def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "e
         ]
 
     if job_type == JobType.SUBMIT_APPLY:
-        deploy = _load_deploy_addresses(settings)
+        deploy = _load_deploy_addresses(settings, prover)
         env_extra["ORACLE_ADDRESS"] = deploy["oracle"]
         env_extra["CONSUMER_ADDRESS"] = deploy["consumer"]
+        if prover == "circom":
+            return [
+                "forge",
+                "script",
+                "script/SubmitAndApplyCircom.s.sol:SubmitAndApplyCircom",
+                "--rpc-url",
+                settings.rpc_url,
+                "--broadcast",
+                "--private-key",
+                settings.private_key,
+            ]
         return [
             "forge",
             "script",

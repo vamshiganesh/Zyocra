@@ -92,7 +92,7 @@ class JobManager:
         try:
             cmd = build_command(job.job_type, settings, job.prover)
             cwd = command_cwd(job.job_type, settings)
-            env = command_env(job.job_type, settings)
+            env = command_env(job.job_type, settings, job.prover)
 
             await self._publish(job.id, f"[operator] cwd={cwd}")
             await self._publish(job.id, f"[operator] cmd={' '.join(cmd)}")
