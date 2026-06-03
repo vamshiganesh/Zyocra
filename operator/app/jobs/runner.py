@@ -108,25 +108,26 @@ def command_cwd(job_type: JobType, settings: Settings) -> Path:
     return settings.repo_root
 
 
-def command_env(job_type: JobType, settings: Settings) -> dict[str, str]:
+def command_env(job_type: JobType, settings: Settings, prover: ProverKind = "ezkl") -> dict[str, str]:
     env = os.environ.copy()
     env["RPC_URL"] = settings.rpc_url
     env["PRIVATE_KEY"] = settings.private_key
     env["DEPLOY_CHAIN"] = settings.deploy_chain
-    env["DEPLOY_OUTFILE"] = f"deployments/{settings.deploy_json_name}"
+    env["PROVER_KIND"] = prover
+    env["DEPLOY_OUTFILE"] = f"deployments/{_deploy_json_name(settings, prover)}"
 
     if job_type == JobType.SUBMIT_APPLY:
-        deploy = _load_deploy_addresses(settings)
+        deploy = _load_deploy_addresses(settings, prover)
         env["ORACLE_ADDRESS"] = deploy["oracle"]
         env["CONSUMER_ADDRESS"] = deploy["consumer"]
 
     return env
 
 
-def _load_deploy_addresses(settings: Settings) -> dict[str, str]:
+def _load_deploy_addresses(settings: Settings, prover: ProverKind = "ezkl") -> dict[str, str]:
     import json
 
-    path = settings.deploy_json_path
+    path = settings.contracts_dir / "deployments" / _deploy_json_name(settings, prover)
     if not path.exists():
         raise FileNotFoundError(f"deployment json missing: {path}")
     data = json.loads(path.read_text(encoding="utf-8"))

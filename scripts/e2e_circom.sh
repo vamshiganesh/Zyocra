@@ -70,4 +70,5 @@ print(f"  oracle:          ${ORACLE}")
 print(f"  consumer:        ${CONSUMER}")
 PY
 
-bash "${ROOT}/scripts/sync-frontend-data.sh"
+PROVER_KIND=circom bash "${ROOT}/scripts/sync-frontend-data.sh"
+info "Circom oracle e2e complete"

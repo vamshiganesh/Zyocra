@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 root = Path("${ROOT}")
+prover = os.environ.get("PROVER_KIND", "ezkl")
 
 def load_json(path: Path):
     if not path.is_file():

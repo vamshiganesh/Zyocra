@@ -141,7 +141,7 @@ class JobManager:
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=str(settings.repo_root),
-                env=command_env(JobType.SYNC_FRONTEND, settings),
+                env=command_env(JobType.SYNC_FRONTEND, settings, parent.prover),
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
             )
