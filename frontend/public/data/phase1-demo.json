@@ -4,10 +4,10 @@
     "populated": true
   },
   "commitments": {
-    "adapterHash": "0x5c840159cf800e89cc2fc5ff33164ec8aee75b5a20c7e15cbdc612c31d47993c",
-    "adapterHashShort": "0x5c8401\u202647993c",
-    "modelHash": "0x2fe8f38e2a8992e0546762c67f073e737f12419ac3f13004598e08c7d978f627",
-    "modelHashShort": "0x2fe8f3\u202678f627"
+    "adapterHash": "0xea8aa91a74b29bf40ddd1e1fab2dd51c8bc0a8f9bd305bf9e2298cc2ca12ebf4",
+    "adapterHashShort": "0xea8aa9\u202612ebf4",
+    "modelHash": "0x1c9709565efc3c0b11fc1f529b94049b70f0ae671550808446564f8360c2160c",
+    "modelHashShort": "0x1c9709\u2026c2160c"
   },
   "consumer": {
     "borrowAllowed": true,
@@ -22,7 +22,7 @@
   "epoch": {
     "id": "epoch-2026-041",
     "numeric": 2026041,
-    "status": "active"
+    "status": "ready"
   },
   "features": {
     "names": [
@@ -34,39 +34,33 @@
       "wallet_age_days"
     ],
     "sampleIndex": 0,
-    "values": [
-      0.26375776529312134,
-      0.09584087133407593,
-      0.503912091255188,
-      0.5070705413818359,
-      0.47515666484832764,
-      0.8217794299125671
-    ]
+    "values": []
   },
   "hasArtifacts": true,
-  "hasOnChain": true,
+  "hasOnChain": false,
   "proof": {
-    "artifactPath": "circuits-baseline/proofs/proof.json",
+    "artifactPath": "circuits-custom/proofs/proof.json",
     "ezklVersion": "23.0.5",
-    "hashPrefix": "0x0273d592\u2026fbb87fd6",
-    "lengthBytes": 3648,
-    "offChainVerify": true,
-    "status": "verified"
+    "hashPrefix": "\u2014",
+    "lengthBytes": 0,
+    "offChainVerify": false,
+    "prover": "circom",
+    "status": "pending"
   },
   "score": {
-    "bps": 1797,
+    "bps": 5002,
     "bucket": "LOW",
     "bucketRange": "0.00 \u2013 0.55",
-    "float": 0.1796875
+    "float": 0.5002
   },
-  "syncedAt": "2026-07-07T11:30:30Z",
+  "syncedAt": "2026-07-07T17:49:41Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    "halo2Verifier": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "onChain": true,
-    "oracle": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "result": "pass",
-    "verifierAdapter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    "consumer": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+    "halo2Verifier": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+    "onChain": false,
+    "oracle": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+    "result": "pending",
+    "verifierAdapter": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
   }
 }

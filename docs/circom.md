@@ -137,21 +137,25 @@ Milestone 5 compares both on constraints, RAM, prove time, verify gas, proof siz
 
 `scripts/export_verifier.sh` writes `verifiers/LoraHeadVerifier.sol` (GPL-3.0, snarkjs-generated).
 
-### Oracle integration (v0.4)
+### Oracle integration (v0.5 — Scope B)
 
 | Component | Role |
 |-----------|------|
 | `CircomRiskScoreVerifier` | `IRiskScoreVerifier` adapter; proof bytes = `abi.encode(pA, pB, pC)` with EVM pi_b layout |
-| `CircomProofJsonLib` | Parse `proof.json` + `public.json` for tests and tooling |
-| `DeployCircom.s.sol` | Deploy Groth16 verifier + adapter (no `RiskOracle` wiring yet) |
+| `CircomProofJsonLib` | Parse `proof.json` + `public.json` (+ optional borrower limb) for tests and tooling |
+| `CircomScoreEncoding` | On-chain Taylor sigmoid: dequantized `logit_acc` → `scoreBps` binding check |
+| `CircomPublicInputLayout` | 9 circuit signals + optional 10th borrower limb |
+| `DeployCircomOracle.s.sol` | Deploy Groth16 + adapter + `RiskOracle` + `RiskConsumer` |
+| `SubmitAndApplyCircom.s.sol` | Submit proof + apply consumer policy |
+| `scripts/e2e_circom.sh` | Full local loop: prove → deploy → submit → sync |
 
-**Public layout:** `hidden[8]` + `logit_acc` (9 signals). **Not wired to `RiskOracle`** because the oracle stores `scoreBps` (post-sigmoid) while Circom proves `logit_acc`. Hybrid architecture: trust backbone hidden vector off-chain, prove head on-chain — see `docs/benchmarks.md` hybrid mode.
+**Public layout:** `hidden[8]` + `logit_acc` (9 signals) + optional borrower binding limb (10th). `RiskOracle` accepts 9- or 10-input proofs and binds `scoreBps` via `CircomScoreEncoding` (Taylor sigmoid over dequantized `logit_acc`). Run `bash scripts/e2e_circom.sh` or Operator → Circom → **Run full epoch**.
 
-**License:** Groth16 verifier is GPL-3.0; MIT adapter imports it for dev/benchmark only.
+**License:** Groth16 verifier is GPL-3.0; MIT adapter imports it for dev/benchmark and local oracle e2e.
 
 ## Further work
 
 - Optional in-circuit bias with fixed-point rescale
-- Piecewise-linear sigmoid gadget (if benchmark scope expands)
-- `RiskOracle` v2 with Circom score semantics or on-chain sigmoid approx
-- Borrower binding in public inputs
+- Piecewise-linear sigmoid gadget (replace Taylor approx in `CircomScoreEncoding`)
+- Borrower binding inside the Circom circuit (vs appended limb)
+- Sepolia deploy for Circom oracle stack
