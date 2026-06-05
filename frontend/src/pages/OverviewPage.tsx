@@ -90,7 +90,7 @@ export function OverviewPage() {
                   title={live ? "Live demo snapshot" : c.metrics.title}
                   description={
                     live
-                      ? "Values from phase1-demo.json via the EZKL pipeline and optional Anvil submission."
+                      ? `Values from phase1-demo.json via the ${prover === "circom" ? "Circom head" : "EZKL full-graph"} pipeline and optional Anvil submission.`
                       : c.metrics.description
                   }
                 />

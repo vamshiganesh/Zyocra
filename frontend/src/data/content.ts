@@ -79,7 +79,7 @@ export const overviewCopy = {
     label: "Demo",
     title: "Walk the six-step pipeline",
     description:
-      "Read-only replay of epoch commitments → inputs → prove → verify → score → collateral impact. Regenerate artifacts with bash scripts/e2e_phase1.sh in the terminal.",
+      "Read-only replay of epoch commitments → inputs → prove → verify → score → collateral impact. Regenerate with e2e_phase1.sh, e2e_circom.sh, or Operator.",
   },
   faq: {
     label: "FAQ",

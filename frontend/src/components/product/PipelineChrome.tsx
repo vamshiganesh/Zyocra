@@ -107,13 +107,13 @@ export function PipelineChrome() {
                 </p>
                 {dataReady ? (
                   <p className="pipeline-chrome__popover-meta">
-                    <code>phase1-demo.json</code> · synced {syncedAt}
+                    <code>phase1-demo.json</code> · {prover.toUpperCase()} · synced {syncedAt}
                     {onChain ? " · on-chain submission included" : " · off-chain only"}
                   </p>
                 ) : (
                   <p className="pipeline-chrome__popover-meta">
-                    Run <code>bash scripts/e2e_phase1.sh</code> from the repo root, then
-                    refresh.
+                    Run <code>bash scripts/e2e_phase1.sh</code> or{" "}
+                    <code>bash scripts/e2e_circom.sh</code>, then refresh — or use Operator.
                   </p>
                 )}
               </div>

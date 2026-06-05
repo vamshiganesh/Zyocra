@@ -56,7 +56,7 @@ export const changelog = [
     description: "EZKL prove→verify→oracle→consumer loop, Circom custom path, benchmark harness, live UI data binding.",
     items: [
       { tag: "EZKL", text: "circuits-baseline pipeline, Halo2Verifier, e2e_phase1.sh on Anvil." },
-      { tag: "CIRCOM", text: "lora_output_head circuit, Groth16 prove/verify, docs/circom.md." },
+      { tag: "CIRCOM", text: "lora_output_head circuit, Groth16 oracle e2e via e2e_circom.sh." },
       { tag: "BENCH", text: "make benchmark: normalized JSON/CSV/MD + plots; EZKL vs Circom metrics." },
       { tag: "UI", text: "phase1-demo.json + bench-latest.json wired to pipeline and benchmark screens." },
       { tag: "DOCS", text: "threat-model.md, benchmarks.md, frontend-data.md." },
