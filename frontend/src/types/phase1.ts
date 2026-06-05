@@ -1,5 +1,7 @@
 /** Raw payload served from /data/phase1-demo.json (sync-frontend-data.sh). */
 
+export type ProverKind = "ezkl" | "circom";
+
 export type Phase1DemoJson = {
   syncedAt: string;
   hasArtifacts: boolean;
@@ -25,6 +27,8 @@ export type Phase1DemoJson = {
     bps: number;
     bucket: string;
     bucketRange: string;
+    logitAcc?: number;
+    publicInputCount?: number;
   };
   proof: {
     status: string;
@@ -33,6 +37,7 @@ export type Phase1DemoJson = {
     hashPrefix: string;
     ezklVersion: string;
     artifactPath: string;
+    prover?: ProverKind;
   };
   verification: {
     result: string;

@@ -130,6 +130,7 @@ out = {
         "bps": score_bps,
         "bucket": bucket,
         "bucketRange": bucket_range,
+        **({"logitAcc": int(oracle["logitAcc"]), "publicInputCount": int(oracle.get("publicInputCount", 10))} if prover == "circom" and oracle.get("logitAcc") is not None else {}),
     },
     "proof": {
         "status": "verified" if verify_passed and on_chain else ("generated" if verify_passed else "pending"),

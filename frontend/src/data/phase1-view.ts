@@ -1,15 +1,16 @@
 import type { DataField, EpochRow } from "./product-placeholders";
-import type { Phase1DemoJson } from "../types/phase1";
+import type { Phase1DemoJson, ProverKind } from "../types/phase1";
 import { EMPTY_VALUE } from "../lib/display";
 
 export type Phase1View = {
   raw: Phase1DemoJson;
+  prover: ProverKind;
   epochId: string;
   epochRegistry: EpochRow[];
   epochDetailFields: DataField[];
   inputFeatures: DataField[];
   publicInputFields: DataField[];
-  ezklArtifactFields: DataField[];
+  artifactFields: DataField[];
   verifyFields: DataField[];
   txSimFields: DataField[];
   scoreOutput: DataField[];
@@ -18,6 +19,9 @@ export type Phase1View = {
   headlineMetrics: { label: string; value: string; detail: string; accent?: boolean }[];
   proofPanelStatus: "idle" | "ready" | "running" | "verified" | "sealed";
   verifyPanelStatus: "idle" | "ready" | "running" | "verified" | "sealed";
+  verifierAdapterName: string;
+  verifierCoreName: string;
+  deployJsonName: string;
 };
 
 function fmtFloat(n: number, digits = 4): string {
@@ -32,8 +36,16 @@ function addrOrDash(v?: string): string {
   return v && v.startsWith("0x") ? v : EMPTY_VALUE;
 }
 
+function resolveProver(proof: Phase1DemoJson["proof"]): ProverKind {
+  if (proof.prover === "circom") return "circom";
+  if (proof.artifactPath.includes("circuits-custom")) return "circom";
+  return "ezkl";
+}
+
 export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
   const { epoch, commitments, features, score, proof, verification, consumer } = raw;
+  const prover = resolveProver(proof);
+  const isCircom = prover === "circom";
 
   const proofStatusLabel =
     proof.status === "verified"
@@ -51,7 +63,19 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
 
   const submissionStatus = verification.onChain ? "Submitted" : "Not submitted";
 
+  const verifierAdapterName = isCircom ? "CircomRiskScoreVerifier" : "EzklRiskScoreVerifier";
+  const verifierCoreName = isCircom ? "LoraHeadVerifier (Groth16)" : "Halo2Verifier (EZKL)";
+  const deployJsonName = isCircom ? "anvil-circom-oracle-latest.json" : "anvil-ezkl-latest.json";
+
   const epochDetailFields: DataField[] = [
+    {
+      label: "Prover path",
+      value: isCircom ? "Circom (LoRA head)" : "EZKL (full graph)",
+      mono: true,
+      description: isCircom
+        ? "Groth16 head proof wired through CircomScoreEncoding on RiskOracle."
+        : "Full ONNX graph compiled to Halo2 via EZKL.",
+    },
     {
       label: "Epoch ID",
       value: epoch.id,
@@ -70,7 +94,9 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
       label: "Verifier status",
       value: verifierStatusLabel,
       mono: true,
-      description: "EZKL Halo2Verifier outcome on Anvil or local Foundry test.",
+      description: isCircom
+        ? "Groth16 verifier outcome on Anvil or local Foundry test."
+        : "EZKL Halo2Verifier outcome on Anvil or local Foundry test.",
       hint: verification.onChain ? "broadcast" : "off-chain",
     },
     {
@@ -78,7 +104,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
       value: commitments.modelHashShort,
       title: commitments.modelHash,
       mono: true,
-      description: "Committed ONNX graph identity registered on RiskOracle.",
+      description: "Committed model identity registered on RiskOracle.",
     },
     {
       label: "Adapter hash",
@@ -87,107 +113,216 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
       mono: true,
       description: "LoRA adapter commitment for this scoring epoch.",
     },
-    {
-      label: "ONNX commit",
-      value: "zyocra-risk-mlp-v1",
-      mono: true,
-      description: "ml-base export artifact wired into EZKL compile.",
-      hint: "artifacts/onnx/",
-    },
+    ...(isCircom
+      ? []
+      : [
+          {
+            label: "ONNX commit",
+            value: "zyocra-risk-mlp-v1",
+            mono: true,
+            description: "ml-base export artifact wired into EZKL compile.",
+            hint: "artifacts/onnx/",
+          } satisfies DataField,
+        ]),
     {
       label: "Quantization profile",
       value: "Q8.8 · weight scale 256 · activation scale 128",
       mono: true,
-      description: "Fixed-point scales shared by ml-base and EZKL settings.",
+      description: "Fixed-point scales shared by ml-base, EZKL settings, and Circom witness grids.",
     },
     {
-      label: "EZKL verifier",
+      label: isCircom ? "Groth16 verifier" : "EZKL verifier",
       value: addrOrDash(verification.halo2Verifier),
       mono: true,
-      description: "Deployed Halo2Verifier (EZKL-generated Solidity).",
+      description: isCircom
+        ? "Deployed LoraHeadVerifier (snarkjs-generated Solidity)."
+        : "Deployed Halo2Verifier (EZKL-generated Solidity).",
     },
     {
       label: "Oracle adapter",
       value: addrOrDash(verification.verifierAdapter),
       mono: true,
-      description: "EzklRiskScoreVerifier implementing IRiskScoreVerifier.",
+      description: `${verifierAdapterName} implementing IRiskScoreVerifier.`,
     },
   ];
 
-  const inputFeatures: DataField[] = features.names.map((name, i) => ({
-    label: name,
-    value: features.values[i] !== undefined ? fmtFloat(features.values[i], 4) : EMPTY_VALUE,
-    description: "Min-max normalized feature from ml-base test split.",
-    hint: `sample row ${features.sampleIndex}`,
-  }));
+  const inputFeatures: DataField[] = isCircom
+    ? [
+        {
+          label: "hidden[0..7]",
+          value: features.values.length > 0 ? `${features.values.length} limbs` : "8 limbs (off-chain)",
+          description: "Backbone hidden vector fed to the LoRA output head. Not re-proven in the Circom subgraph.",
+          hint: "circuits-custom head input",
+        },
+        {
+          label: "logit_acc",
+          value: score.logitAcc !== undefined ? String(score.logitAcc) : EMPTY_VALUE,
+          mono: true,
+          description: "Quantized accumulator output from the LoRA head circuit (public signal index 8).",
+          hint: "Q8.8",
+        },
+        {
+          label: "score binding",
+          value: `${score.bps} bps`,
+          mono: true,
+          description: "On-chain scoreBps derived via CircomScoreEncoding Taylor sigmoid over logit_acc.",
+        },
+      ]
+    : features.names.map((name, i) => ({
+        label: name,
+        value: features.values[i] !== undefined ? fmtFloat(features.values[i], 4) : EMPTY_VALUE,
+        description: "Min-max normalized feature from ml-base test split.",
+        hint: `sample row ${features.sampleIndex}`,
+      }));
 
-  const publicInputFields: DataField[] = [
-    {
-      label: "borrower_id",
-      value: consumer.borrower,
-      mono: true,
-      description: "Demo borrower for consumer policy application.",
-    },
-    {
-      label: "Epoch ID",
-      value: epoch.id,
-      mono: true,
-      description: "Must match oracle epoch at submission.",
-    },
-    {
-      label: "Model hash",
-      value: commitments.modelHash,
-      mono: true,
-      description: "Public commitment in verifier instance set.",
-    },
-    {
-      label: "Adapter hash",
-      value: commitments.adapterHash,
-      mono: true,
-      description: "Adapter commitment for this epoch.",
-    },
-  ];
+  const publicInputFields: DataField[] = isCircom
+    ? [
+        {
+          label: "hidden[0..7]",
+          value: "8 public limbs",
+          mono: true,
+          description: "Witness-fed hidden states exposed as public signals in the Groth16 proof.",
+        },
+        {
+          label: "logit_acc",
+          value: score.logitAcc !== undefined ? String(score.logitAcc) : EMPTY_VALUE,
+          mono: true,
+          description: "Public signal at index 8; bound to scoreBps via CircomScoreEncoding.",
+        },
+        {
+          label: "borrower limb",
+          value: consumer.borrower,
+          mono: true,
+          description: "Optional 10th public-input limb for borrower binding at submitScore.",
+        },
+        {
+          label: "Public input count",
+          value: score.publicInputCount !== undefined ? String(score.publicInputCount) : "10",
+          mono: true,
+          description: "9 circuit signals + borrower binding limb for oracle e2e.",
+        },
+        {
+          label: "Model hash",
+          value: commitments.modelHash,
+          mono: true,
+          description: "Committed at oracle deploy; must match payload.",
+        },
+        {
+          label: "Adapter hash",
+          value: commitments.adapterHash,
+          mono: true,
+          description: "LoRA adapter commitment for this epoch.",
+        },
+      ]
+    : [
+        {
+          label: "borrower_id",
+          value: consumer.borrower,
+          mono: true,
+          description: "Demo borrower for consumer policy application.",
+        },
+        {
+          label: "Epoch ID",
+          value: epoch.id,
+          mono: true,
+          description: "Must match oracle epoch at submission.",
+        },
+        {
+          label: "Model hash",
+          value: commitments.modelHash,
+          mono: true,
+          description: "Public commitment in verifier instance set.",
+        },
+        {
+          label: "Adapter hash",
+          value: commitments.adapterHash,
+          mono: true,
+          description: "Adapter commitment for this epoch.",
+        },
+      ];
 
-  const ezklArtifactFields: DataField[] = [
-    {
-      label: "EZKL version",
-      value: proof.ezklVersion,
-      mono: true,
-      description: "Pinned prover toolchain.",
-    },
-    {
-      label: "Proof size",
-      value: proof.lengthBytes > 0 ? String(proof.lengthBytes) : EMPTY_VALUE,
-      mono: true,
-      description: "Serialized proof byte length.",
-      hint: "bytes",
-    },
-    {
-      label: "Proof hash",
-      value: proof.hashPrefix,
-      mono: true,
-      description: "Prefix of keccak256(proof bytes) for log correlation.",
-    },
-    {
-      label: "Off-chain verify",
-      value: proof.offChainVerify ? "PASS" : EMPTY_VALUE,
-      mono: true,
-      description: "ezkl.verify() on local artifacts.",
-    },
-    {
-      label: "Artifact path",
-      value: proof.artifactPath,
-      mono: true,
-      description: "Committed proof JSON under circuits-baseline.",
-    },
-  ];
+  const artifactFields: DataField[] = isCircom
+    ? [
+        {
+          label: "Prover",
+          value: "Circom + snarkjs",
+          mono: true,
+          description: "LoRA output head Groth16 path.",
+        },
+        {
+          label: "Proof size",
+          value: proof.lengthBytes > 0 ? String(proof.lengthBytes) : EMPTY_VALUE,
+          mono: true,
+          description: "Serialized Groth16 proof byte length.",
+          hint: "bytes",
+        },
+        {
+          label: "Proof hash",
+          value: proof.hashPrefix,
+          mono: true,
+          description: "Prefix of keccak256(proof bytes) for log correlation.",
+        },
+        {
+          label: "Off-chain verify",
+          value: proof.offChainVerify ? "PASS" : EMPTY_VALUE,
+          mono: true,
+          description: "snarkjs groth16.verify() on local artifacts.",
+        },
+        {
+          label: "Artifact path",
+          value: proof.artifactPath,
+          mono: true,
+          description: "Committed proof JSON under circuits-custom.",
+        },
+      ]
+    : [
+        {
+          label: "EZKL version",
+          value: proof.ezklVersion,
+          mono: true,
+          description: "Pinned prover toolchain.",
+        },
+        {
+          label: "Proof size",
+          value: proof.lengthBytes > 0 ? String(proof.lengthBytes) : EMPTY_VALUE,
+          mono: true,
+          description: "Serialized proof byte length.",
+          hint: "bytes",
+        },
+        {
+          label: "Proof hash",
+          value: proof.hashPrefix,
+          mono: true,
+          description: "Prefix of keccak256(proof bytes) for log correlation.",
+        },
+        {
+          label: "Off-chain verify",
+          value: proof.offChainVerify ? "PASS" : EMPTY_VALUE,
+          mono: true,
+          description: "ezkl.verify() on local artifacts.",
+        },
+        {
+          label: "Artifact path",
+          value: proof.artifactPath,
+          mono: true,
+          description: "Committed proof JSON under circuits-baseline.",
+        },
+      ];
 
   const verifyFields: DataField[] = [
     {
       label: "Verifier contract",
-      value: "EzklRiskScoreVerifier",
+      value: verifierAdapterName,
       mono: true,
-      description: "Adapter to EZKL Halo2Verifier.verifyProof.",
+      description: isCircom
+        ? "Adapter to LoraHeadVerifier.verifyProof."
+        : "Adapter to EZKL Halo2Verifier.verifyProof.",
+    },
+    {
+      label: "Core verifier",
+      value: verifierCoreName,
+      mono: true,
+      description: isCircom ? "Groth16 pairing check on BN254." : "Halo2 KZG verify on EVM.",
     },
     {
       label: "Verifier status",
@@ -275,12 +410,30 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
       mono: true,
       description: "Inclusive lower bound for bucket classification.",
     },
-    {
-      label: "EZKL rescaled",
-      value: fmtFloat(score.float, 6),
-      description: "Witness rescaled output from proof.json.",
-      hint: "public output",
-    },
+    ...(isCircom
+      ? [
+          {
+            label: "logit_acc",
+            value: score.logitAcc !== undefined ? String(score.logitAcc) : EMPTY_VALUE,
+            mono: true,
+            description: "Quantized head output from Groth16 public signals.",
+            hint: "public index 8",
+          } satisfies DataField,
+          {
+            label: "CircomScoreEncoding",
+            value: fmtFloat(score.float, 6),
+            description: "Taylor sigmoid over dequantized logit_acc → scoreBps binding.",
+            hint: "on-chain",
+          } satisfies DataField,
+        ]
+      : [
+          {
+            label: "EZKL rescaled",
+            value: fmtFloat(score.float, 6),
+            description: "Witness rescaled output from proof.json.",
+            hint: "public output",
+          } satisfies DataField,
+        ]),
   ];
 
   const collateral = fmtBpsFactor(consumer.collateralFactorBps);
@@ -358,7 +511,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
       status: verification.onChain ? "active" : "draft",
       modelHash: commitments.modelHashShort,
       adapterHash: commitments.adapterHashShort,
-      verifier: "EZKL",
+      verifier: isCircom ? "CIRCOM" : "EZKL",
       scoredAt: raw.syncedAt.slice(0, 10),
       borrowers: 1,
     },
@@ -366,10 +519,15 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
 
   const headlineMetrics = [
     {
+      label: "Prover",
+      value: isCircom ? "Circom head" : "EZKL full",
+      detail: isCircom ? "Groth16 oracle e2e" : "Halo2 oracle e2e",
+      accent: true,
+    },
+    {
       label: "Latest epoch",
       value: epoch.id,
       detail: verification.onChain ? "On-chain" : "Local artifacts",
-      accent: true,
     },
     {
       label: "Risk score",
@@ -413,12 +571,13 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
 
   return {
     raw,
+    prover,
     epochId: epoch.id,
     epochRegistry,
     epochDetailFields,
     inputFeatures,
     publicInputFields,
-    ezklArtifactFields,
+    artifactFields,
     verifyFields,
     txSimFields,
     scoreOutput,
@@ -427,5 +586,8 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
     headlineMetrics,
     proofPanelStatus,
     verifyPanelStatus,
+    verifierAdapterName,
+    verifierCoreName,
+    deployJsonName,
   };
 }
