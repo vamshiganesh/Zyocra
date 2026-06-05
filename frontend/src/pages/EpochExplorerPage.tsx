@@ -21,6 +21,7 @@ export function EpochExplorerPage() {
     status,
     error,
     reload,
+    live,
     epochId,
     prover,
     epochDetailFields,
