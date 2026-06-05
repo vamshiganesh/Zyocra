@@ -21,12 +21,19 @@ type OperatorJobsState = {
   lastStatus: JobStatus | null;
 };
 
-export function useOperatorJobs(onComplete?: () => void): OperatorJobsState {
+export function useOperatorJobs(
+  onComplete?: () => void,
+  initialProver: ProverKind = "ezkl",
+): OperatorJobsState {
   const [jobs, setJobs] = useState<OperatorJob[]>([]);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
-  const [prover, setProver] = useState<ProverKind>("ezkl");
+  const [prover, setProver] = useState<ProverKind>(initialProver);
   const [lastStatus, setLastStatus] = useState<JobStatus | null>(null);
+
+  useEffect(() => {
+    setProver(initialProver);
+  }, [initialProver]);
 
   const refreshJobs = useCallback(async () => {
     try {
