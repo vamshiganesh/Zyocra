@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type { ProverKind } from "../../types/phase1";
 import { ClippedButton } from "../ui/ClippedButton";
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
   className?: string;
   children: React.ReactNode;
   autoRun?: boolean;
+  prover?: ProverKind;
 };
 
 export function RunEpochDemoButton({
@@ -15,8 +17,13 @@ export function RunEpochDemoButton({
   size = "md",
   className,
   autoRun = false,
+  prover,
 }: Props) {
-  const to = autoRun ? "/operator?run=epoch" : "/operator";
+  const params = new URLSearchParams();
+  if (autoRun) params.set("run", "epoch");
+  if (prover) params.set("prover", prover);
+  const query = params.toString();
+  const to = query ? `/operator?${query}` : "/operator";
 
   return (
     <ClippedButton to={to} variant={variant} size={size} className={className}>

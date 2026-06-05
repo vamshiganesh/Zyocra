@@ -6,7 +6,7 @@ import { FlowNav } from "../components/product/FlowNav";
 import { PlaceholderPanel } from "../components/product/PlaceholderPanel";
 import { ProductHero } from "../components/product/ProductHero";
 import { provePaths } from "../data/content";
-import { circomArtifactFields } from "../data/product-placeholders";
+import { circomArtifactFields, ezklArtifactFields } from "../data/product-placeholders";
 import { ClippedButton } from "../components/ui/ClippedButton";
 import { ClippedCard } from "../components/ui/ClippedCard";
 import { SectionHeader } from "../components/ui/SectionHeader";
