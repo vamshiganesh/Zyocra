@@ -10,6 +10,15 @@ ANVIL_PORT="${ANVIL_PORT:-8545}"
 
 info() { printf '==> %s\n' "$*"; }
 
+normalize_deploy_outfile() {
+  local name="${1:-anvil-circom-oracle-latest.json}"
+  if [[ "$name" == deployments/* ]]; then
+    printf '%s' "$name"
+  else
+    printf 'deployments/%s' "$name"
+  fi
+}
+
 info "[1/7] Circom LoRA head prove pipeline"
 bash "${ROOT}/circuits-custom/scripts/run_pipeline.sh"
 
@@ -29,14 +38,14 @@ else
   info "[4/7] Reuse Anvil at ${RPC_URL}"
 fi
 
-export DEPLOY_OUTFILE="${DEPLOY_OUTFILE:-anvil-circom-oracle-latest.json}"
+export DEPLOY_OUTFILE="$(normalize_deploy_outfile "${DEPLOY_OUTFILE:-anvil-circom-oracle-latest.json}")"
 info "[5/7] Deploy Circom oracle stack"
 (cd "${ROOT}/contracts" && forge script script/DeployCircomOracle.s.sol:DeployCircomOracle \
   --rpc-url "${RPC_URL}" \
   --broadcast \
   --private-key "${PRIVATE_KEY}")
 
-DEPLOY_JSON="${ROOT}/contracts/deployments/${DEPLOY_OUTFILE}"
+DEPLOY_JSON="${ROOT}/contracts/${DEPLOY_OUTFILE}"
 if [[ ! -f "${DEPLOY_JSON}" ]]; then
   echo "deployment json missing: ${DEPLOY_JSON}" >&2
   exit 1

@@ -42,7 +42,7 @@
       2,
       3
     ],
-    "timestamp_utc": "2026-07-07T11:08:35Z",
+    "timestamp_utc": "2026-07-07T18:48:49Z",
     "tools": {
       "circom": "circom compiler 2.2.3",
       "forge": "forge Version: 1.5.1-stable",
@@ -58,7 +58,7 @@
   ],
   "gas": {
     "circom_verify_gas": 244502,
-    "ezkl_verify_gas": 536109,
+    "ezkl_verify_gas": 536176,
     "harness": "contracts/test/BenchmarkGas.t.sol",
     "note": "Standalone verifier.verifyProof / IRiskScoreVerifier.verify \u2014 not full oracle path"
   },
@@ -109,32 +109,32 @@
       "unit": "ms"
     },
     {
-      "circom": 68.07,
-      "ezkl": 1011.06,
+      "circom": 198.58,
+      "ezkl": 4037.59,
       "ezkl_head": null,
       "metric": "prove_time_stdev_ms",
       "notes": "sample stdev across prove runs",
       "unit": "ms"
     },
     {
-      "circom": 1600.0,
-      "ezkl": 331.02,
+      "circom": 1400.0,
+      "ezkl": 278.45,
       "ezkl_head": null,
       "metric": "verify_time_ms",
       "notes": "off-chain verifier",
       "unit": "ms"
     },
     {
-      "circom": 804,
-      "ezkl": 21373,
+      "circom": 807,
+      "ezkl": 21356,
       "ezkl_head": null,
       "metric": "proof_size_bytes",
       "notes": "serialized proof file size",
       "unit": "bytes"
     },
     {
-      "circom": 189932,
-      "ezkl": 1765648,
+      "circom": 189724,
+      "ezkl": 1731656,
       "ezkl_head": null,
       "metric": "peak_rss_kb",
       "notes": "prove step peak RSS (Linux time -v)",
@@ -142,7 +142,7 @@
     },
     {
       "circom": 244502,
-      "ezkl": 536109,
+      "ezkl": 536176,
       "ezkl_head": null,
       "metric": "verify_gas",
       "notes": "EVM verifier only (Foundry)",
@@ -166,7 +166,7 @@
     },
     {
       "circom": 27167,
-      "ezkl": 76587,
+      "ezkl": 76597,
       "ezkl_head": null,
       "metric": "verify_gas_per_public_input",
       "notes": "standalone verify gas / public signals",
@@ -190,7 +190,7 @@
     }
   ],
   "schema_version": "1.1",
-  "timestamp_utc": "2026-07-07T11:08:35Z",
+  "timestamp_utc": "2026-07-07T18:48:49Z",
   "workloads": {
     "circom": {
       "artifacts": {
@@ -209,17 +209,17 @@
       "lora_rank_ops": 4,
       "matmul_count": 1,
       "path": "circom",
-      "peak_rss_kb": 189932,
-      "proof_size_bytes": 804,
-      "prove_ms_max": 1590.0,
+      "peak_rss_kb": 189724,
+      "proof_size_bytes": 807,
+      "prove_ms_max": 1850.0,
       "prove_ms_median": 1560.0,
-      "prove_ms_min": 1460.0,
-      "prove_ms_stdev": 68.07,
+      "prove_ms_min": 1470.0,
+      "prove_ms_stdev": 198.58,
       "prove_runs": 3,
       "public_input_count": 9,
       "scope": "LoRA output head only (8-dim hidden \u2192 logit_acc, rank-4 explicit A\u00b7B fusion)",
       "verify_kind": "off_chain_snarkjs_groth16",
-      "verify_ms": 1600.0
+      "verify_ms": 1400.0
     },
     "ezkl": {
       "artifacts": {
@@ -234,18 +234,18 @@
       "constraint_metric_note": "num_rows from settings.json (EZKL PLONK rows); total_assignments also reported",
       "matmul_count": 3,
       "path": "ezkl",
-      "peak_rss_kb": 1765648,
-      "proof_size_bytes": 21373,
-      "prove_ms_max": 20860.0,
+      "peak_rss_kb": 1731656,
+      "proof_size_bytes": 21356,
+      "prove_ms_max": 22340.0,
       "prove_ms_median": 19480.0,
-      "prove_ms_min": 18890.0,
-      "prove_ms_stdev": 1011.06,
+      "prove_ms_min": 14370.0,
+      "prove_ms_stdev": 4037.59,
       "prove_runs": 3,
       "public_input_count": 7,
       "scope": "Full ONNX graph (6\u219216\u21928\u21921 + sigmoid) via EZKL 23.0.5",
       "score_float_witness": 0.1796875,
       "verify_kind": "off_chain_ezkl",
-      "verify_ms": 331.02
+      "verify_ms": 278.45
     },
     "ezkl_head": null,
     "hybrid": {

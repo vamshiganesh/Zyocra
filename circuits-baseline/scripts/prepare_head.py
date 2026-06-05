@@ -14,7 +14,6 @@ sys.path.insert(0, str(ROOT))
 
 import onnx  # noqa: E402
 
-from zyocra_ezkl.config import SRS_FILE  # noqa: E402
 from zyocra_ezkl.pipeline import compile_circuit, ensure_srs, gen_settings, setup_keys  # noqa: E402
 
 
@@ -42,8 +41,8 @@ def main() -> None:
 
     gen_settings(model=dest_onnx, settings=settings_json)
     compile_circuit(model=dest_onnx, compiled=compiled, settings=settings_json)
-    ensure_srs()
-    setup_keys(compiled=compiled, vk=vk, pk=pk, srs=SRS_FILE)
+    srs = ensure_srs()
+    setup_keys(compiled=compiled, vk=vk, pk=pk, srs=srs)
 
     print(f"==> head settings: {settings_json}")
     print(f"==> head compiled: {compiled}")

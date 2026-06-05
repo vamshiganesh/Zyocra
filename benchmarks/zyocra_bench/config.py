@@ -60,7 +60,8 @@ EZKL_HEAD_WITNESS = EZKL_HEAD_ROOT / "witnesses" / "witness.json"
 EZKL_HEAD_PROOF = EZKL_HEAD_ROOT / "proofs" / "proof.json"
 EZKL_HEAD_PK = EZKL_HEAD_ROOT / "keys" / "pk.key"
 EZKL_HEAD_VK = EZKL_HEAD_ROOT / "keys" / "vk.key"
-EZKL_HEAD_SRS = EZKL_HEAD_ROOT / "keys" / "kzg.srs"
+# Same logrows (17) as full graph — prepare_head.py uses circuits-baseline/keys/kzg.srs
+EZKL_HEAD_SRS = EZKL_SRS
 
 LATEST_JSON = RAW_DIR / "bench-latest.json"
 FE_PUBLIC_BENCH = REPO_ROOT / "frontend" / "public" / "data" / "bench-latest.json"

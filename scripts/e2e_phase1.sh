@@ -11,6 +11,16 @@ ANVIL_PORT="${ANVIL_PORT:-8545}"
 
 info() { printf '==> %s\n' "$*"; }
 
+# Forge writeJson is restricted to contracts/deployments/ (see foundry.toml fs_permissions).
+normalize_deploy_outfile() {
+  local name="${1:-anvil-ezkl-latest.json}"
+  if [[ "$name" == deployments/* ]]; then
+    printf '%s' "$name"
+  else
+    printf 'deployments/%s' "$name"
+  fi
+}
+
 if [[ ! -x "$PYTHON" ]]; then
   echo "missing venv at $PYTHON — run: make install" >&2
   exit 1
@@ -37,13 +47,13 @@ else
 fi
 
 info "[5/8] Deploy EZKL oracle stack"
-export DEPLOY_OUTFILE="${DEPLOY_OUTFILE:-anvil-ezkl-latest.json}"
+export DEPLOY_OUTFILE="$(normalize_deploy_outfile "${DEPLOY_OUTFILE:-anvil-ezkl-latest.json}")"
 (cd "${ROOT}/contracts" && forge script script/DeployEzkl.s.sol:DeployEzkl \
   --rpc-url "${RPC_URL}" \
   --broadcast \
   --private-key "${PRIVATE_KEY}")
 
-DEPLOY_JSON="${ROOT}/contracts/deployments/${DEPLOY_OUTFILE:-anvil-ezkl-latest.json}"
+DEPLOY_JSON="${ROOT}/contracts/${DEPLOY_OUTFILE}"
 if [[ ! -f "${DEPLOY_JSON}" ]]; then
   echo "deployment json missing: ${DEPLOY_JSON}" >&2
   exit 1

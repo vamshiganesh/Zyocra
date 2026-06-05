@@ -22,7 +22,7 @@
   "epoch": {
     "id": "epoch-2026-041",
     "numeric": 2026041,
-    "status": "ready"
+    "status": "active"
   },
   "features": {
     "names": [
@@ -37,7 +37,7 @@
     "values": []
   },
   "hasArtifacts": true,
-  "hasOnChain": false,
+  "hasOnChain": true,
   "proof": {
     "artifactPath": "circuits-custom/proofs/proof.json",
     "ezklVersion": "23.0.5",
@@ -55,14 +55,14 @@
     "logitAcc": 29,
     "publicInputCount": 10
   },
-  "syncedAt": "2026-07-07T18:03:58Z",
+  "syncedAt": "2026-07-07T18:48:07Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
-    "halo2Verifier": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
-    "onChain": false,
-    "oracle": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+    "consumer": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "halo2Verifier": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "onChain": true,
+    "oracle": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     "result": "pending",
-    "verifierAdapter": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+    "verifierAdapter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
   }
 }

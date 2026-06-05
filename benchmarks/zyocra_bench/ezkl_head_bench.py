@@ -84,6 +84,10 @@ def collect_ezkl_head(*, refresh_prove: bool = False) -> dict[str, Any]:
     _ensure_head_artifacts()
     _require(EZKL_HEAD_COMPILED, "run circuits-baseline/scripts/prepare_head.py")
     _require(EZKL_HEAD_PK, "run circuits-baseline/scripts/prepare_head.py")
+    if not EZKL_HEAD_SRS.is_file():
+        raise FileNotFoundError(
+            f"missing {EZKL_HEAD_SRS} — run circuits-baseline demo or scripts/setup.py --srs-only"
+        )
 
     sys.path.insert(0, str(EZKL_ROOT))
     from zyocra_ezkl.pipeline import gen_witness, prove, verify
