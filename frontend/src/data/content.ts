@@ -61,7 +61,7 @@ export const overviewCopy = {
     label: "Pipeline",
     title: "Epoch → prove → verify → parameter update",
     description:
-      "Six operational screens mirror the oracle workload. Demo data uses epoch-2026-041 until prover and contract hooks land.",
+      "Six operational screens mirror the oracle workload. Demo data syncs from EZKL or Circom e2e runs.",
   },
   system: {
     label: "Stack",

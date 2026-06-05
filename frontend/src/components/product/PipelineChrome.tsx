@@ -48,6 +48,7 @@ export function PipelineChrome() {
     ? view.raw.syncedAt.replace("T", " ").replace("Z", " UTC").slice(0, 19)
     : null;
   const onChain = view?.raw.hasOnChain ?? false;
+  const prover = view?.prover ?? "ezkl";
   const dataReady = status === "ready" && syncedAt;
 
   return (

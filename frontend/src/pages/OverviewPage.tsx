@@ -18,7 +18,7 @@ import "./pages.css";
 
 export function OverviewPage() {
   const c = overviewCopy;
-  const { status, error, reload, headlineMetrics, live } = usePipelineFields();
+  const { status, error, reload, headlineMetrics, live, prover } = usePipelineFields();
   const metrics = live && headlineMetrics ? headlineMetrics : benchmarkPlaceholders;
   const [activeLayer, setActiveLayer] = useState(c.hero.layers[1]?.id ?? "prove");
 
