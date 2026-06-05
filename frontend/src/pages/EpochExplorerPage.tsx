@@ -77,7 +77,7 @@ export function EpochExplorerPage() {
                 <SectionHeader
                   label="Active epoch"
                   title={epochId}
-                  description={`${onChain ? "On-chain submission" : "Local artifacts"} · proof ${proofField?.value ?? EMPTY_VALUE} · verifier ${verifierField?.value ?? EMPTY_VALUE}`}
+                  description={`${prover === "circom" ? "Circom head" : "EZKL full graph"} · ${onChain ? "On-chain submission" : "Local artifacts"} · proof ${proofField?.value ?? EMPTY_VALUE} · verifier ${verifierField?.value ?? EMPTY_VALUE}`}
                 />
                 <DataFieldGrid fields={epochDetailFields} columns={3} />
               </div>
@@ -145,7 +145,9 @@ export function EpochExplorerPage() {
                 />
                 <DataFieldGrid
                   fields={epochDetailFields.filter((f) =>
-                    ["Model hash", "Adapter hash", "ONNX commit", "Quantization profile"].includes(f.label),
+                    ["Model hash", "Adapter hash", "ONNX commit", "Quantization profile", "Prover path"].includes(
+                      f.label,
+                    ),
                   )}
                   columns={2}
                 />
