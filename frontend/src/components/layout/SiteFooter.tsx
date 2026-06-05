@@ -23,12 +23,6 @@ const social = [
   { href: "https://x.com/VamshiGaneshB", label: "X" },
 ];
 
-const badges = [
-  { id: "gdpr", label: "GDPR" },
-  { id: "soc2", label: "SOC 2" },
-  { id: "iso", label: "ISO" },
-];
-
 function scrollToTop() {
   scrollPageToTop();
   document.getElementById("top")?.focus({ preventScroll: true });
@@ -52,41 +46,6 @@ export function SiteFooter() {
               </span>
               Back to top
             </button>
-
-            <ul className="site-footer__badges">
-              {badges.map((badge) => (
-                <li key={badge.id} className="site-footer__badge">
-                  <span className="site-footer__badge-ring" aria-hidden="true">
-                    <svg viewBox="0 0 48 48" width="40" height="40">
-                      <circle
-                        cx="24"
-                        cy="24"
-                        r="18"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                      />
-                      <circle
-                        cx="24"
-                        cy="24"
-                        r="12"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                        strokeDasharray="2 3"
-                      />
-                      <path
-                        d="M24 14L30 24L24 34L18 24Z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                      />
-                    </svg>
-                  </span>
-                  <span className="site-footer__badge-label">{badge.label}</span>
-                </li>
-              ))}
-            </ul>
           </div>
 
           <div className="shell__main site-footer__upper-main">
