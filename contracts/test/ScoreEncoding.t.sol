@@ -34,7 +34,7 @@ contract ScoreEncodingTest is Test {
         ScoreEncoding.requireScoreMatchesPublicInput(1797, inputs);
     }
 
-    function test_requireBorrowerMatchesPublicInput_acceptsAlignedBorrower() public {
+    function test_requireBorrowerMatchesPublicInput_acceptsAlignedBorrower() public view {
         uint256[] memory inputs = new uint256[](8);
         inputs[7] = uint256(uint160(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
 
