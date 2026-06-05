@@ -1,12 +1,20 @@
 import { EMPTY_VALUE } from "../lib/display";
 import { usePhase1Data } from "../hooks/usePhase1Data";
 import { useChainStatus } from "../hooks/useChainStatus";
+import type { ProverKind } from "../types/phase1";
 import * as ph from "./product-placeholders";
 
 /** Live phase-1 fields with static fallbacks when demo JSON is absent. */
 export function usePipelineFields() {
   const { status, view, error, reload } = usePhase1Data();
-  const { live: chainLive, enabled: chainEnabled } = useChainStatus();
+  const jsonOracle = view?.raw.verification.oracle;
+  const jsonConsumer = view?.raw.verification.consumer;
+  const { live: chainLive, enabled: chainEnabled } = useChainStatus({
+    oracle: jsonOracle,
+    consumer: jsonConsumer,
+  });
+
+  const prover: ProverKind = view?.prover ?? "ezkl";
 
   const epochDetailFields = (view?.epochDetailFields ?? ph.epochDetailFields).map((field) => {
     if (!chainEnabled || !chainLive) return field;
@@ -45,6 +53,7 @@ export function usePipelineFields() {
     error,
     reload,
     live: view !== null,
+    prover,
     chainLive,
     chainEnabled,
     epochId: view?.epochId ?? ph.demoEpoch.id,
@@ -52,8 +61,11 @@ export function usePipelineFields() {
     epochDetailFields,
     inputFeatures: view?.inputFeatures ?? ph.inputFeatures,
     publicInputFields: view?.publicInputFields ?? ph.publicInputFields,
-    ezklArtifactFields: view?.ezklArtifactFields ?? ph.ezklArtifactFields,
+    artifactFields: view?.artifactFields ?? ph.ezklArtifactFields,
     verifyFields: view?.verifyFields ?? ph.verifyFields,
+    verifierAdapterName: view?.verifierAdapterName ?? "EzklRiskScoreVerifier",
+    verifierCoreName: view?.verifierCoreName ?? "Halo2Verifier (EZKL)",
+    deployJsonName: view?.deployJsonName ?? "anvil-ezkl-latest.json",
     txSimFields: view?.txSimFields ?? [
       {
         label: "Caller",
@@ -93,5 +105,7 @@ export function usePipelineFields() {
     collateralBps: view?.raw.consumer.collateralFactorBps,
     spreadBps: view?.raw.consumer.borrowSpreadBps,
     borrowAllowed: view?.raw.consumer.borrowAllowed,
+    jsonOracle,
+    jsonConsumer,
   };
 }

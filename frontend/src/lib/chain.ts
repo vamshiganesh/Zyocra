@@ -7,10 +7,8 @@ export const DEMO_BORROWER =
 const rpcUrl = import.meta.env.VITE_RPC_URL as string | undefined;
 const chainId = Number(import.meta.env.VITE_CHAIN_ID ?? sepolia.id);
 
-export const oracleAddress = import.meta.env.VITE_ORACLE_ADDRESS as Address | undefined;
-export const consumerAddress = import.meta.env.VITE_CONSUMER_ADDRESS as Address | undefined;
-
-export const chainReadsEnabled = Boolean(rpcUrl && oracleAddress);
+export const envOracleAddress = import.meta.env.VITE_ORACLE_ADDRESS as Address | undefined;
+export const envConsumerAddress = import.meta.env.VITE_CONSUMER_ADDRESS as Address | undefined;
 
 export const publicClient = rpcUrl
   ? createPublicClient({
@@ -85,6 +83,11 @@ export const riskConsumerAbi = [
   },
 ] as const;
 
+export type ChainAddressOverrides = {
+  oracle?: string;
+  consumer?: string;
+};
+
 export type LiveChainStatus = {
   latestEpoch: number;
   scoreBps?: number;
@@ -94,28 +97,58 @@ export type LiveChainStatus = {
   borrowAllowed?: boolean;
   modelHash?: string;
   adapterHash?: string;
+  oracleAddress?: string;
+  consumerAddress?: string;
   source: "live" | "json";
 };
 
-export async function readLiveChainStatus(): Promise<LiveChainStatus | null> {
-  if (!publicClient || !oracleAddress) return null;
+function asAddress(value?: string): Address | undefined {
+  if (!value || !value.startsWith("0x") || value.length !== 42) return undefined;
+  return value as Address;
+}
+
+export function resolveChainAddresses(overrides?: ChainAddressOverrides): {
+  oracle?: Address;
+  consumer?: Address;
+  source: "env" | "json" | "none";
+} {
+  const oracle = asAddress(envOracleAddress) ?? asAddress(overrides?.oracle);
+  const consumer = asAddress(envConsumerAddress) ?? asAddress(overrides?.consumer);
+  const source = envOracleAddress
+    ? "env"
+    : overrides?.oracle
+      ? "json"
+      : "none";
+  return { oracle, consumer, source };
+}
+
+export function chainReadsEnabled(overrides?: ChainAddressOverrides): boolean {
+  const { oracle } = resolveChainAddresses(overrides);
+  return Boolean(publicClient && oracle);
+}
+
+export async function readLiveChainStatus(
+  overrides?: ChainAddressOverrides,
+): Promise<LiveChainStatus | null> {
+  const { oracle, consumer } = resolveChainAddresses(overrides);
+  if (!publicClient || !oracle) return null;
 
   const latestEpoch = Number(
     await publicClient.readContract({
-      address: oracleAddress,
+      address: oracle,
       abi: riskOracleAbi,
       functionName: "latestEpoch",
     }),
   );
 
   const modelHash = await publicClient.readContract({
-    address: oracleAddress,
+    address: oracle,
     abi: riskOracleAbi,
     functionName: "committedModelHash",
   });
 
   const adapterHash = await publicClient.readContract({
-    address: oracleAddress,
+    address: oracle,
     abi: riskOracleAbi,
     functionName: "committedAdapterHash",
   });
@@ -124,12 +157,14 @@ export async function readLiveChainStatus(): Promise<LiveChainStatus | null> {
     latestEpoch,
     modelHash,
     adapterHash,
+    oracleAddress: oracle,
+    consumerAddress: consumer,
     source: "live",
   };
 
   if (latestEpoch > 0) {
     const score = await publicClient.readContract({
-      address: oracleAddress,
+      address: oracle,
       abi: riskOracleAbi,
       functionName: "getLatestScore",
     });
@@ -137,9 +172,9 @@ export async function readLiveChainStatus(): Promise<LiveChainStatus | null> {
     live.borrower = score.borrower;
   }
 
-  if (consumerAddress) {
+  if (consumer) {
     const policy = await publicClient.readContract({
-      address: consumerAddress,
+      address: consumer,
       abi: riskConsumerAbi,
       functionName: "getBorrowerPolicy",
       args: [DEMO_BORROWER],

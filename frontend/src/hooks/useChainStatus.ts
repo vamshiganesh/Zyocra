@@ -1,20 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
-import { chainReadsEnabled, readLiveChainStatus, type LiveChainStatus } from "../lib/chain";
+import {
+  chainReadsEnabled,
+  readLiveChainStatus,
+  type ChainAddressOverrides,
+  type LiveChainStatus,
+} from "../lib/chain";
 
-export function useChainStatus(pollMs = 12_000) {
+export function useChainStatus(overrides?: ChainAddressOverrides, pollMs = 12_000) {
   const [live, setLive] = useState<LiveChainStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const enabled = chainReadsEnabled(overrides);
+  const oracleKey = overrides?.oracle ?? "";
+  const consumerKey = overrides?.consumer ?? "";
 
   const refresh = useCallback(async () => {
-    if (!chainReadsEnabled) {
+    if (!enabled) {
       setLive(null);
       setError(null);
       return;
     }
     setLoading(true);
     try {
-      const status = await readLiveChainStatus();
+      const status = await readLiveChainStatus(overrides);
       setLive(status);
       setError(null);
     } catch (err) {
@@ -22,14 +30,14 @@ export function useChainStatus(pollMs = 12_000) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [enabled, oracleKey, consumerKey, overrides]);
 
   useEffect(() => {
     void refresh();
-    if (!chainReadsEnabled) return;
+    if (!enabled) return;
     const timer = window.setInterval(() => void refresh(), pollMs);
     return () => window.clearInterval(timer);
-  }, [pollMs, refresh]);
+  }, [pollMs, refresh, enabled]);
 
-  return { live, error, loading, enabled: chainReadsEnabled, refresh };
+  return { live, error, loading, enabled, refresh };
 }
