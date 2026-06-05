@@ -7,12 +7,12 @@ import {
 } from "../lib/chain";
 
 export function useChainStatus(overrides?: ChainAddressOverrides, pollMs = 12_000) {
+  const oracle = overrides?.oracle;
+  const consumer = overrides?.consumer;
   const [live, setLive] = useState<LiveChainStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const enabled = chainReadsEnabled(overrides);
-  const oracleKey = overrides?.oracle ?? "";
-  const consumerKey = overrides?.consumer ?? "";
 
   const refresh = useCallback(async () => {
     if (!enabled) {
@@ -22,7 +22,7 @@ export function useChainStatus(overrides?: ChainAddressOverrides, pollMs = 12_00
     }
     setLoading(true);
     try {
-      const status = await readLiveChainStatus(overrides);
+      const status = await readLiveChainStatus({ oracle, consumer });
       setLive(status);
       setError(null);
     } catch (err) {
@@ -30,7 +30,7 @@ export function useChainStatus(overrides?: ChainAddressOverrides, pollMs = 12_00
     } finally {
       setLoading(false);
     }
-  }, [enabled, oracleKey, consumerKey, overrides]);
+  }, [enabled, oracle, consumer]);
 
   useEffect(() => {
     void refresh();

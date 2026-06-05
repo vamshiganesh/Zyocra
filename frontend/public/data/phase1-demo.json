@@ -51,9 +51,11 @@
     "bps": 5002,
     "bucket": "LOW",
     "bucketRange": "0.00 \u2013 0.55",
-    "float": 0.5002
+    "float": 0.5002,
+    "logitAcc": 29,
+    "publicInputCount": 10
   },
-  "syncedAt": "2026-07-07T17:49:41Z",
+  "syncedAt": "2026-07-07T18:03:58Z",
   "verification": {
     "chainId": 31337,
     "consumer": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",

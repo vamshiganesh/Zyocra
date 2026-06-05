@@ -35,7 +35,7 @@ export function OverviewPage() {
             onLayerChange={setActiveLayer}
             actions={
               <>
-                <RunEpochDemoButton variant="accent" size="lg" autoRun>
+                <RunEpochDemoButton variant="accent" size="lg" autoRun prover={live ? prover : undefined}>
                   {c.hero.ctaPrimary}
                 </RunEpochDemoButton>
                 <ClippedButton to="/benchmarks" variant="ghost" size="lg">
@@ -120,7 +120,7 @@ export function OverviewPage() {
                   description={c.entry.description}
                 />
                 <div className="hero__actions" style={{ marginTop: "var(--space-6)" }}>
-                  <RunEpochDemoButton variant="accent" size="md" autoRun>
+                  <RunEpochDemoButton variant="accent" size="md" autoRun prover={live ? prover : undefined}>
                     Run epoch demo
                   </RunEpochDemoButton>
                   <ClippedButton to="/epoch#active" variant="surface" size="md">

@@ -20,6 +20,7 @@ export function ProtocolImpactPage() {
     error,
     reload,
     live,
+    prover,
     impactFields,
     auditTrail,
     scoreBucket,
@@ -79,7 +80,7 @@ export function ProtocolImpactPage() {
                   title={`${scoreBucket} bucket application`}
                   description={
                     live
-                      ? `${chainEnabled ? "Live viem reads merged over synced JSON where configured." : "Values from phase1-demo.json after e2e sync."} Policy output from RiskConsumer after verified score admission.`
+                      ? `${chainEnabled ? "Live viem reads merged over synced JSON where configured." : "Values from phase1-demo.json after e2e sync."} ${prover === "circom" ? "Circom" : "EZKL"} oracle path · policy from RiskConsumer after verified score admission.`
                       : "Placeholder deltas from static demo. Sync artifacts for live values."
                   }
                 />

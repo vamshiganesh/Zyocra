@@ -56,7 +56,7 @@ export function EpochExplorerPage() {
             body={screen.lede}
             actions={
               <>
-                <RunEpochDemoButton variant="accent" size="lg" autoRun>
+                <RunEpochDemoButton variant="accent" size="lg" autoRun prover={live ? prover : undefined}>
                   Run epoch demo
                 </RunEpochDemoButton>
                 <ClippedButton to="/inputs" variant="ghost" size="lg">
