@@ -16,7 +16,7 @@ const phase1Copy: Record<DataLoadStatus, { title: string; body: string }> = {
   },
   empty: {
     title: "No demo artifacts yet",
-    body: "Run bash scripts/sync-frontend-data.sh after the EZKL pipeline or e2e_phase1.sh.",
+    body: "Run bash scripts/sync-frontend-data.sh after e2e_phase1.sh, e2e_circom.sh, or Operator jobs.",
   },
   error: {
     title: "Could not load demo data",

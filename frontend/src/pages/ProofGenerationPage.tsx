@@ -37,7 +37,7 @@ export function ProofGenerationPage() {
 
   const isCircom = prover === "circom";
   const proofTitle = proofStatusTitle[proofPanelStatus] ?? "Pending";
-  const compareFields = isCircom ? circomArtifactFields : circomArtifactFields;
+  const compareFields = isCircom ? ezklArtifactFields : circomArtifactFields;
 
   return (
     <div className="page">

@@ -14,8 +14,10 @@ import "./pages.css";
 const screen = screenBySlug("inputs")!;
 
 export function InputSummaryPage() {
-  const { status, error, reload, epochId, inputFeatures, publicInputFields } =
+  const { status, error, reload, epochId, prover, inputFeatures, publicInputFields } =
     usePipelineFields();
+
+  const isCircom = prover === "circom";
 
   return (
     <div className="page">
@@ -42,8 +44,12 @@ export function InputSummaryPage() {
               <div id="vector">
                 <SectionHeader
                   label="Features"
-                  title={`${epochId} feature vector`}
-                  description="Six-dimensional tabular input to the risk MLP. Exported with deterministic ordering for ONNX and circuits."
+                  title={isCircom ? `${epochId} head inputs` : `${epochId} feature vector`}
+                  description={
+                    isCircom
+                      ? "Circom proves the LoRA output head over an off-chain hidden backbone vector. EZKL path uses the full six-feature MLP input."
+                      : "Six-dimensional tabular input to the risk MLP. Exported with deterministic ordering for ONNX and circuits."
+                  }
                 />
                 <DataFieldGrid fields={inputFeatures} columns={3} />
               </div>
@@ -66,7 +72,11 @@ export function InputSummaryPage() {
                 <SectionHeader
                   label="Public inputs"
                   title="Verifier-exposed fields"
-                  description="Subset of inputs and commitments passed as public signals to the Solidity verifier."
+                  description={
+                    isCircom
+                      ? "Groth16 public signals: hidden[8] + logit_acc + borrower binding limb."
+                      : "Subset of inputs and commitments passed as public signals to the Solidity verifier."
+                  }
                 />
                 <DataFieldGrid fields={publicInputFields} columns={2} />
               </div>
