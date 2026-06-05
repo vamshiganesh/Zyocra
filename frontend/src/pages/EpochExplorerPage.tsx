@@ -22,6 +22,7 @@ export function EpochExplorerPage() {
     error,
     reload,
     epochId,
+    prover,
     epochDetailFields,
     epochRegistry,
     onChain,

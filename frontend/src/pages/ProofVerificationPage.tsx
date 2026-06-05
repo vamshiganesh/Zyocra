@@ -27,13 +27,17 @@ export function ProofVerificationPage() {
     error,
     reload,
     live,
+    prover,
     verifyFields,
     publicInputFields,
     txSimFields,
     verifyPanelStatus,
+    verifierAdapterName,
+    verifierCoreName,
     onChain,
   } = usePipelineFields();
 
+  const isCircom = prover === "circom";
   const verifyTitle = verifyStatusTitle[verifyPanelStatus] ?? "Pending";
 
   return (
@@ -61,8 +65,12 @@ export function ProofVerificationPage() {
               <div id="verifier">
                 <SectionHeader
                   label="Verifier"
-                  title="EzklRiskScoreVerifier"
-                  description="Gas used here is the primary on-chain cost metric in the benchmark table."
+                  title={verifierAdapterName}
+                  description={
+                    isCircom
+                      ? `${verifierCoreName} + CircomScoreEncoding binding. Gas is the primary on-chain cost metric in benchmarks.`
+                      : "Gas used here is the primary on-chain cost metric in the benchmark table."
+                  }
                 />
                 <DataFieldGrid fields={verifyFields} columns={2} />
               </div>
@@ -73,8 +81,12 @@ export function ProofVerificationPage() {
               <div id="public-inputs">
                 <SectionHeader
                   label="Public inputs"
-                  title="Calldata public signal set"
-                  description="Must match epoch commitments and borrower feature hash at verification time."
+                  title={isCircom ? "Groth16 public signal set" : "Calldata public signal set"}
+                  description={
+                    isCircom
+                      ? "hidden[8] + logit_acc + borrower limb. Must match epoch commitments at verification."
+                      : "Must match epoch commitments and borrower feature hash at verification time."
+                  }
                 />
                 <DataFieldGrid fields={publicInputFields} columns={2} />
               </div>
@@ -94,7 +106,9 @@ export function ProofVerificationPage() {
                 <PlaceholderPanel label="Verifier status" title={verifyTitle} status={verifyPanelStatus}>
                   <DataFieldGrid fields={txSimFields} columns={2} />
                   {!live ? (
-                    <p className="data-grid__hint">Sync demo data or run e2e_phase1.sh for live verification fields.</p>
+                    <p className="data-grid__hint">
+                      Sync demo data or run e2e_phase1.sh / e2e_circom.sh for live verification fields.
+                    </p>
                   ) : null}
                 </PlaceholderPanel>
               </div>
