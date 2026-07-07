@@ -52,6 +52,8 @@ pip-wheel-metadata/
 ml-base/artifacts/
 circuits-baseline/onnx/
 circuits-baseline/keys/
+circuits-baseline/**/keys/*
+!circuits-baseline/**/keys/.gitkeep
 circuits-baseline/witnesses/*
 !circuits-baseline/witnesses/.gitkeep
 circuits-baseline/proofs/*
