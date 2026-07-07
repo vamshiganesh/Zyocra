@@ -12,16 +12,16 @@
   "kind": "ezkl_bench",
   "matmul_count": 3,
   "path": "ezkl",
-  "peak_rss_kb": 1760860,
-  "proof_size_bytes": 21463,
-  "prove_ms_max": 22630.0,
-  "prove_ms_median": 20940.0,
-  "prove_ms_min": 20670.0,
-  "prove_ms_stdev": 1062.28,
+  "peak_rss_kb": 1772532,
+  "proof_size_bytes": 21425,
+  "prove_ms_max": 25820.0,
+  "prove_ms_median": 25490.0,
+  "prove_ms_min": 23900.0,
+  "prove_ms_stdev": 1026.6,
   "prove_runs": 3,
   "public_input_count": 7,
   "scope": "Full ONNX graph (6\u219216\u21928\u21921 + sigmoid) via EZKL 23.0.5",
   "score_float_witness": 0.1796875,
   "verify_kind": "off_chain_ezkl",
-  "verify_ms": 271.67
+  "verify_ms": 465.88
 }

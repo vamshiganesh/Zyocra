@@ -1,10 +1,10 @@
 metric,unit,ezkl,ezkl_head,circom,notes
 constraint_count,count,964,106,89,EZKL: settings num_rows; Circom: R1CS total
-prove_time_ms,ms,2.094e+04,1.76e+04,1580,median of 3 runs
-prove_time_stdev_ms,ms,1062,1065,210.8,sample stdev across prove runs
-verify_time_ms,ms,271.7,138,1520,off-chain verifier
-proof_size_bytes,bytes,21463,18550,804,serialized proof file size
-peak_rss_kb,KB,1760860,1422284,189840,prove step peak RSS (Linux time -v)
+prove_time_ms,ms,3.239e+04,2.128e+04,2220,median of 3 runs
+prove_time_stdev_ms,ms,543.5,1796,180.1,sample stdev across prove runs
+verify_time_ms,ms,585.7,159.4,1480,off-chain verifier
+proof_size_bytes,bytes,21312,18579,803,serialized proof file size
+peak_rss_kb,KB,1757600,1401868,189640,prove step peak RSS (Linux time -v)
 verify_gas,gas,536176,—,244502,EVM verifier only (Foundry)
 constraints_per_matmul,count,321.3,106,89,constraint_count / matmul_count
 constraints_per_lora_rank_op,count,—,—,22.25,Circom head only: constraints / rank

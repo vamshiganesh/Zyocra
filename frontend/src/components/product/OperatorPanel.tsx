@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { OperatorJob } from "../../lib/operator";
+import { fetchChainStatus } from "../../lib/operator";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAccount, useChainId } from "wagmi";
 import { useOperatorJobs } from "../../hooks/useOperatorJobs";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { useBenchmarkData } from "../../hooks/useBenchmarkData";
@@ -48,9 +50,11 @@ export function OperatorPanel() {
     prover,
     setProver,
     runJob,
+    selectJob,
     busy,
     activeJobId,
     lastStatus,
+    jobError,
   } = useOperatorJobs(() => {
     void reloadPhase1();
     void reloadBench();
@@ -58,11 +62,30 @@ export function OperatorPanel() {
   }, initialProver);
 
   const logRef = useRef<HTMLPreElement>(null);
+  const [operatorRpc, setOperatorRpc] = useState<string | null>(null);
+  const [operatorChain, setOperatorChain] = useState<string | null>(null);
+  const walletChainId = useChainId();
+  const { isConnected } = useAccount();
   const deployJson = prover === "circom" ? "anvil-circom-oracle-latest.json" : "anvil-ezkl-latest.json";
   const deployScript =
     prover === "circom" ? "DeployCircomOracle.s.sol" : "DeployEzkl.s.sol";
   const submitScript =
     prover === "circom" ? "SubmitAndApplyCircom.s.sol" : "SubmitAndApply.s.sol";
+
+  useEffect(() => {
+    void fetchChainStatus()
+      .then((status) => {
+        setOperatorRpc(String(status.rpcUrl ?? ""));
+        setOperatorChain(String(status.chain ?? ""));
+      })
+      .catch(() => {
+        setOperatorRpc(null);
+        setOperatorChain(null);
+      });
+  }, [lastStatus, busy]);
+
+  const walletOnSepolia = isConnected && walletChainId === 11_155_111;
+  const operatorOnAnvil = operatorChain === "anvil" || operatorRpc?.includes("127.0.0.1") === true;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -156,6 +179,20 @@ export function OperatorPanel() {
         </ClippedButton>
       </div>
 
+      {operatorRpc ? (
+        <div className="operator-panel__chain mono-label">
+          Operator RPC: {operatorRpc}
+          {operatorChain ? ` · ${operatorChain}` : ""}
+          {walletOnSepolia && operatorOnAnvil
+            ? " · wallet is Sepolia; deploy jobs broadcast to local Anvil"
+            : ""}
+        </div>
+      ) : null}
+
+      {jobError ? (
+        <p className="operator-panel__note operator-panel__note--error">{jobError}</p>
+      ) : null}
+
       {enabled && live ? (
         <div className="operator-panel__chain mono-label">
           Live · {prover} · epoch {live.latestEpoch}
@@ -178,19 +215,22 @@ export function OperatorPanel() {
             <li className="operator-panel__job operator-panel__job--empty">No jobs yet</li>
           ) : (
             jobs.map((job: OperatorJob) => (
-              <li
-                key={job.id}
-                className={`operator-panel__job${job.id === activeJobId ? " is-active" : ""}`}
-              >
-                <span className={`operator-panel__status operator-panel__status--${job.status}`}>
-                  {job.status}
-                </span>
-                <span className="operator-panel__job-type">{JOB_LABELS[job.type] ?? job.type}</span>
-                <span className="operator-panel__job-meta mono-label">
-                  {job.prover}
-                  {job.durationSec != null ? ` · ${job.durationSec}s` : ""}
-                  {job.exitCode != null && job.exitCode !== 0 ? ` · exit ${job.exitCode}` : ""}
-                </span>
+              <li key={job.id}>
+                <button
+                  type="button"
+                  className={`operator-panel__job${job.id === activeJobId ? " is-active" : ""}`}
+                  onClick={() => void selectJob(job.id)}
+                >
+                  <span className={`operator-panel__status operator-panel__status--${job.status}`}>
+                    {job.status}
+                  </span>
+                  <span className="operator-panel__job-type">{JOB_LABELS[job.type] ?? job.type}</span>
+                  <span className="operator-panel__job-meta mono-label">
+                    {job.prover}
+                    {job.durationSec != null ? ` · ${job.durationSec}s` : ""}
+                    {job.exitCode != null && job.exitCode !== 0 ? ` · exit ${job.exitCode}` : ""}
+                  </span>
+                </button>
               </li>
             ))
           )}

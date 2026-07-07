@@ -61,14 +61,27 @@
   gap: var(--space-2);
 }
 
+.operator-panel__note--error {
+  color: #b42318;
+}
+
+.operator-panel__jobs > li {
+  list-style: none;
+}
+
 .operator-panel__job {
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: var(--space-3);
   align-items: center;
+  width: 100%;
   padding: var(--space-3);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
 }
 
 .operator-panel__job.is-active {

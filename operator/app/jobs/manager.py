@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from typing import AsyncIterator
 
 from ..config import settings
+from ..services.anvil import ensure_local_anvil
 from .runner import build_command, command_cwd, command_env, job_requires_broadcast
 from .types import JobStatus, JobType, ProverKind
 
@@ -90,6 +91,12 @@ class JobManager:
         await self._publish(job.id, f"[operator] starting {job.job_type.value} ({job.prover})")
 
         try:
+            if job_requires_broadcast(job.job_type):
+                await ensure_local_anvil(
+                    settings.rpc_url,
+                    lambda line: self._publish(job.id, line),
+                )
+
             cmd = build_command(job.job_type, settings, job.prover)
             cwd = command_cwd(job.job_type, settings)
             env = command_env(job.job_type, settings, job.prover)
