@@ -10,74 +10,77 @@ from .types import JobType, ProverKind
 
 
 def _deploy_json_name(settings: Settings, prover: ProverKind) -> str:
+    return settings.deploy_json_name_for(prover)
+
+
+def _result_outfile(settings: Settings, prover: ProverKind) -> str:
+    sepolia = settings.active_chain == "sepolia"
     if prover == "circom":
-        return "anvil-circom-oracle-latest.json"
-    if settings.deploy_chain == "sepolia":
-        return "sepolia-ezkl-latest.json"
-    return "anvil-ezkl-latest.json"
+        name = "sepolia-circom-loop-latest.json" if sepolia else "circom-loop-latest.json"
+    else:
+        name = "sepolia-loop-latest.json" if sepolia else "phase1-loop-latest.json"
+    return f"deployments/{name}"
 
 
 def build_command(job_type: JobType, settings: Settings, prover: ProverKind = "ezkl") -> list[str]:
     root = settings.repo_root
-    env_extra: dict[str, str] = {
-        "RPC_URL": settings.rpc_url,
-        "PRIVATE_KEY": settings.private_key,
-        "DEPLOY_CHAIN": settings.deploy_chain,
-    }
+    rpc = settings.effective_rpc_url
+    key = settings.effective_private_key
 
     if job_type == JobType.RUN_FULL_EPOCH:
+        if settings.active_chain == "sepolia":
+            raise ValueError(
+                "run_full_epoch on Sepolia is disabled — use bash scripts/submit_testnet.sh "
+                "or scripts/submit_circom_testnet.sh (or Operator deploy_only + submit_apply)"
+            )
         if prover == "circom":
             return ["bash", str(root / "scripts" / "e2e_circom.sh")]
         return ["bash", str(root / "scripts" / "e2e_phase1.sh")]
 
     if job_type == JobType.DEPLOY_ONLY:
-        env_extra["DEPLOY_OUTFILE"] = f"deployments/{_deploy_json_name(settings, prover)}"
         if prover == "circom":
             return [
                 "forge",
                 "script",
                 "script/DeployCircomOracle.s.sol:DeployCircomOracle",
                 "--rpc-url",
-                settings.rpc_url,
+                rpc,
                 "--broadcast",
                 "--private-key",
-                settings.private_key,
+                key,
             ]
         return [
             "forge",
             "script",
             "script/DeployEzkl.s.sol:DeployEzkl",
             "--rpc-url",
-            settings.rpc_url,
+            rpc,
             "--broadcast",
             "--private-key",
-            settings.private_key,
+            key,
         ]
 
     if job_type == JobType.SUBMIT_APPLY:
-        deploy = _load_deploy_addresses(settings, prover)
-        env_extra["ORACLE_ADDRESS"] = deploy["oracle"]
-        env_extra["CONSUMER_ADDRESS"] = deploy["consumer"]
         if prover == "circom":
             return [
                 "forge",
                 "script",
                 "script/SubmitAndApplyCircom.s.sol:SubmitAndApplyCircom",
                 "--rpc-url",
-                settings.rpc_url,
+                rpc,
                 "--broadcast",
                 "--private-key",
-                settings.private_key,
+                key,
             ]
         return [
             "forge",
             "script",
             "script/SubmitAndApply.s.sol:SubmitAndApply",
             "--rpc-url",
-            settings.rpc_url,
+            rpc,
             "--broadcast",
             "--private-key",
-            settings.private_key,
+            key,
         ]
 
     if job_type == JobType.RUN_BENCHMARK:
@@ -110,11 +113,12 @@ def command_cwd(job_type: JobType, settings: Settings) -> Path:
 
 def command_env(job_type: JobType, settings: Settings, prover: ProverKind = "ezkl") -> dict[str, str]:
     env = os.environ.copy()
-    env["RPC_URL"] = settings.rpc_url
-    env["PRIVATE_KEY"] = settings.private_key
-    env["DEPLOY_CHAIN"] = settings.deploy_chain
+    env["RPC_URL"] = settings.effective_rpc_url
+    env["PRIVATE_KEY"] = settings.effective_private_key
+    env["DEPLOY_CHAIN"] = settings.active_chain
     env["PROVER_KIND"] = prover
     env["DEPLOY_OUTFILE"] = f"deployments/{_deploy_json_name(settings, prover)}"
+    env["RESULT_OUTFILE"] = _result_outfile(settings, prover)
 
     if job_type == JobType.SUBMIT_APPLY:
         deploy = _load_deploy_addresses(settings, prover)

@@ -84,7 +84,8 @@ contract SubmitAndApplyCircom is Script {
     objectKey.serialize("borrowSpreadBps", policy.borrowSpreadBps);
     objectKey.serialize("borrowAllowed", policy.borrowAllowed);
     string memory json = objectKey.serialize("mitigationFlag", policy.mitigationFlag);
-    json.write("deployments/circom-loop-latest.json");
+    string memory outfile = vm.envOr("RESULT_OUTFILE", string("deployments/circom-loop-latest.json"));
+    json.write(outfile);
   }
 
   function _proofJsonPath() internal view returns (string memory) {

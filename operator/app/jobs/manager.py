@@ -68,6 +68,11 @@ class JobManager:
     async def enqueue(self, job_type: JobType, prover: ProverKind = "ezkl") -> Job:
         if job_requires_broadcast(job_type) and not settings.needs_broadcast_key():
             raise ValueError("PRIVATE_KEY is required for broadcast jobs")
+        if job_type == JobType.RUN_FULL_EPOCH and settings.active_chain == "sepolia":
+            raise ValueError(
+                "run_full_epoch on Sepolia is disabled — use deploy_only + submit_apply "
+                "or bash scripts/submit_*_testnet.sh"
+            )
 
         async with self._lock:
             if self._running and job_type != JobType.SYNC_FRONTEND:
@@ -114,7 +119,7 @@ class JobManager:
         try:
             if job_requires_broadcast(job.job_type):
                 await ensure_local_anvil(
-                    settings.rpc_url,
+                    settings.effective_rpc_url,
                     lambda line: self._publish(job.id, line),
                 )
 
