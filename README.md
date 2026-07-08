@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="gitAssets/Zyocra-GitHub-Logo.png" alt="Zyocra" width="420" />
+<img src="gitAssets/Zyocra-GitHub-Logo.png" alt="Zyocra" width="600" />
 
 # Zyocra
 
