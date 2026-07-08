@@ -80,8 +80,71 @@ export function streamJobLogs(
   return () => source.close();
 }
 
-export async function fetchChainStatus() {
-  return api<Record<string, unknown>>("/api/chain/status");
+export type OperatorChainStatus = {
+  chain?: string;
+  rpcUrl?: string;
+  rpcLabel?: string;
+  hasDeployment?: boolean;
+  addresses?: {
+    oracle?: string;
+    consumer?: string;
+  };
+  live?: {
+    latestEpoch?: number;
+    score?: {
+      epoch?: number;
+      scoreBps?: number;
+      borrower?: string;
+    };
+    borrowerPolicy?: {
+      collateralFactorBps?: number;
+      borrowSpreadBps?: number;
+      borrowAllowed?: boolean;
+      lastEpoch?: number;
+    };
+  } | null;
+  loop?: {
+    epoch?: number;
+    scoreBps?: number;
+    collateralFactorBps?: number;
+  };
+  error?: string | null;
+};
+
+export function formatOperatorChainStatus(status: OperatorChainStatus): string[] {
+  const lines: string[] = [];
+  const target = status.rpcLabel ?? status.rpcUrl ?? "unknown RPC";
+  lines.push(`[chain] operator target: ${target} (${status.chain ?? "?"})`);
+
+  const oracle = status.addresses?.oracle;
+  const consumer = status.addresses?.consumer;
+  if (oracle) lines.push(`[chain] oracle ${oracle}`);
+  if (consumer) lines.push(`[chain] consumer ${consumer}`);
+
+  if (status.error) {
+    lines.push(`[chain] operator read error: ${status.error}`);
+    return lines;
+  }
+
+  const live = status.live;
+  const loop = status.loop;
+  const epoch = live?.latestEpoch ?? loop?.epoch;
+  const scoreBps = live?.score?.scoreBps ?? loop?.scoreBps;
+  const collateral =
+    live?.borrowerPolicy?.collateralFactorBps ?? loop?.collateralFactorBps;
+
+  if (epoch != null && epoch > 0) {
+    lines.push(`[chain] operator live · epoch ${epoch}${scoreBps != null ? ` · score ${scoreBps} bps` : ""}`);
+    if (collateral != null) lines.push(`[chain] operator collateral ${collateral} bps`);
+  } else {
+    lines.push("[chain] operator live · no verified epochs on operator RPC");
+  }
+
+  return lines;
+}
+
+export async function fetchChainStatus(): Promise<OperatorChainStatus> {
+  return api<OperatorChainStatus>("/api/chain/status");
 }
 
 export async function resetOperatorJobs(): Promise<{ cancelled: string[]; count: number }> {

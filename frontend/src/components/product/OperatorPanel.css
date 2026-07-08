@@ -120,6 +120,20 @@
   font-size: var(--text-xs);
 }
 
+.operator-panel__chain-log {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  background: #0f1218;
+  color: #d6dde8;
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 160px;
+  overflow: auto;
+}
+
 .operator-panel__terminal-wrap {
   border: 1px solid var(--color-border);
   background: #0f1218;
