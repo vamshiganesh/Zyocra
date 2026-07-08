@@ -48,7 +48,7 @@
   "proof": {
     "artifactPath": "circuits-baseline/proofs/proof.json",
     "ezklVersion": "23.0.5",
-    "hashPrefix": "0x2641f489\u20269a76f2fb",
+    "hashPrefix": "0x104c062a\u202624c5a169",
     "lengthBytes": 3648,
     "offChainVerify": true,
     "prover": "ezkl",
@@ -60,7 +60,7 @@
     "bucketRange": "0.00 \u2013 0.55",
     "float": 0.1796875
   },
-  "syncedAt": "2026-07-08T11:29:10Z",
+  "syncedAt": "2026-07-08T13:30:25Z",
   "verification": {
     "chainId": 31337,
     "consumer": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",

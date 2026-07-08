@@ -59,7 +59,7 @@ Mock lending consumer — **policy tightening only**, not liquidation.
 
 | Responsibility | Detail |
 |----------------|--------|
-| Read oracle | `applyVerifiedScore(borrower, epoch)` after oracle submission |
+| Read oracle | `applyVerifiedScore(borrower, epoch)` after oracle submission (authorized applicators only) |
 | Map bucket | Uses `RiskBuckets` thresholds (aligned with `frontend/src/data/content.ts`) |
 | Adjust parameters | Collateral factor, borrow spread, borrow gate, mitigation flag |
 | Emit state | `CollateralParamsUpdated`, `RiskBucketChanged` |

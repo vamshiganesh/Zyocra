@@ -269,6 +269,9 @@ MIT — see [`LICENSE`](LICENSE).
 - **UI:** `/operator` dashboard, Run epoch demo CTAs, job queue, EZKL/Circom prover toggle.
 - **Security:** borrower field on `ScoreRecord`, public input index 7 binding, consumer `BorrowerMismatch` guard.
 - **Testnet:** `scripts/deploy_testnet.sh`, `scripts/submit_testnet.sh`, `deploy_circom_testnet.sh`, `submit_circom_testnet.sh`; Operator Anvil/Sepolia toggle; wallet-signed Sepolia submit/apply; EZKL + Circom addresses in README.
+- **Security:** Circom in-circuit borrower; `RiskConsumer.authorizedApplicators`; cubic Taylor Circom score encoding (Python↔Solidity).
+- **Benchmarks:** `PROVE_RUNS=10` head bakeoff artifacts under `benchmarks/raw-results/`.
+
 - **Frontend:** wagmi/viem live chain reads, wallet connect, epoch registry pre-flight.
 
 ### v0.4.0

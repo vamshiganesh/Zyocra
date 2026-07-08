@@ -1,0 +1,22 @@
+{
+  "cpu_count": 8,
+  "hostname": "DESKTOP-M7LTASU",
+  "kind": "env_snapshot",
+  "mem_total_kb": 8085716,
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python_packages": {
+    "ezkl": "23.0.5",
+    "torch": "2.12.1+cpu"
+  },
+  "repo_root": "/home/ubuntu/projects/zyocra/Zyocra",
+  "timestamp_utc": "2026-07-08T13:30:22Z",
+  "tools": {
+    "circom": "circom compiler 2.2.3",
+    "forge": "forge Version: 1.5.1-stable",
+    "node": "v24.10.0",
+    "pnpm": "11.5.1",
+    "python": "Python 3.12.3",
+    "rustc": "rustc 1.94.0 (4a4ef493e 2026-03-02)",
+    "snarkjs": null
+  }
+}
