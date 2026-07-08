@@ -49,7 +49,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "What should a reviewer look at first?",
     answer:
-      "The benchmark comparison table, threat model guarantees vs non-guarantees, and contract tests for verifier accept/reject and consumer parameter updates after verified oracle submissions.",
+      "Primary: matched EZKL head vs Circom head on Benchmarks. Then threat-model guarantees vs non-guarantees, and oracle/consumer tests. Treat full-graph vs Circom head as a labeled system contrast — not the fair race.",
   },
 ];
 

@@ -73,7 +73,7 @@ export const overviewCopy = {
     label: "Benchmark axes",
     title: "What the comparison measures",
     description:
-      "Headline table in Benchmarks. Values populate when Milestone 5 runs complete on one machine spec.",
+      "Primary: matched EZKL head vs Circom head. Secondary: asymmetric full-graph vs head. Hybrid amortization below.",
   },
   entry: {
     label: "Demo",

@@ -32,7 +32,7 @@ Zyocra compares **compiler-generated** (EZKL) and **hand-optimized** (Circom) ze
 
 - Circuit: `lora_output_head.circom` — proves `logit_acc = ⟨h,W⟩ + Σ_r A[r]·⟨B[r,:],h⟩`
 - ~89 R1CS constraints, Groth16, local pot12
-- `CircomRiskScoreVerifier` implements `IRiskScoreVerifier` (standalone deploy; not oracle-wired)
+- `CircomRiskScoreVerifier` implements `IRiskScoreVerifier` and is wired through Circom oracle e2e (`e2e_circom.sh`)
 
 ## 5. On-chain oracle and consumer
 

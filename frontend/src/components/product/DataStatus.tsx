@@ -32,7 +32,7 @@ const benchmarkCopy: Record<DataLoadStatus, { title: string; body: string }> = {
   },
   empty: {
     title: "No benchmark results yet",
-    body: "Run make benchmark from repo root, then bash scripts/sync-frontend-data.sh.",
+    body: "Run make head-benchmark from repo root (includes ezkl_head), then sync if needed.",
   },
   error: {
     title: "Could not load benchmark data",
