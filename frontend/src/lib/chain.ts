@@ -40,6 +40,13 @@ export const riskOracleAbi = [
     outputs: [{ type: "bytes32" }],
   },
   {
+    name: "authorizedProvers",
+    type: "function",
+    stateMutability: "view",
+    inputs: [{ name: "prover", type: "address" }],
+    outputs: [{ type: "bool" }],
+  },
+  {
     name: "getLatestScore",
     type: "function",
     stateMutability: "view",
@@ -58,6 +65,27 @@ export const riskOracleAbi = [
         ],
       },
     ],
+  },
+  {
+    name: "submitScore",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      {
+        name: "payload",
+        type: "tuple",
+        components: [
+          { name: "modelHash", type: "bytes32" },
+          { name: "adapterHash", type: "bytes32" },
+          { name: "epoch", type: "uint64" },
+          { name: "scoreBps", type: "uint256" },
+          { name: "borrower", type: "address" },
+          { name: "proof", type: "bytes" },
+          { name: "publicInputs", type: "uint256[]" },
+        ],
+      },
+    ],
+    outputs: [],
   },
 ] as const;
 
@@ -80,6 +108,16 @@ export const riskConsumerAbi = [
         ],
       },
     ],
+  },
+  {
+    name: "applyVerifiedScore",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "borrower", type: "address" },
+      { name: "epoch", type: "uint64" },
+    ],
+    outputs: [],
   },
 ] as const;
 

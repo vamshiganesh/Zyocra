@@ -33,11 +33,7 @@ def health():
     return {
         "ok": True,
         "rpcUrl": redact_rpc_url(settings.effective_rpc_url),
-        "rpcLabel": rpc_display and_display_noop(),
+        "rpcLabel": rpc_display_label(settings.effective_rpc_url, settings.active_chain),
         "chain": settings.active_chain,
         "sepoliaConfigured": bool(settings.sepolia_rpc_url and settings.deployer_private_key),
     }
-
-
-def rpc_display and_display_noop():  # type: ignore[misc]
-    return rpc_display_label(settings.effective_rpc_url, settings.active_chain)

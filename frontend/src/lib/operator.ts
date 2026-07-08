@@ -80,14 +80,28 @@ export function streamJobLogs(
   return () => source.close();
 }
 
+export type OperatorChainMode = "anvil" | "sepolia";
+
+export type OperatorChainModeStatus = {
+  mode: OperatorChainMode;
+  rpcUrl?: string;
+  rpcLabel?: string;
+  sepoliaConfigured?: boolean;
+};
+
 export type OperatorChainStatus = {
   chain?: string;
   rpcUrl?: string;
   rpcLabel?: string;
+  prover?: ProverKind;
+  deployJson?: string;
   hasDeployment?: boolean;
+  sepoliaConfigured?: boolean;
   addresses?: {
     oracle?: string;
     consumer?: string;
+    circomVerifier?: string;
+    groth16Verifier?: string;
   };
   live?: {
     latestEpoch?: number;
@@ -109,6 +123,28 @@ export type OperatorChainStatus = {
     collateralFactorBps?: number;
   };
   error?: string | null;
+};
+
+export type WalletSubmitPayload = {
+  prover: ProverKind;
+  chain: OperatorChainMode;
+  chainId: number;
+  oracle: string;
+  consumer: string;
+  payload: {
+    modelHash: `0x${string}`;
+    adapterHash: `0x${string}`;
+    epoch: number;
+    scoreBps: number;
+    borrower: `0x${string}`;
+    proof: `0x${string}`;
+    publicInputs: string[];
+  };
+  apply: {
+    borrower: `0x${string}`;
+    epoch: number;
+  };
+  note?: string;
 };
 
 export function formatOperatorChainStatus(status: OperatorChainStatus): string[] {
@@ -143,14 +179,30 @@ export function formatOperatorChainStatus(status: OperatorChainStatus): string[]
   return lines;
 }
 
-export async function fetchChainStatus(): Promise<OperatorChainStatus> {
-  return api<OperatorChainStatus>("/api/chain/status");
+export async function fetchChainStatus(prover: ProverKind = "ezkl"): Promise<OperatorChainStatus> {
+  return api<OperatorChainStatus>(`/api/chain/status?prover=${prover}`);
+}
+
+export async function fetchChainMode(): Promise<OperatorChainModeStatus> {
+  return api<OperatorChainModeStatus>("/api/chain/mode");
+}
+
+export async function setChainMode(mode: OperatorChainMode): Promise<OperatorChainModeStatus> {
+  return api<OperatorChainModeStatus>("/api/chain/mode", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode }),
+  });
+}
+
+export async function fetchSubmitPayload(prover: ProverKind = "ezkl"): Promise<WalletSubmitPayload> {
+  return api<WalletSubmitPayload>(`/api/artifacts/submit-payload?prover=${prover}`);
 }
 
 export async function resetOperatorJobs(): Promise<{ cancelled: string[]; count: number }> {
   return api("/api/jobs/reset", { method: "POST" });
 }
 
-export async function fetchArtifactsSummary() {
-  return api<Record<string, unknown>>("/api/artifacts/summary");
+export async function fetchArtifactsSummary(prover: ProverKind = "ezkl") {
+  return api<Record<string, unknown>>(`/api/artifacts/summary?prover=${prover}`);
 }
