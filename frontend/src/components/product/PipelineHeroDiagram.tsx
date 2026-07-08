@@ -12,7 +12,7 @@ type Stage = {
   y: number;
 };
 
-/** Center of stack — shifted left so labels fit inside the viewBox. */
+/** Center of stack, shifted left so labels fit inside the viewBox. */
 const CX = 168;
 const PLANE_W = 104;
 const PLANE_H = 48;
@@ -43,7 +43,7 @@ type Props = {
   activeStage?: string;
 };
 
-/** Isometric zkML pipeline diagram — full-bleed wireframe stack. */
+/** Isometric zkML pipeline diagram, full-bleed wireframe stack. */
 export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
   const spineTop = STAGES[0].y - PLANE_H - 48;
   const spineBottom = STAGES[3].y + PLANE_H + 56;
@@ -84,7 +84,7 @@ export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
           );
         })}
 
-        {/* Commit — pyramid on plane */}
+        {/* Commit, pyramid on plane */}
         <g
           className={`pipeline-diagram__shape${activeStage === "commit" ? " is-active" : ""}`}
           data-stage="commit"
@@ -127,7 +127,7 @@ export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
           })()}
         </g>
 
-        {/* Prove — hemisphere */}
+        {/* Prove, hemisphere */}
         <g
           className={`pipeline-diagram__shape${activeStage === "prove" ? " is-active" : ""}`}
           data-stage="prove"
@@ -158,7 +158,7 @@ export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
           })()}
         </g>
 
-        {/* Verify — flat hex ring */}
+        {/* Verify, flat hex ring */}
         <g
           className={`pipeline-diagram__shape${activeStage === "verify" ? " is-active" : ""}`}
           data-stage="verify"
@@ -186,7 +186,7 @@ export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
           })()}
         </g>
 
-        {/* Apply — isometric cube */}
+        {/* Apply, isometric cube */}
         <g
           className={`pipeline-diagram__shape${activeStage === "apply" ? " is-active" : ""}`}
           data-stage="apply"
@@ -222,7 +222,7 @@ export function PipelineHeroDiagram({ activeStage = "prove" }: Props) {
           })()}
         </g>
 
-        {/* Labels — kept inside viewBox with right margin */}
+        {/* Labels, kept inside viewBox with right margin */}
         {STAGES.map((stage) => {
           const active = stage.id === activeStage;
           const lineStart = CX + PLANE_W + 16;

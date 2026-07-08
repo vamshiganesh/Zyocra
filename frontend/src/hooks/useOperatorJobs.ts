@@ -151,7 +151,7 @@ export function useOperatorJobs(
       await resetOperatorJobs();
       detachStream();
       setActiveJobId(null);
-      setLogs(["[operator] queue reset — stale jobs cancelled"]);
+      setLogs(["[operator] queue reset, stale jobs cancelled"]);
       setLastStatus(null);
       await refreshJobs();
     } catch (err) {

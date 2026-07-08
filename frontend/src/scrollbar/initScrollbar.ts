@@ -40,7 +40,7 @@ function ensureInitAttributes(): void {
   document.body.setAttribute("data-overlayscrollbars-initialize", "");
 }
 
-/** Initialize document scrollbar — replaces native OS scrollbar (incl. Windows arrow buttons). */
+/** Initialize document scrollbar, replaces native OS scrollbar (incl. Windows arrow buttons). */
 export function initDocumentScrollbar(): void {
   ensureInitAttributes();
 

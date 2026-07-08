@@ -49,7 +49,7 @@ export const faqItems: FaqItem[] = [
   {
     question: "What should a reviewer look at first?",
     answer:
-      "Primary: matched EZKL head vs Circom head on Benchmarks. Then threat-model guarantees vs non-guarantees, and oracle/consumer tests. Treat full-graph vs Circom head as a labeled system contrast — not the fair race.",
+      "Primary: matched EZKL head vs Circom head on Benchmarks. Then threat-model guarantees vs non-guarantees, and oracle/consumer tests. Treat full-graph vs Circom head as a labeled system contrast, not the fair race.",
   },
 ];
 
@@ -69,7 +69,7 @@ export const changelog = [
   },
   {
     version: "0.2.0",
-    date: "Jul 4, 2026",
+    date: "May 4, 2026",
     title: "Product screens and messaging",
     description: "Ten-route oracle demo shell with pipeline navigation and zk/DeFi-specific copy.",
     items: [
@@ -80,7 +80,7 @@ export const changelog = [
   },
   {
     version: "0.1.0",
-    date: "Jul 4, 2026",
+    date: "Apr 15, 2026",
     title: "Monorepo foundation",
     description: "Repository layout, design system, and local toolchain with no live prover wiring.",
     items: [

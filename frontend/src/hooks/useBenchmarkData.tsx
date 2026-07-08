@@ -103,7 +103,7 @@ function rowsFromColumn(
       left = fmtRss(m[leftKey] ?? null);
       circom = fmtRss(m.circom);
     } else if (key === "verify_gas" && leftKey === "ezkl_head") {
-      // Head path has no separate gas row in harness — mark N/A honestly.
+      // Head path has no separate gas row in harness, mark N/A honestly.
       left = EMPTY_VALUE;
     }
     return { metric: LABELS[key] ?? m.metric, ezkl: left, circom };
@@ -133,7 +133,7 @@ type BenchmarkContextValue = {
   hasEzklHead: boolean;
   error: string | null;
   reload: () => void;
-  /** @deprecated use headRows — kept for Overview fallbacks */
+  /** @deprecated use headRows, kept for Overview fallbacks */
   rows: BenchmarkRow[] | null;
 };
 

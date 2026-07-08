@@ -61,10 +61,10 @@ export function BenchmarkComparisonPage() {
                     <code>hidden[8] → logit</code> statement.
                   </li>
                   <li>
-                    <strong>Asymmetric (system):</strong> EZKL full 6→16→8→1+sigmoid vs Circom head — different workloads; ratios are not bakeoff wins.
+                    <strong>Asymmetric (system):</strong> EZKL full 6→16→8→1+sigmoid vs Circom head, different workloads; ratios are not bakeoff wins.
                   </li>
                   <li>
-                    <strong>Hybrid:</strong> one EZKL full prove per epoch + Circom head proves per adapter update — amortized cost below.
+                    <strong>Hybrid:</strong> one EZKL full prove per epoch + Circom head proves per adapter update, amortized cost below.
                   </li>
                   <li>Operator: EZKL runs <code>e2e_phase1.sh</code>; Circom runs <code>e2e_circom.sh</code>. Benchmarks use{" "}
                     <code>make head-benchmark</code>.

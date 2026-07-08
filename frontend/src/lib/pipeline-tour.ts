@@ -17,7 +17,7 @@ export function scrollToSection(hash: string) {
   });
 }
 
-/** Start the six-screen pipeline walk. Does not run EZKL — navigates + scrolls only. */
+/** Start the six-screen pipeline walk. Does not run EZKL, navigates + scrolls only. */
 export function startPipelineTour(navigate: NavigateFunction, pathname: string) {
   sessionStorage.setItem(PIPELINE_TOUR_KEY, "1");
   window.dispatchEvent(new CustomEvent("zyocra:pipeline-tour"));

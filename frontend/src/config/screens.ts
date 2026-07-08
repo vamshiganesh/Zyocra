@@ -24,7 +24,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Overview",
     eyebrow: "Verifiable risk oracle",
     headline: "Prove inference. Publish score. Adjust collateral.",
-    lede: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks EZKL against a hand-optimized Circom LoRA head — matched on the head, asymmetric on full inference by design.",
+    lede: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks EZKL against a hand-optimized Circom LoRA head, matched on the head, asymmetric on full inference by design.",
     sections: [
       { id: "flow", label: "Pipeline", index: "01" },
       { id: "system", label: "Stack", index: "02" },
@@ -130,7 +130,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Benchmarks",
     eyebrow: "Research artifact",
     headline: "Matched LoRA head: EZKL vs Circom.",
-    lede: "Primary table compares head-only workloads. Full-graph EZKL stays a separate system path — not a fair kernel bakeoff against Circom head.",
+    lede: "Primary table compares head-only workloads. Full-graph EZKL stays a separate system path, not a fair kernel bakeoff against Circom head.",
     sections: [
       { id: "comparison", label: "Comparison", index: "01" },
       { id: "paths", label: "Paths", index: "02" },

@@ -123,7 +123,7 @@ export function ProofGenerationPage() {
                 <SectionHeader
                   label="Compare"
                   title={isCircom ? "EZKL full graph (reference)" : "Circom head (reference)"}
-                  description="Benchmark comparison row — workloads differ; use make benchmark for economics."
+                  description="Benchmark comparison row, workloads differ; use make benchmark for economics."
                 />
                 <DataFieldGrid fields={compareFields} columns={2} />
               </div>

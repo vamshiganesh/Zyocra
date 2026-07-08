@@ -113,7 +113,7 @@ export function PipelineChrome() {
                 ) : (
                   <p className="pipeline-chrome__popover-meta">
                     Run <code>bash scripts/e2e_phase1.sh</code> or{" "}
-                    <code>bash scripts/e2e_circom.sh</code>, then refresh — or use Operator.
+                    <code>bash scripts/e2e_circom.sh</code>, then refresh, or use Operator.
                   </p>
                 )}
               </div>

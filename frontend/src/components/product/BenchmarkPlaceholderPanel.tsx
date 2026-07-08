@@ -20,7 +20,7 @@ export function BenchmarkPlaceholderPanel({ compact = false }: { compact?: boole
           live
             ? hasEzklHead
               ? "Primary comparison: EZKL head-only ONNX vs hand Circom on the same hidden[8] → logit statement. Run make head-benchmark to refresh."
-              : "Published bench-latest.json is missing ezkl_head — run make head-benchmark so the fair row is populated."
+              : "Published bench-latest.json is missing ezkl_head, run make head-benchmark so the fair row is populated."
             : "Run make head-benchmark, then bash scripts/sync-frontend-data.sh."
         }
       />
@@ -37,7 +37,7 @@ export function BenchmarkPlaceholderPanel({ compact = false }: { compact?: boole
       </p>
 
       <BenchmarkPanel
-        title="Primary — fair circuit comparison"
+        title="Primary, fair circuit comparison"
         note="Same LoRA output-head algebra · EZKL-compiled head ONNX vs hand Circom."
         ezklColumn="EZKL head"
         circomColumn="Circom head"
@@ -47,7 +47,7 @@ export function BenchmarkPlaceholderPanel({ compact = false }: { compact?: boole
       {!compact ? (
         <>
           <BenchmarkPanel
-            title="Secondary — system workloads (not equivalent)"
+            title="Secondary, system workloads (not equivalent)"
             note="EZKL full-graph end-to-end score vs Circom head-only LoRA subgraph."
             ezklColumn="EZKL full graph"
             circomColumn="Circom head"

@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-/** Height-animated panel — grid 0fr/1fr slide without measuring DOM. */
+/** Height-animated panel, grid 0fr/1fr slide without measuring DOM. */
 export function CollapsePanel({ open, children, className }: Props) {
   return (
     <div className={`collapse-panel${open ? " is-open" : ""}${className ? ` ${className}` : ""}`}>

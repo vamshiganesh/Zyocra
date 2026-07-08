@@ -246,7 +246,7 @@ export function OperatorPanel() {
       return;
     }
     if (!publicClient) {
-      setWalletError("Public client unavailable — check VITE_RPC_URL.");
+      setWalletError("Public client unavailable, check VITE_RPC_URL.");
       return;
     }
 
@@ -269,7 +269,7 @@ export function OperatorPanel() {
       });
       if (!authorized) {
         setWalletNote(
-          `Wallet ${address.slice(0, 6)}…${address.slice(-4)} not yet authorized — granting prover+applicator via deployer…`,
+          `Wallet ${address.slice(0, 6)}…${address.slice(-4)} not yet authorized, granting prover+applicator via deployer…`,
         );
         const grant = await authorizeWallet(address, prover);
         if (flowId !== walletFlowId.current) return;
@@ -285,7 +285,7 @@ export function OperatorPanel() {
         }
         if (!grant.alreadyAuthorized && grant.txHashes.length > 0) {
           setWalletNote(
-            `Authorized ${address.slice(0, 6)}… · ${grant.txHashes.length} tx(s) — submitting epoch…`,
+            `Authorized ${address.slice(0, 6)}… · ${grant.txHashes.length} tx(s), submitting epoch…`,
           );
         }
       }
@@ -319,7 +319,7 @@ export function OperatorPanel() {
         scoreBps: ready.payload.scoreBps,
         status: "pending",
       });
-      setWalletNote(`submitScore ${shortHash(submitHash)} — waiting for receipt…`);
+      setWalletNote(`submitScore ${shortHash(submitHash)}, waiting for receipt…`);
 
       const submitReceipt = await publicClient.waitForTransactionReceipt({
         hash: submitHash,
@@ -333,7 +333,7 @@ export function OperatorPanel() {
       }
       patchWalletTx(submitLogId, { status: "confirmed" });
 
-      setWalletNote("submitScore confirmed — applying consumer policy… confirm in MetaMask");
+      setWalletNote("submitScore confirmed, applying consumer policy… confirm in MetaMask");
       const applyHash = await writeContractAsync({
         address: ready.consumer as `0x${string}`,
         abi: riskConsumerAbi,
@@ -352,7 +352,7 @@ export function OperatorPanel() {
         scoreBps: ready.payload.scoreBps,
         status: "pending",
       });
-      setWalletNote(`applyVerifiedScore ${shortHash(applyHash)} — waiting for receipt…`);
+      setWalletNote(`applyVerifiedScore ${shortHash(applyHash)}, waiting for receipt…`);
 
       const applyReceipt = await publicClient.waitForTransactionReceipt({
         hash: applyHash,
@@ -367,7 +367,7 @@ export function OperatorPanel() {
       patchWalletTx(applyLogId, { status: "confirmed" });
 
       setWalletNote(
-        `Done · submit ${shortHash(submitHash)} · apply ${shortHash(applyHash)} — see On-chain tx log`,
+        `Done · submit ${shortHash(submitHash)} · apply ${shortHash(applyHash)}, see On-chain tx log`,
       );
       await refreshChain();
       await loadOperatorChainStatus();
@@ -475,7 +475,7 @@ export function OperatorPanel() {
         {" · "}
         {deployScript} / {submitScript}
         {operatorOnSepolia
-          ? " · Sepolia: full epoch disabled — use Deploy only + Submit & apply, or shell scripts. Wallet submit auto-grants ACL to your MetaMask via the deployer key."
+          ? " · Sepolia: full epoch disabled, use Deploy only + Submit & apply, or shell scripts. Wallet submit auto-grants ACL to your MetaMask via the deployer key."
           : " · Anvil: Operator forge jobs hit local Anvil (auto-starts if needed). Wallet submit is Sepolia-only."}
       </p>
 
@@ -547,7 +547,7 @@ export function OperatorPanel() {
             onClick={() => {
               walletFlowId.current += 1;
               setWalletBusy(false);
-              setWalletNote("Wallet flow cancelled — you can try again (check MetaMask pending txs).");
+              setWalletNote("Wallet flow cancelled, you can try again (check MetaMask pending txs).");
             }}
           >
             Cancel wallet wait
@@ -627,8 +627,8 @@ export function OperatorPanel() {
                     operatorCollateral != null ? ` · collateral ${operatorCollateral} bps` : ""
                   }`
                 : operatorOnSepolia
-                  ? " · no verified epochs on operator Sepolia target — deploy + submit"
-                  : " · no verified epochs — run full epoch"}
+                  ? " · no verified epochs on operator Sepolia target, deploy + submit"
+                  : " · no verified epochs, run full epoch"}
               {operatorRpc ? ` · ${operatorRpc}` : ""}
             </p>
           ) : null}
@@ -666,13 +666,13 @@ export function OperatorPanel() {
 
           {walletOnSepolia && operatorOnAnvil ? (
             <p className="operator-panel__chain mono-label operator-panel__chain--muted">
-              Wallet on Sepolia — frontend reads live testnet; Operator still broadcasts to Anvil until you toggle Sepolia.
+              Wallet on Sepolia, frontend reads live testnet; Operator still broadcasts to Anvil until you toggle Sepolia.
             </p>
           ) : null}
 
           {operatorOnSepolia && !walletOnSepolia && isConnected ? (
             <p className="operator-panel__chain mono-label operator-panel__chain--muted">
-              Operator on Sepolia — switch wallet network to Sepolia before Wallet submit.
+              Operator on Sepolia, switch wallet network to Sepolia before Wallet submit.
             </p>
           ) : null}
 

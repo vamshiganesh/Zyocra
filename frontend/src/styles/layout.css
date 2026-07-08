@@ -82,7 +82,7 @@
   min-height: 0;
 }
 
-/* Spacer under fixed rail — keeps vertical rule + alignment */
+/* Spacer under fixed rail, keeps vertical rule + alignment */
 .shell__rail-slot {
   border-right: 1px solid var(--color-line-dark);
   min-height: 100%;

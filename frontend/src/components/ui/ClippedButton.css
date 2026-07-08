@@ -57,7 +57,7 @@
   letter-spacing: 0.08em;
 }
 
-/* Strict one-line viewport — nothing from the duplicate may paint at rest */
+/* Strict one-line viewport, nothing from the duplicate may paint at rest */
 .clip-btn__label {
   position: relative;
   z-index: 1;
@@ -94,7 +94,7 @@
 }
 
 /*
- * Roll exactly one line. Fully fade the exiting line — a partial fade/skew
+ * Roll exactly one line. Fully fade the exiting line, a partial fade/skew
  * leaves antialiased glyph edges as a 1px sliver on the top of the mask.
  */
 .clip-btn:hover .clip-btn__roll,
@@ -150,7 +150,7 @@
   box-shadow: none;
 }
 
-/* Inset polygon ring — inset box-shadow + clip-path leaves gaps on chamfer corners */
+/* Inset polygon ring, inset box-shadow + clip-path leaves gaps on chamfer corners */
 .clip-btn--ghost::before,
 .clip-btn--ghost::after {
   content: "";

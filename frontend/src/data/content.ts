@@ -1,4 +1,4 @@
-/** Product copy — heroes, sections, and UI strings. See docs/messaging.md */
+/** Product copy, heroes, sections, and UI strings. See docs/messaging.md */
 
 export type HeroLayer = {
   id: string;
@@ -11,7 +11,7 @@ export const overviewCopy = {
   hero: {
     eyebrow: "Verifiable risk oracle",
     title: "Prove inference.\nPublish score.\nAdjust collateral.",
-    body: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks compiler-generated EZKL against a hand-optimized Circom LoRA head — matched on the head subgraph, asymmetric on full inference by design.",
+    body: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks compiler-generated EZKL against a hand-optimized Circom LoRA head. Matched on the head subgraph, asymmetric on full inference by design.",
     ctaPrimary: "Run epoch demo",
     ctaSecondary: "Benchmark comparison",
     layers: [
@@ -159,7 +159,7 @@ export const provePaths = {
 
 export const benchmarkMethodology = [
   "Primary table: matched EZKL head vs Circom head (same hidden→logit).",
-  "Secondary table: EZKL full vs Circom head — asymmetric system workloads, labeled as such.",
+  "Secondary table: EZKL full vs Circom head, asymmetric system workloads, labeled as such.",
   "Hybrid model: one EZKL full prove/epoch + Circom head proves per update.",
   "Single machine spec in benchmarks/raw-results/env-latest.txt; median of 3 prove runs.",
   "Gas from Foundry BenchmarkGasTest standalone verifiers (not full submitScore).",

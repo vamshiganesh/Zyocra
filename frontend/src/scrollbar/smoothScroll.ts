@@ -2,7 +2,7 @@ import Lenis from "lenis";
 import { OverlayScrollbars } from "overlayscrollbars";
 
 /**
- * Framer / Lenis defaults — responsive without the lag of ultra-low lerp values.
+ * Framer / Lenis defaults, responsive without the lag of ultra-low lerp values.
  * @see https://github.com/darkroomengineering/lenis#settings
  */
 export const LENIS_CONFIG = {

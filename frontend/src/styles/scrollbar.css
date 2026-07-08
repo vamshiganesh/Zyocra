@@ -1,12 +1,12 @@
 /*
- * Zyocra scrollbar — OverlayScrollbars theme + native suppression.
+ * Zyocra scrollbar, OverlayScrollbars theme + native suppression.
  *
  * Windows Chromium paints arrow buttons on native scrollbars that cannot be
  * removed reliably with ::-webkit-scrollbar-button rules. OverlayScrollbars
  * hides the native scrollbar entirely and draws thumb + track only.
  */
 
-/* Yellow thumb, transparent track, square handle — no arrow buttons in markup */
+/* Yellow thumb, transparent track, square handle, no arrow buttons in markup */
 .os-theme-zyocra {
   --os-size: var(--scrollbar-size);
   --os-padding-perpendicular: 0;
@@ -52,7 +52,7 @@ html[data-overlayscrollbars-initialize] > body::-webkit-scrollbar {
   height: 0 !important;
 }
 
-/* After OverlayScrollbars attaches — keep native scrollbar hidden */
+/* After OverlayScrollbars attaches, keep native scrollbar hidden */
 html[data-overlayscrollbars-body],
 html[data-overlayscrollbars-body] > body,
 [data-overlayscrollbars~="host"] {
