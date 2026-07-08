@@ -2,16 +2,16 @@
 pragma solidity ^0.8.24;
 
 import {IRiskScoreVerifier} from "../interfaces/IRiskScoreVerifier.sol";
+import {ILoraHeadGroth16Verifier} from "../interfaces/ILoraHeadGroth16Verifier.sol";
 import {CircomProofJsonLib} from "../libraries/CircomProofJsonLib.sol";
 import {CircomPublicInputLayout} from "../libraries/CircomPublicInputLayout.sol";
-import {Groth16Verifier} from "circuits-custom/verifiers/LoraHeadVerifier.sol";
 
 /// @title CircomRiskScoreVerifier
 /// @notice `IRiskScoreVerifier` adapter for snarkjs-exported Groth16 verifiers.
 /// @dev Proof bytes ABI-encode `(uint256[2] pA, uint256[2][2] pB, uint256[2] pC)` with EVM pi_b layout.
-///      Public inputs: 10 signals — hidden[8] + borrower + logit_acc (see docs/circom.md).
+///      Public inputs (snarkjs order): logit_acc + hidden[8] + borrower (10 signals).
 contract CircomRiskScoreVerifier is IRiskScoreVerifier {
-  Groth16Verifier public immutable groth16;
+  ILoraHeadGroth16Verifier public immutable groth16;
 
   error InvalidPublicInputs(uint256 expected, uint256 actual);
   error InvalidProofEncoding();
@@ -19,7 +19,7 @@ contract CircomRiskScoreVerifier is IRiskScoreVerifier {
   event Groth16VerifierLinked(address indexed groth16Verifier);
 
   constructor(address groth16Verifier_) {
-    groth16 = Groth16Verifier(groth16Verifier_);
+    groth16 = ILoraHeadGroth16Verifier(groth16Verifier_);
     emit Groth16VerifierLinked(groth16Verifier_);
   }
 

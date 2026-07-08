@@ -1,10 +1,10 @@
 {
-  "borrowAllowed": true,
-  "borrowSpreadBps": 0,
+  "borrowAllowed": false,
+  "borrowSpreadBps": 250,
   "borrower": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  "bucket": 0,
-  "collateralFactorBps": 8000,
+  "bucket": 3,
+  "collateralFactorBps": 5000,
   "epoch": 2026041,
-  "mitigationFlag": false,
-  "scoreBps": 5002
+  "mitigationFlag": true,
+  "scoreBps": 10000
 }

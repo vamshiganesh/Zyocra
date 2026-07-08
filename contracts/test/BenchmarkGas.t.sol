@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {Test, console2} from "forge-std/Test.sol";
 import {EzklRiskScoreVerifier} from "../src/verifiers/EzklRiskScoreVerifier.sol";
 import {Halo2Verifier} from "../src/verifiers/Halo2Verifier.sol";
+import {ILoraHeadGroth16Verifier} from "../src/interfaces/ILoraHeadGroth16Verifier.sol";
 import {ProofJsonLib} from "../src/libraries/ProofJsonLib.sol";
 import {Groth16Verifier} from "circuits-custom/verifiers/LoraHeadVerifier.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -39,7 +40,9 @@ contract BenchmarkGasTest is Test {
     vm.skip(!vm.exists(path));
 
     string memory raw = vm.readFile(path);
-    Groth16Verifier verifier = new Groth16Verifier();
+    // Deploy generated verifier, call through explicit uint[10] interface
+    // (avoids stale remapped LoraHeadVerifier.sol typed as uint[9] in the IDE).
+    ILoraHeadGroth16Verifier verifier = ILoraHeadGroth16Verifier(address(new Groth16Verifier()));
 
     uint256[2] memory pA;
     uint256[2][2] memory pB;

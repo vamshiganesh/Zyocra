@@ -214,17 +214,17 @@ SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
 
 | Contract | Address |
 |----------|---------|
-| RiskOracle | [`0x7b9FdfF6223B5E3e5EE1E304852843C44c47EBE7`](https://sepolia.etherscan.io/address/0x7b9FdfF6223B5E3e5EE1E304852843C44c47EBE7) |
-| RiskConsumer | [`0x80e7FaD7b0a69ecAb687223174eC5564c6b7E577`](https://sepolia.etherscan.io/address/0x80e7FaD7b0a69ecAb687223174eC5564c6b7E577) |
-| CircomRiskScoreVerifier | [`0x76F01b9D1e65770Cb6615AbCc247775fc4e8296a`](https://sepolia.etherscan.io/address/0x76F01b9D1e65770Cb6615AbCc247775fc4e8296a) |
-| Groth16Verifier | [`0xFB3c5010311B237fb1C3A1A6048275f9D5dfbfc0`](https://sepolia.etherscan.io/address/0xFB3c5010311B237fb1C3A1A6048275f9D5dfbfc0) |
+| RiskOracle | [`0x385F9131f47019157e3cc34D25449b9096CF0915`](https://sepolia.etherscan.io/address/0x385F9131f47019157e3cc34D25449b9096CF0915) |
+| RiskConsumer | [`0x45AdCB08be2aB8c48Bbd6faF94Dd25e8DeB1E3b0`](https://sepolia.etherscan.io/address/0x45AdCB08be2aB8c48Bbd6faF94Dd25e8DeB1E3b0) |
+| CircomRiskScoreVerifier | [`0x0b7b21D80C034D1ED8255E6a086a7fE94d508389`](https://sepolia.etherscan.io/address/0x0b7b21D80C034D1ED8255E6a086a7fE94d508389) |
+| Groth16Verifier | [`0x07661775a09743E49E83e495E1925F142836a06f`](https://sepolia.etherscan.io/address/0x07661775a09743E49E83e495E1925F142836a06f) |
 
-Latest loop (`contracts/deployments/sepolia-circom-loop-latest.json`): **epoch `2026041`**, **score `5002` bps**, borrower `0x7099…79C8`, collateral `8000` bps.
+Latest loop (`contracts/deployments/sepolia-circom-loop-latest.json`): **epoch `2026041`**, **score `10000` bps** (saturated demo logit after in-circuit borrower rebuild), borrower `0x7099…79C8`, collateral `5000` bps.
 
 | Step | Tx |
 |------|----|
-| `submitScore` | [`0x8f8b4db0…8106c`](https://sepolia.etherscan.io/tx/0x8f8b4db052f976967dfacf3f383e3b1dd1144ec99462172d82635c9ed3e8106c) |
-| `applyVerifiedScore` | [`0x8132ad80…3641fe`](https://sepolia.etherscan.io/tx/0x8132ad8045d968d5fffe1d49cbf2d6b5456370d3d5766ccdffba6619903641fe) |
+| `submitScore` | [`0x51515f8f…f270`](https://sepolia.etherscan.io/tx/0x51515f8ffb6fd64794a67f224a13c0e496d1dcfe95deb77ad8c9132ac4d8f270) |
+| `applyVerifiedScore` | [`0x90025223…6a65`](https://sepolia.etherscan.io/tx/0x9002522356b870cdfc3e4ec25d2fedc837a60c86d60e6015fc550e5accbc6a65) |
 ### Test commands
 
 | Command | What runs |
