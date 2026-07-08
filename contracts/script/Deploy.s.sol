@@ -25,7 +25,7 @@ contract Deploy is Script {
 
         StubRiskScoreVerifier verifier = new StubRiskScoreVerifier(deployer);
         RiskOracle oracle = new RiskOracle(deployer, address(verifier), MODEL_HASH, ADAPTER_HASH);
-        RiskConsumer consumer = new RiskConsumer(address(oracle));
+        RiskConsumer consumer = new RiskConsumer(address(oracle), deployer);
 
         vm.stopBroadcast();
 

@@ -23,7 +23,7 @@ contract BorrowerBindingTest is Test {
     function setUp() public {
         verifier = new StubRiskScoreVerifier(owner);
         oracle = new RiskOracle(owner, address(verifier), MODEL_HASH, ADAPTER_HASH);
-        consumer = new RiskConsumer(address(oracle));
+        consumer = new RiskConsumer(address(oracle), address(this));
     }
 
     function _payload(address borrower, uint64 epoch, uint256 scoreLimb)

@@ -7,6 +7,7 @@ import {RiskConsumer} from "../src/RiskConsumer.sol";
 import {CircomRiskScoreVerifier} from "../src/verifiers/CircomRiskScoreVerifier.sol";
 import {CircomProofJsonLib} from "../src/libraries/CircomProofJsonLib.sol";
 import {CircomScoreEncoding} from "../src/libraries/CircomScoreEncoding.sol";
+import {CircomPublicInputLayout} from "../src/libraries/CircomPublicInputLayout.sol";
 import {DemoCommitments} from "../src/libraries/DemoCommitments.sol";
 import {RiskBuckets} from "../src/libraries/RiskBuckets.sol";
 import {RiskPolicies} from "../src/libraries/RiskPolicies.sol";
@@ -62,7 +63,7 @@ contract CircomIntegrationTest is Test {
       DemoCommitments.CIRCOM_MODEL_HASH,
       DemoCommitments.CIRCOM_ADAPTER_HASH
     );
-    consumer = new RiskConsumer(address(oracle));
+    consumer = new RiskConsumer(address(oracle), address(this));
   }
 
   function test_circomVerifier_acceptsGeneratedProof() public view {
@@ -102,18 +103,19 @@ contract CircomIntegrationTest is Test {
   }
 
   function test_submitScore_revertsOnTamperedScoreBps() public {
-    uint256 logitAcc = publicInputs[8];
+    uint256 logitAcc = publicInputs[CircomPublicInputLayout.CIRCOM_LOGIT_ACC_INDEX];
     uint256 provedBps = CircomScoreEncoding.scoreBpsFromLogitAcc(logitAcc);
+    uint256 tampered = provedBps == 0 ? 1 : provedBps - 1;
 
     vm.expectRevert(
-      abi.encodeWithSelector(CircomScoreEncoding.ScoreMismatch.selector, provedBps + 1, provedBps)
+      abi.encodeWithSelector(CircomScoreEncoding.ScoreMismatch.selector, tampered, provedBps)
     );
     oracle.submitScore(
       RiskOracle.ScoreUpdatePayload({
         modelHash: DemoCommitments.CIRCOM_MODEL_HASH,
         adapterHash: DemoCommitments.CIRCOM_ADAPTER_HASH,
         epoch: epoch,
-        scoreBps: provedBps + 1,
+        scoreBps: tampered,
         borrower: BORROWER,
         proof: proof,
         publicInputs: publicInputs

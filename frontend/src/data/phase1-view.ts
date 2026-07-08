@@ -165,7 +165,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
           label: "score binding",
           value: `${score.bps} bps`,
           mono: true,
-          description: "On-chain scoreBps derived via CircomScoreEncoding Taylor sigmoid over logit_acc.",
+          description: "On-chain scoreBps derived via CircomScoreEncoding cubic Taylor sigmoid over logit_acc.",
         },
       ]
     : features.names.map((name, i) => ({
@@ -193,13 +193,13 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
           label: "borrower limb",
           value: consumer.borrower,
           mono: true,
-          description: "Optional 10th public-input limb for borrower binding at submitScore.",
+          description: "In-circuit public borrower limb (Groth16 statement).",
         },
         {
           label: "Public input count",
           value: score.publicInputCount !== undefined ? String(score.publicInputCount) : "10",
           mono: true,
-          description: "9 circuit signals + borrower binding limb for oracle e2e.",
+          description: "logit_acc + hidden[8] + borrower (10 in-circuit public signals, snarkjs order).",
         },
         {
           label: "Model hash",
@@ -422,7 +422,7 @@ export function buildPhase1View(raw: Phase1DemoJson): Phase1View {
           {
             label: "CircomScoreEncoding",
             value: fmtFloat(score.float, 6),
-            description: "Taylor sigmoid over dequantized logit_acc → scoreBps binding.",
+            description: "Cubic Taylor sigmoid over dequantized logit_acc → scoreBps binding.",
             hint: "on-chain",
           } satisfies DataField,
         ]

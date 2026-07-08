@@ -58,7 +58,7 @@ contract EzklIntegrationTest is Test {
     oracle = new RiskOracle(
       address(this), address(ezklVerifier), DemoCommitments.EZKL_MODEL_HASH, DemoCommitments.EZKL_ADAPTER_HASH
     );
-    consumer = new RiskConsumer(address(oracle));
+    consumer = new RiskConsumer(address(oracle), address(this));
   }
 
   function test_ezklVerifier_acceptsGeneratedProof() public {

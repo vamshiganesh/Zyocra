@@ -36,7 +36,7 @@ contract DeployCircomOracle is Script {
       DemoCommitments.CIRCOM_MODEL_HASH,
       DemoCommitments.CIRCOM_ADAPTER_HASH
     );
-    RiskConsumer consumer = new RiskConsumer(address(oracle));
+    RiskConsumer consumer = new RiskConsumer(address(oracle), deployer);
 
     vm.stopBroadcast();
 

@@ -142,20 +142,19 @@ Milestone 5 compares both on constraints, RAM, prove time, verify gas, proof siz
 | Component | Role |
 |-----------|------|
 | `CircomRiskScoreVerifier` | `IRiskScoreVerifier` adapter; proof bytes = `abi.encode(pA, pB, pC)` with EVM pi_b layout |
-| `CircomProofJsonLib` | Parse `proof.json` + `public.json` (+ optional borrower limb) for tests and tooling |
-| `CircomScoreEncoding` | On-chain Taylor sigmoid: dequantized `logit_acc` → `scoreBps` binding check |
-| `CircomPublicInputLayout` | 9 circuit signals + optional 10th borrower limb |
+| `CircomProofJsonLib` | Parse `proof.json` + `public.json` (10 in-circuit signals) for tests and tooling |
+| `CircomScoreEncoding` | On-chain cubic Taylor sigmoid: dequantized `logit_acc` → `scoreBps` (matches `oracle_payload.py`) |
+| `CircomPublicInputLayout` | `logit_acc` + `hidden[8]` + borrower (10 signals, snarkjs order) |
 | `DeployCircomOracle.s.sol` | Deploy Groth16 + adapter + `RiskOracle` + `RiskConsumer` |
 | `SubmitAndApplyCircom.s.sol` | Submit proof + apply consumer policy |
 | `scripts/e2e_circom.sh` | Full local loop: prove → deploy → submit → sync |
 
-**Public layout:** `hidden[8]` + `logit_acc` (9 signals) + optional borrower binding limb (10th). `RiskOracle` accepts 9- or 10-input proofs and binds `scoreBps` via `CircomScoreEncoding` (Taylor sigmoid over dequantized `logit_acc`). Run `bash scripts/e2e_circom.sh` or Operator → Circom → **Run full epoch**.
+**Public layout:** snarkjs order `[logit_acc, hidden[0..7], borrower]` (10 Groth16 public signals; Circom output first). Tampering with the borrower limb fails verification. `RiskOracle` binds `scoreBps` via `CircomScoreEncoding` (cubic Taylor \(\tfrac12 + x/4 - x^3/48\) on \(|x|\le 5\), signed field decode). Run `bash scripts/e2e_circom.sh` or Operator → Circom → **Run full epoch**.
 
 **License:** Groth16 verifier is GPL-3.0; MIT adapter imports it for dev/benchmark and local oracle e2e.
 
 ## Further work
 
 - Optional in-circuit bias with fixed-point rescale
-- Piecewise-linear sigmoid gadget (replace Taylor approx in `CircomScoreEncoding`)
-- Borrower binding inside the Circom circuit (vs appended limb)
-- Sepolia deploy for Circom oracle stack
+- Piecewise-linear / in-circuit sigmoid gadget (further reduce encoding trust)
+- Feature↔borrower commitment (stronger than public address tag)

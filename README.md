@@ -123,7 +123,7 @@ Zyocra separates **proof correctness** from **model quality** and **data honesty
 
 **Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
 
-**Known Phase 1 gaps:** borrower binding uses an appended public-input limb (not yet inside either circuit); Circom score uses Taylor sigmoid over dequantized `logit_acc`; `setVerifier` is owner-controlled without timelock.
+**Known Phase 1 gaps:** EZKL borrower binding still uses an appended public-input limb (Circom borrower is in-circuit); Circom score uses cubic Taylor sigmoid over dequantized `logit_acc` (not in-circuit); `setVerifier` is owner-controlled without timelock.
 
 Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
 

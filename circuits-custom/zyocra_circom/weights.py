@@ -87,6 +87,7 @@ def build_witness_payload(
     source: str,
     sample_index: int | None = None,
     seed: int | None = None,
+    borrower: int = int("70997970C51812dc3A010C7d01b50e0d17dc79C8", 16),
 ) -> dict[str, Any]:
     assert_dims(hidden, weight_base, lora_a, lora_b)
     acc = logit_accumulator(hidden, weight_base, lora_a, lora_b)
@@ -94,6 +95,7 @@ def build_witness_payload(
     payload: dict[str, Any] = {
         "source": source,
         "hidden": hidden.astype(int).tolist(),
+        "borrower": int(borrower),
         "weight_base": weight_base.astype(int).tolist(),
         "lora_a": lora_a.astype(int).tolist(),
         "lora_b": lora_b.reshape(-1).astype(int).tolist(),
@@ -134,10 +136,15 @@ def export_fixture(out_path: Path = FIXTURE_V1) -> dict[str, Any]:
     return payload
 
 
-def to_circom_input(payload: dict[str, Any]) -> dict[str, list[str]]:
+DEMO_BORROWER_UINT = int("70997970C51812dc3A010C7d01b50e0d17dc79C8", 16)
+
+
+def to_circom_input(payload: dict[str, Any]) -> dict[str, Any]:
     """Witness calculator input (strings for snarkjs)."""
+    borrower = int(payload.get("borrower", DEMO_BORROWER_UINT))
     return {
         "hidden": [str(v) for v in payload["hidden"]],
+        "borrower": str(borrower),
         "weight_base": [str(v) for v in payload["weight_base"]],
         "lora_a": [str(v) for v in payload["lora_a"]],
         "lora_b": [str(v) for v in payload["lora_b"]],
@@ -150,7 +157,8 @@ def write_input_json(payload: dict[str, Any], path: Path) -> None:
 
 
 def write_public_json(payload: dict[str, Any], path: Path) -> None:
-    """Public signals for snarkjs verify: hidden[8] + logit_acc."""
-    public = [str(v) for v in payload["hidden"]] + [str(payload["logit_acc"])]
+    """Public signals matching snarkjs: logit_acc, hidden[8], borrower."""
+    borrower = int(payload.get("borrower", DEMO_BORROWER_UINT))
+    public = [str(payload["logit_acc"])] + [str(v) for v in payload["hidden"]] + [str(borrower)]
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(public, indent=2) + "\n", encoding="utf-8")

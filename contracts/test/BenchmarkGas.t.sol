@@ -44,7 +44,7 @@ contract BenchmarkGasTest is Test {
     uint256[2] memory pA;
     uint256[2][2] memory pB;
     uint256[2] memory pC;
-    uint256[9] memory pub;
+    uint256[10] memory pub;
 
     pA[0] = raw.readUint(".circom.pi_a[0]");
     pA[1] = raw.readUint(".circom.pi_a[1]");
@@ -54,7 +54,7 @@ contract BenchmarkGasTest is Test {
     pB[1][1] = raw.readUint(".circom.pi_b[1][1]");
     pC[0] = raw.readUint(".circom.pi_c[0]");
     pC[1] = raw.readUint(".circom.pi_c[1]");
-    for (uint256 i = 0; i < 9; i++) {
+    for (uint256 i = 0; i < 10; i++) {
       pub[i] = raw.readUint(string(abi.encodePacked(".circom.pub_signals[", vm.toString(i), "]")));
     }
 

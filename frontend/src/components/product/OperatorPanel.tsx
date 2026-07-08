@@ -267,7 +267,7 @@ export function OperatorPanel() {
   useEffect(() => {
     if (!applyReceipt.isSuccess || !applyHash) return;
     setWalletNote(
-      `Done. submit ${submitHash?.slice(0, 10)}… · apply ${applyHash.slice(0, 10)}… — refresh Chain status`,
+      `Done. submit ${submitHash?.slice(0, 10)}… · apply ${applyHash.slice(0, 10)}… — wallet must be authorizedProver and authorizedApplicator`,
     );
     setPendingApply(null);
     void refreshChain();

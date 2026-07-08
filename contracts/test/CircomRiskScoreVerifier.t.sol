@@ -34,7 +34,7 @@ contract CircomRiskScoreVerifierTest is Test {
 
     uint256[] memory inputs = new uint256[](3);
     vm.expectRevert(
-      abi.encodeWithSelector(CircomRiskScoreVerifier.InvalidPublicInputs.selector, 9, 3)
+      abi.encodeWithSelector(CircomRiskScoreVerifier.InvalidPublicInputs.selector, 10, 3)
     );
     adapter.verify(hex"00", inputs);
   }

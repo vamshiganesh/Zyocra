@@ -6,32 +6,43 @@ import {DemoCommitments} from "./DemoCommitments.sol";
 
 /// @title CircomScoreEncoding
 /// @notice Map Circom `logit_acc` public signals to RiskOracle basis points.
-/// @dev Bias and sigmoid are applied off-circuit; on-chain uses committed bias + Taylor sigmoid.
+/// @dev Bias + cubic Taylor sigmoid are applied off-circuit; must match `oracle_payload.py`.
 library CircomScoreEncoding {
     uint256 internal constant WAD = 1e18;
     uint256 internal constant LOGIT_DENOMINATOR = 128 * 256;
-    uint256 internal constant HIGH_LOGIT_ACC = 20 * LOGIT_DENOMINATOR;
+    uint256 internal constant HIGH_ABS_XWAD = 5 * WAD;
+    /// @dev BN254 scalar field (snarkjs / Circom).
+    uint256 internal constant SNARK_SCALAR_FIELD =
+        21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
     error ScoreMismatch(uint256 calldataBps, uint256 provedBps);
     error BorrowerMismatch(address calldataBorrower, address provedBorrower);
 
-    /// @notice Convert integer logit_acc to basis points using committed output bias.
+    /// @notice Decode Circom field element to signed integer (negatives as p - |x|).
+    function signedLogitAcc(uint256 logitAcc) internal pure returns (int256) {
+        if (logitAcc > SNARK_SCALAR_FIELD / 2) {
+            return -int256(SNARK_SCALAR_FIELD - logitAcc);
+        }
+        return int256(logitAcc);
+    }
+
+    /// @notice Convert integer logit_acc to basis points using cubic Taylor sigmoid.
+    /// @dev σ(x) ≈ 1/2 + x/4 − x³/48 on |x| ≤ 5, then saturate. Matches oracle_payload.py.
     function scoreBpsFromLogitAcc(uint256 logitAcc) internal pure returns (uint256) {
-        if (logitAcc >= HIGH_LOGIT_ACC) {
-            return 10_000;
-        }
-
         int256 biasWad = DemoCommitments.CIRCOM_OUTPUT_BIAS_WAD;
-        int256 xWad = int256((logitAcc * WAD) / LOGIT_DENOMINATOR) + biasWad;
+        int256 signedAcc = signedLogitAcc(logitAcc);
+        int256 xWad = (signedAcc * int256(WAD)) / int256(LOGIT_DENOMINATOR) + biasWad;
 
-        if (xWad >= 20 * int256(WAD)) {
+        if (xWad >= int256(HIGH_ABS_XWAD)) {
             return 10_000;
         }
-        if (xWad <= -20 * int256(WAD)) {
+        if (xWad <= -int256(HIGH_ABS_XWAD)) {
             return 0;
         }
 
-        int256 sigmoidWad = int256(WAD / 2) + xWad / 4;
+        int256 x2 = (xWad * xWad) / int256(WAD);
+        int256 x3 = (x2 * xWad) / int256(WAD);
+        int256 sigmoidWad = int256(WAD / 2) + xWad / 4 - x3 / 48;
         if (sigmoidWad > int256(WAD)) sigmoidWad = int256(WAD);
         if (sigmoidWad < 0) sigmoidWad = 0;
 
@@ -50,16 +61,13 @@ library CircomScoreEncoding {
         }
     }
 
-    /// @notice Assert borrower binding limb when extended public inputs are provided.
+    /// @notice Assert borrower matches the in-circuit public limb.
     function requireBorrowerMatchesPublicInput(address borrower, uint256[] memory publicInputs)
         internal
         pure
     {
-        if (publicInputs.length != CircomPublicInputLayout.CIRCOM_EXTENDED_INPUT_COUNT) {
-            return;
-        }
-        address provedBorrower =
-            address(uint160(publicInputs[CircomPublicInputLayout.CIRCOM_BORROWER_INDEX]));
+        CircomPublicInputLayout.requireCircomLayout(publicInputs);
+        address provedBorrower = CircomPublicInputLayout.borrower(publicInputs);
         if (borrower != provedBorrower) {
             revert BorrowerMismatch(borrower, provedBorrower);
         }

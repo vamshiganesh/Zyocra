@@ -158,10 +158,7 @@ contract RiskOracle is IRiskOracle {
             ScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
             return;
         }
-        if (
-            len == CircomPublicInputLayout.CIRCOM_PUBLIC_INPUT_COUNT
-                || len == CircomPublicInputLayout.CIRCOM_EXTENDED_INPUT_COUNT
-        ) {
+        if (len == CircomPublicInputLayout.CIRCOM_PUBLIC_INPUT_COUNT) {
             CircomScoreEncoding.requireScoreMatchesPublicInput(payload.scoreBps, payload.publicInputs);
             CircomScoreEncoding.requireBorrowerMatchesPublicInput(payload.borrower, payload.publicInputs);
             return;

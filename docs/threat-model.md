@@ -136,7 +136,7 @@ The consumer reads **only** scores that passed these checks for a verified epoch
 
 - Bucket thresholds (`RiskBuckets`) and collateral parameters (`RiskPolicies`) are **hard-coded** in Solidity, not proven or governed on-chain.
 - Policy is **deterministic** from `scoreBps` → bucket → `{collateralFactorBps, borrowSpreadBps, borrowAllowed, mitigationFlag}`.
-- `applyVerifiedScore` is permissionless; any address can trigger policy application for any borrower (updates are idempotent per `(borrower, epoch)` via `lastEpoch`).
+- `applyVerifiedScore` requires an **authorized applicator** (owner by default via `setAuthorizedApplicator`); updates remain idempotent per `(borrower, epoch)` via `lastEpoch`.
 
 ### Explicit non-goals
 
@@ -244,16 +244,17 @@ Benchmark scripts are first-class code (`benchmarks/zyocra_bench/`). Results sho
 ### High priority (implementation)
 
 1. ~~**Bind `scoreBps` to `publicInputs` on-chain**~~ — **Done** (`ScoreEncoding` + `PublicInputLayout` in `RiskOracle.submitScore`).
-2. **Borrower / identity binding** — if per-borrower scores are required, extend public inputs and oracle schema.
+2. ~~**Borrower / identity binding (Circom)**~~ — **Done** (in-circuit public `borrower` signal). EZKL still uses an appended limb. Stronger feature↔borrower commitments remain open.
 3. **Verifier governance** — timelock, multisig, or immutable verifier for production; document upgrade path for `setVerifier`.
-4. ~~**Circom oracle adapter**~~ — **Done** (`CircomRiskScoreVerifier` + `CircomProofJsonLib`); full `RiskOracle` wiring deferred (logit_acc vs scoreBps semantics).
+4. ~~**Circom oracle adapter**~~ — **Done** (`CircomRiskScoreVerifier` + in-circuit borrower + Sepolia deploy).
 
 ### Medium priority
 
 5. ~~**Access control on `submitScore`**~~ — **Done** (`authorizedProvers` + `setAuthorizedProver`).
 6. **Epoch time windows** — optional `validUntil` or minimum block spacing per epoch.
 7. **Feature commitment** — hash feature vector in public inputs with explicit layout versioning.
-8. **Consumer authorization** — restrict who may call `applyVerifiedScore` or tie to oracle events.
+8. ~~**Consumer authorization**~~ — **Done** (`authorizedApplicators` on `RiskConsumer`).
+9. **Circom score encoding** — cubic Taylor + signed decode shipped; optional in-circuit / PWL sigmoid gadget for lower encoding trust.
 
 ### Lower priority / research
 
@@ -269,8 +270,8 @@ Benchmark scripts are first-class code (`benchmarks/zyocra_bench/`). Results sho
 | Layer | Trusts | Does not trust |
 |-------|--------|----------------|
 | **Proof** | Arithmetic, commitments in circuit, verifier soundness | Data sources, model quality, economic optimality |
-| **Oracle** | Verifier impl, deploy-time hashes, monotonic epochs, score↔public-input binding, authorized provers | Submitter identity beyond ACL, feature honesty, borrower in proof |
-| **Consumer** | Oracle verified scores, hard-coded policy | Borrower-feature linkage, position state, liquidation safety |
+| **Oracle** | Verifier impl, deploy-time hashes, monotonic epochs, score↔public-input binding, authorized provers, Circom in-circuit borrower | Submitter honesty beyond ACL, feature honesty, EZKL appended borrower limb |
+| **Consumer** | Oracle verified scores, hard-coded policy, authorized applicators | Borrower-feature linkage, position state, liquidation safety |
 | **Benchmarks** | Scripted harness, pinned versions | Cross-workload equivalence, statistical robustness |
 
 ---

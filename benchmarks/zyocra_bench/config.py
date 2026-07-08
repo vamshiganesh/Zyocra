@@ -41,7 +41,7 @@ PYTHON = ML_ROOT / ".venv" / "bin" / "python"
 
 # Benchmark protocol
 SCHEMA_VERSION = "1.1"
-PROVE_RUNS = 3
+PROVE_RUNS = 10
 SAMPLE_INDEX = 0
 SAMPLE_INDICES = [0, 1, 2, 3]
 EPOCH_LABEL = "epoch-2026-041"

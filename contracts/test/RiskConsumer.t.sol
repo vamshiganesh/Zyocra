@@ -24,7 +24,9 @@ contract RiskConsumerTest is Test {
     function setUp() public {
         verifier = new StubRiskScoreVerifier(owner);
         oracle = new RiskOracle(owner, address(verifier), MODEL_HASH, ADAPTER_HASH);
-        consumer = new RiskConsumer(address(oracle));
+        consumer = new RiskConsumer(address(oracle), owner);
+        vm.prank(owner);
+        consumer.setAuthorizedApplicator(address(this), true);
     }
 
     function _submit(uint64 epoch, uint256 scoreLimb) internal {
@@ -202,5 +204,28 @@ contract RiskConsumerTest is Test {
         assertEq(uint8(afterSecond.bucket), uint8(RiskBuckets.Bucket.MEDIUM));
         assertEq(afterSecond.lastEpoch, 2);
         assertEq(afterSecond.collateralFactorBps, 7_200);
+    }
+
+    function test_applyVerifiedScore_revertsForUnauthorizedApplicator() public {
+        _submit(20, 79);
+        address stranger = makeAddr("stranger");
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(RiskConsumer.UnauthorizedApplicator.selector, stranger));
+        consumer.applyVerifiedScore(borrower, 20);
+    }
+
+    function test_setAuthorizedApplicator_onlyOwner() public {
+        address keeper = makeAddr("keeper");
+        vm.prank(keeper);
+        vm.expectRevert(RiskConsumer.Unauthorized.selector);
+        consumer.setAuthorizedApplicator(keeper, true);
+
+        vm.prank(owner);
+        consumer.setAuthorizedApplicator(keeper, true);
+
+        _submit(21, 79);
+        vm.prank(keeper);
+        consumer.applyVerifiedScore(borrower, 21);
+        assertEq(consumer.getBorrowerPolicy(borrower).lastEpoch, 21);
     }
 }

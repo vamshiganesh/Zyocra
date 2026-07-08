@@ -9,7 +9,7 @@ import {Groth16Verifier} from "circuits-custom/verifiers/LoraHeadVerifier.sol";
 /// @title CircomRiskScoreVerifier
 /// @notice `IRiskScoreVerifier` adapter for snarkjs-exported Groth16 verifiers.
 /// @dev Proof bytes ABI-encode `(uint256[2] pA, uint256[2][2] pB, uint256[2] pC)` with EVM pi_b layout.
-///      Public inputs: 9 signals — hidden[8] + logit_acc (see docs/circom.md).
+///      Public inputs: 10 signals — hidden[8] + borrower + logit_acc (see docs/circom.md).
 contract CircomRiskScoreVerifier is IRiskScoreVerifier {
   Groth16Verifier public immutable groth16;
 
@@ -29,22 +29,14 @@ contract CircomRiskScoreVerifier is IRiskScoreVerifier {
     view
     returns (bool valid)
   {
-    uint256[] memory circuitInputs = publicInputs;
-    if (publicInputs.length == CircomPublicInputLayout.CIRCOM_EXTENDED_INPUT_COUNT) {
-      circuitInputs = new uint256[](CircomProofJsonLib.PUBLIC_INPUT_COUNT);
-      for (uint256 i = 0; i < CircomProofJsonLib.PUBLIC_INPUT_COUNT; i++) {
-        circuitInputs[i] = publicInputs[i];
-      }
-    }
-
-    if (circuitInputs.length != CircomProofJsonLib.PUBLIC_INPUT_COUNT) {
-      revert InvalidPublicInputs(CircomProofJsonLib.PUBLIC_INPUT_COUNT, circuitInputs.length);
+    if (publicInputs.length != CircomPublicInputLayout.CIRCOM_PUBLIC_INPUT_COUNT) {
+      revert InvalidPublicInputs(CircomPublicInputLayout.CIRCOM_PUBLIC_INPUT_COUNT, publicInputs.length);
     }
 
     (uint256[2] memory pA, uint256[2][2] memory pB, uint256[2] memory pC) =
       abi.decode(proof, (uint256[2], uint256[2][2], uint256[2]));
 
-    uint256[9] memory pub = CircomProofJsonLib.toFixedPublicInputs(circuitInputs);
+    uint256[10] memory pub = CircomProofJsonLib.toFixedPublicInputs(publicInputs);
     return groth16.verifyProof(pA, pB, pC, pub);
   }
 }

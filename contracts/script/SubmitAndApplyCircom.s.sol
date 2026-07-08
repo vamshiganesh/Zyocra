@@ -45,8 +45,8 @@ contract SubmitAndApplyCircom is Script {
     console2.log("==> submitScore (Circom)");
     console2.log("  epoch", epoch);
     console2.log("  scoreBps", scoreBps);
-    console2.log("  logit_acc", artifacts.publicInputs[8]);
-    console2.log("  borrower", borrower);
+    console2.log("  logit_acc", artifacts.publicInputs[0]);
+    console2.log("  borrower limb", artifacts.publicInputs[9]);
 
     vm.startBroadcast();
 

@@ -234,13 +234,13 @@ def _encode_circom_proof(proof_path: Path) -> bytes:
 def _load_circom_public_inputs(public_path: Path, borrower: str) -> list[int]:
     public = json.loads(public_path.read_text(encoding="utf-8"))
     inputs = [int(x) for x in public]
+    if len(inputs) != 10:
+        raise ValueError(f"expected 10 in-circuit Circom public signals, got {len(inputs)}")
     borrower_limb = int(Web3.to_checksum_address(borrower), 16)
-    if len(inputs) == 9:
-        inputs.append(borrower_limb)
-    elif len(inputs) == 10:
-        inputs[9] = borrower_limb
-    else:
-        raise ValueError(f"expected 9 or 10 Circom public signals, got {len(inputs)}")
+    if inputs[9] != borrower_limb:
+        raise ValueError(
+            "public.json borrower limb does not match payload borrower — regenerate Circom proof"
+        )
     return inputs
 
 

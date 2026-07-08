@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import math
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -18,6 +17,8 @@ from zyocra_circom.config import (
 DEMO_EPOCH = 202_604_1
 DEMO_BORROWER_HEX = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
 ORACLE_PAYLOAD_JSON = PROOF_JSON.parent / "oracle-payload.json"
+SNARK_SCALAR_FIELD = 21888242871839275222246405745257275088548364400416034343698204186575808495617
+LOGIT_DENOMINATOR = ACTIVATION_SCALE * WEIGHT_SCALE
 
 
 def keccak256_hex(label: str) -> str:
@@ -34,15 +35,22 @@ def load_public_signals(public_path: Path = PUBLIC_SIGNALS_JSON) -> list[int]:
     return [int(x) for x in data]
 
 
+def signed_logit_acc(logit_acc: int) -> int:
+    """Decode Circom field element to signed integer (matches CircomScoreEncoding)."""
+    if logit_acc > SNARK_SCALAR_FIELD // 2:
+        return -(SNARK_SCALAR_FIELD - logit_acc)
+    return logit_acc
+
+
 def score_bps_from_logit_acc(logit_acc: int, bias: float = 0.0) -> int:
-    logit = logit_acc / float(ACTIVATION_SCALE * WEIGHT_SCALE) + bias
-    if logit >= 20:
-        score = 1.0
-    elif logit <= -20:
-        score = 0.0
-    else:
-        score = 1.0 / (1.0 + math.exp(-logit))
-    return int(round(max(0.0, min(1.0, score)) * 10_000))
+    """Cubic Taylor σ(x)≈1/2+x/4−x³/48 on |x|≤5 — must match CircomScoreEncoding.sol."""
+    x = signed_logit_acc(logit_acc) / float(LOGIT_DENOMINATOR) + bias
+    if x >= 5:
+        return 10_000
+    if x <= -5:
+        return 0
+    sigmoid = 0.5 + x / 4.0 - (x**3) / 48.0
+    return int(round(max(0.0, min(1.0, sigmoid)) * 10_000))
 
 
 def borrower_uint256(borrower_hex: str = DEMO_BORROWER_HEX) -> int:
@@ -63,8 +71,18 @@ def build_oracle_payload(
     bias: float = 0.0,
 ) -> dict[str, Any]:
     public_inputs = load_public_signals(public_path)
-    logit_acc = public_inputs[-1]
-    public_inputs = public_inputs + [borrower_uint256(borrower_hex)]
+    if len(public_inputs) != 10:
+        raise ValueError(f"expected 10 in-circuit public signals, got {len(public_inputs)}")
+
+    # Layout (snarkjs): logit_acc, hidden[8], borrower
+    logit_acc = public_inputs[0]
+    proved_borrower = public_inputs[9]
+    expected = borrower_uint256(borrower_hex)
+    if proved_borrower != expected:
+        raise ValueError(
+            f"public.json borrower {proved_borrower} != requested {expected} — regenerate proof"
+        )
+
     score_bps = score_bps_from_logit_acc(logit_acc, bias=bias)
 
     return {
@@ -81,7 +99,8 @@ def build_oracle_payload(
         "publicPath": str(public_path),
         "notes": {
             "verifier": "CircomRiskScoreVerifier + LoraHeadVerifier (e2e_circom.sh)",
-            "public_layout": "hidden[8] + logit_acc + borrower binding limb",
+            "public_layout": "logit_acc + hidden[8] + borrower (in-circuit; snarkjs order)",
+            "sigmoid": "cubic Taylor 1/2 + x/4 - x^3/48 on |x|<=5 (matches CircomScoreEncoding.sol)",
         },
     }
 
