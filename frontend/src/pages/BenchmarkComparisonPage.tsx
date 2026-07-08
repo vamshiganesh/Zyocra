@@ -52,13 +52,23 @@ export function BenchmarkComparisonPage() {
               <div id="paths">
                 <SectionHeader
                   label="Prover paths"
-                  title="EZKL full graph vs Circom head"
-                  description="EZKL runs the full-graph oracle e2e. Circom runs the LoRA head Groth16 path through RiskOracle (logit_acc → scoreBps binding)."
+                  title="Matched head · asymmetric full · hybrid"
+                  description="Primary research claim is structured LoRA head proving. Full-graph EZKL is the end-to-end oracle path; Circom optimizes adapter updates."
                 />
                 <ul className="assumption-list">
-                  <li>EZKL: full MLP + sigmoid score, 8 public inputs (features + score + borrower binding limb).</li>
-                  <li>Circom: LoRA head, 10 public inputs (hidden[8] + logit_acc + borrower), CircomScoreEncoding on-chain.</li>
-                  <li>Use the Operator prover toggle to run e2e_phase1.sh or e2e_circom.sh.</li>
+                  <li>
+                    <strong>Matched (fair):</strong> EZKL head-only ONNX vs Circom <code>lora_output_head</code> on the same{" "}
+                    <code>hidden[8] → logit</code> statement.
+                  </li>
+                  <li>
+                    <strong>Asymmetric (system):</strong> EZKL full 6→16→8→1+sigmoid vs Circom head — different workloads; ratios are not bakeoff wins.
+                  </li>
+                  <li>
+                    <strong>Hybrid:</strong> one EZKL full prove per epoch + Circom head proves per adapter update — amortized cost below.
+                  </li>
+                  <li>Operator: EZKL runs <code>e2e_phase1.sh</code>; Circom runs <code>e2e_circom.sh</code>. Benchmarks use{" "}
+                    <code>make head-benchmark</code>.
+                  </li>
                 </ul>
               </div>
             </ClippedCard>

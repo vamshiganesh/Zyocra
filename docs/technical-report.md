@@ -6,6 +6,10 @@
 
 Zyocra compares **compiler-generated** (EZKL) and **hand-optimized** (Circom) zero-knowledge circuits for a LoRA-adapted liquidation-risk MLP, with on-chain verification and a mock lending consumer.
 
+**Primary research claim:** on the **matched LoRA output head**, structure-aware Circom beats EZKL-compiled head ONNX (constraints / prove time / proof size).
+
+**Secondary system claim:** full-graph EZKL remains the end-to-end score path; Circom is adapter-scoped — not a drop-in full-MLP replacement. Hybrid amortization models rare full proves + frequent head updates.
+
 **In scope:** proof correctness for declared workloads, oracle storage, collateral policy mapping, reproducible benchmarks.
 
 **Out of scope:** borrower identity in proofs, production trusted setup, core circuit research (recursion/folding), adversarial ML.
@@ -60,17 +64,32 @@ make head-benchmark   # also builds EZKL head-only comparable row
 
 ## 7. Results (representative WSL2 run)
 
+### 7.1 Primary — matched LoRA head (fair)
+
+| Metric | EZKL head | Circom head |
+|--------|-----------|-------------|
+| Constraints | 106 PLONK rows | 89 R1CS |
+| Prove time (median) | ~15.8 s | ~2.0 s |
+| Peak RSS | ~1.4 GB | ~185 MB |
+| Proof size | ~19 KB | ~806 B |
+
+**Interpretation:** On the same `hidden[8] → logit` statement, hand Circom wins on prove time, RAM, and proof size. This is the recruiter / paper primary claim.
+
+### 7.2 Secondary — system workloads (not equivalent)
+
 | Metric | EZKL full | Circom head |
 |--------|-----------|-------------|
 | Constraints | 964 PLONK rows | 89 R1CS |
-| Prove time (median) | ~23 s | ~1.9 s |
+| Prove time (median) | ~23 s | ~2.0 s |
 | Peak RSS | ~1.7 GB | ~185 MB |
 | Verify gas | 536,109 | 244,502 |
-| Proof size | ~21 KB | ~804 B |
+| Proof size | ~21 KB | ~806 B |
 
-**Interpretation:** Full-graph EZKL vs Circom head is an **intentional asymmetry** — the research question is where hand-tuned LoRA algebra wins. Use `workloads.ezkl_head` and `accuracy.head_alignment` for comparable head subgraph analysis.
+**Interpretation:** Full-graph EZKL vs Circom head is an **intentional asymmetry** — complete score attestation vs adapter-scoped algebra. Ratios from this table are **not** matched-kernel wins. Use §7.1 for apples-to-apples analysis.
 
-**Hybrid model:** one full EZKL prove/epoch + Circom head prove/update → see `workloads.hybrid.amortized_prove_ms_per_update`.
+### 7.3 Hybrid amortized cost
+
+One full EZKL prove per epoch + Circom head prove per update (default 4 updates) → `workloads.hybrid.amortized_prove_ms_per_update` (~6.6 s / update on the latest local run).
 
 ## 8. Engineering complexity
 

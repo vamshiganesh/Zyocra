@@ -11,7 +11,7 @@ export const overviewCopy = {
   hero: {
     eyebrow: "Verifiable risk oracle",
     title: "Prove inference.\nPublish score.\nAdjust collateral.",
-    body: "Zyocra attests that a quantized LoRA-adapted risk model executed correctly off-chain, verifies the result on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
+    body: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks compiler-generated EZKL against a hand-optimized Circom LoRA head — matched on the head subgraph, asymmetric on full inference by design.",
     ctaPrimary: "Run epoch demo",
     ctaSecondary: "Benchmark comparison",
     layers: [
@@ -30,9 +30,9 @@ export const overviewCopy = {
         index: "02",
         title: "Prove layer",
         bullets: [
-          "Run EZKL on the full risk MLP ONNX graph.",
-          "Emit witness, proof bytes, and public input instances.",
-          "Compare against Circom head subgraph in benchmarks.",
+          "EZKL: full ONNX graph for end-to-end score attestation.",
+          "Circom: hand LoRA output head for adapter-scoped proofs.",
+          "Benchmarks lead with matched EZKL head vs Circom head.",
         ],
       },
       {
@@ -148,27 +148,28 @@ export const provePaths = {
   ezkl: {
     name: "EZKL baseline",
     description:
-      "Full ONNX graph compiled to PLONK. Measures end-to-end compiler cost for quantized LoRA inference.",
+      "Full ONNX graph for end-to-end score attestation, plus an optional head-only compile for matched LoRA benchmarks.",
   },
   circom: {
     name: "Circom LoRA path",
     description:
-      "Hand-written R1CS for W′ = W + AB and selected layers. Tests whether structure beats generic compilation.",
+      "Hand-written R1CS for W′ = W + AB on the output head. Fair vs EZKL head; not a full-graph substitute.",
   },
 };
 
 export const benchmarkMethodology = [
-  "Single machine spec recorded in benchmarks/scripts/env.txt.",
-  "Same borrower vector, quantization profile, and public-input policy on both paths.",
-  "Gas from Foundry `gas_report` on local Anvil, with no mainnet fork.",
-  "Proof size and peak RAM read from prover logs, not self-reported.",
+  "Primary table: matched EZKL head vs Circom head (same hidden→logit).",
+  "Secondary table: EZKL full vs Circom head — asymmetric system workloads, labeled as such.",
+  "Hybrid model: one EZKL full prove/epoch + Circom head proves per update.",
+  "Single machine spec in benchmarks/raw-results/env-latest.txt; median of 3 prove runs.",
+  "Gas from Foundry BenchmarkGasTest standalone verifiers (not full submitScore).",
 ];
 
 export const benchmarkArtifacts = [
-  "benchmarks/raw-results/ezkl-epoch-2026-041.json",
-  "benchmarks/raw-results/circom-epoch-2026-041.json",
-  "benchmarks/plots/constraints-diff.svg",
-  "benchmarks/plots/verify-gas.svg",
+  "benchmarks/raw-results/bench-latest.json",
+  "benchmarks/raw-results/bench-latest.md",
+  "benchmarks/plots/constraints.svg",
+  "benchmarks/plots/prove-time.svg",
 ];
 
 export const footerCopy = {

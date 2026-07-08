@@ -25,10 +25,12 @@ lint: ## Lightweight local lint (shell syntax, forge fmt, pnpm lint, optional ru
 benchmark: ## Run EZKL vs Circom benchmark harness (writes bench-latest.* + plots)
 	@./scripts/benchmark.sh
 
-head-benchmark: ## Export EZKL head ONNX, compile, and run full benchmark with ezkl_head row
+head-benchmark: ## Export EZKL head ONNX, compile, run benchmark with ezkl_head, sync frontend
 	@cd ml-base && .venv/bin/python scripts/export_head_onnx.py
 	@cd circuits-baseline && ../ml-base/.venv/bin/python scripts/prepare_head.py
 	@./scripts/benchmark.sh
+	@./scripts/sync-frontend-data.sh
+	@python3 -c "import json; from pathlib import Path; d=json.loads(Path('benchmarks/raw-results/bench-latest.json').read_text()); h=d.get('workloads',{}).get('ezkl_head'); c=d.get('workloads',{}).get('circom'); assert h and h.get('prove_ms_median') is not None, 'ezkl_head missing — abort'; eh=float(h['prove_ms_median']); ch=float(c['prove_ms_median']); print(f'head gate: ezkl_head={eh:.0f}ms circom={ch:.0f}ms'); assert eh > ch, f'ABORT: Circom head slower than EZKL head ({ch} vs {eh}) — do not lead with matched-head framing'"
 
 check-tools: ## Print versions of host tools and ml-base venv packages
 	@echo "node:    $$(node -v 2>/dev/null || echo missing)"

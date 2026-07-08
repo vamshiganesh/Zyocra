@@ -10,12 +10,20 @@ type Props = {
   title?: string;
   rows: BenchmarkRow[];
   note?: string;
+  ezklColumn?: string;
+  circomColumn?: string;
+  banner?: string;
+  bannerTone?: "warn" | "ok";
 };
 
 export function BenchmarkPanel({
-  title = "Benchmark headline",
+  title = "Matched head subgraph",
   rows,
-  note = "Placeholder metrics, filled in Milestone 5.",
+  note = "Same hidden[8] → logit workload on both paths.",
+  ezklColumn = "EZKL head",
+  circomColumn = "Circom head",
+  banner,
+  bannerTone = "warn",
 }: Props) {
   return (
     <div className="bench-panel">
@@ -23,13 +31,21 @@ export function BenchmarkPanel({
         <p className="mono-label label-dot">{title}</p>
         <p className="bench-panel__note">{note}</p>
       </div>
+      {banner ? (
+        <p
+          className={`bench-panel__banner${bannerTone === "warn" ? " bench-panel__banner--warn" : ""}`}
+          role="note"
+        >
+          {banner}
+        </p>
+      ) : null}
       <div className="bench-panel__table-wrap" data-lenis-prevent>
         <table className="bench-panel__table">
           <thead>
             <tr>
               <th>Metric</th>
-              <th>EZKL baseline</th>
-              <th>Custom Circom</th>
+              <th>{ezklColumn}</th>
+              <th>{circomColumn}</th>
             </tr>
           </thead>
           <tbody>

@@ -8,32 +8,48 @@ Technical framing: **Verifiable LoRA Risk Oracle**.
 
 DeFi lending systems adjust collateralization and borrowing conditions using risk signals. zkML frameworks such as EZKL make verifiable inference practical, but compiler-generated circuits can hide inefficiencies in structured algebra—especially LoRA updates of the form \(W' = W + AB\).
 
-Zyocra implements the **same logical workload** on two paths and measures the difference:
+Zyocra implements the **same risk model** on two proving paths — **matched on the LoRA output head**, **asymmetric on full inference by design**:
 
-| Path | Pipeline |
-|------|----------|
-| **Baseline** | PyTorch → ONNX → EZKL → generated EVM verifier |
-| **Custom** | Hand-optimized Circom (LoRA delta + dense subgraph) → Solidity verifier |
+| Path | Pipeline | Role |
+|------|----------|------|
+| **EZKL full** | PyTorch → ONNX → EZKL → Halo2 verifier | End-to-end score attestation (oracle e2e) |
+| **EZKL head** | Head-only ONNX → EZKL | Fair bakeoff against Circom (`make head-benchmark`) |
+| **Circom head** | Hand Circom LoRA head → Groth16 | Structure-aware adapter proofs |
 
 The consumer is a **mock lending-risk module** that updates collateral parameters by verified risk bucket—not a liquidation bot.
 
 ## Benchmark headline
 
-*From `make benchmark` on WSL2 — see [`docs/benchmarks.md`](docs/benchmarks.md) for methodology and limitations.*
+*Primary claim = matched head. Full-graph row is a separate system workload — see [`docs/benchmarks.md`](docs/benchmarks.md).*
 
-| Metric | EZKL baseline | Custom Circom |
-|--------|---------------|---------------|
-| Constraint count | 964 (PLONK rows) | 89 (R1CS) |
-| Prover peak RAM | ~1.7 GB | ~185 MB |
-| Proof generation time | ~23 s (median) | ~1.9 s (median) |
-| Verification gas (EVM) | 536,109 | 244,502 |
-| Proof size | ~21 KB | ~804 B |
-| Float vs fixed-point error | 0.0064 max abs (test split) | head fixture integer exact |
-| Engineering complexity | ONNX → EZKL full pipeline | hand-written LoRA head subgraph |
+### Primary — fair circuit comparison (matched LoRA head)
+
+| Metric | EZKL head | Circom head |
+|--------|-----------|-------------|
+| Constraint count | 106 (PLONK rows) | 89 (R1CS) |
+| Prover peak RAM | ~1.4 GB | ~185 MB |
+| Proof generation time | ~15.8 s (median) | ~2.0 s (median) |
+| Proof size | ~19 KB | ~806 B |
 
 ```bash
-make benchmark   # writes bench-latest.{json,csv,md} + plots/
+make head-benchmark   # includes ezkl_head + syncs frontend when you run sync-frontend-data.sh
 ```
+
+### Secondary — system workloads (not equivalent)
+
+| Metric | EZKL full graph | Circom head |
+|--------|-----------------|-------------|
+| Constraint count | 964 (PLONK rows) | 89 (R1CS) |
+| Prover peak RAM | ~1.7 GB | ~185 MB |
+| Proof generation time | ~23 s (median) | ~2.0 s (median) |
+| Verification gas (EVM) | 536,109 | 244,502 |
+| Proof size | ~21 KB | ~806 B |
+
+**Do not** read the secondary table as a kernel bakeoff. Full-graph EZKL proves features→score; Circom proves head-only `logit_acc`.
+
+### Hybrid amortized cost
+
+One EZKL full prove per epoch + Circom head proves per adapter update (default 4): see `workloads.hybrid` in `bench-latest.json` (~6.6 s amortized prove / update on the latest local run).
 
 ## System architecture
 
@@ -209,7 +225,7 @@ MIT — see [`LICENSE`](LICENSE).
 ### v0.4.0
 
 - **Security:** `RiskOracle` binds `scoreBps` to EZKL public output limb; `authorizedProvers` ACL on `submitScore`.
-- **Benchmarks:** normalized metrics, prove stdev, hybrid cost model, head alignment, optional EZKL head-only row (`make head-benchmark`).
+- **Benchmarks:** primary table = matched EZKL head vs Circom head; secondary = asymmetric full-vs-head; hybrid amortized cost; `make head-benchmark` syncs frontend.
 - **Contracts:** `CircomRiskScoreVerifier`, `CircomProofJsonLib`, `DeployCircom.s.sol`.
 - **CI:** GitHub Actions (Foundry, pytest, frontend tsc).
 - **Docs:** filled `docs/technical-report.md`.

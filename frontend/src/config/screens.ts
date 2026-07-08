@@ -24,7 +24,7 @@ export const SCREENS: Screen[] = [
     shortLabel: "Overview",
     eyebrow: "Verifiable risk oracle",
     headline: "Prove inference. Publish score. Adjust collateral.",
-    lede: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks EZKL against a hand-optimized Circom path.",
+    lede: "Zyocra attests quantized LoRA-adapted risk inference off-chain, verifies on EVM, and benchmarks EZKL against a hand-optimized Circom LoRA head — matched on the head, asymmetric on full inference by design.",
     sections: [
       { id: "flow", label: "Pipeline", index: "01" },
       { id: "system", label: "Stack", index: "02" },
@@ -129,12 +129,13 @@ export const SCREENS: Screen[] = [
     title: "Benchmark Comparison",
     shortLabel: "Benchmarks",
     eyebrow: "Research artifact",
-    headline: "EZKL vs Circom on one workload.",
-    lede: "Constraint count, peak RAM, proof time, verification gas, proof size, and score quantization error on the same inputs, documented machine spec.",
+    headline: "Matched LoRA head: EZKL vs Circom.",
+    lede: "Primary table compares head-only workloads. Full-graph EZKL stays a separate system path — not a fair kernel bakeoff against Circom head.",
     sections: [
       { id: "comparison", label: "Comparison", index: "01" },
-      { id: "methodology", label: "Methodology", index: "02" },
-      { id: "raw", label: "Artifacts", index: "03" },
+      { id: "paths", label: "Paths", index: "02" },
+      { id: "methodology", label: "Methodology", index: "03" },
+      { id: "raw", label: "Artifacts", index: "04" },
     ],
   },
   {

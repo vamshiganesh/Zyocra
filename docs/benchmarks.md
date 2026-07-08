@@ -99,13 +99,14 @@ Pinned in `environment.tools` and `environment.python_packages`:
 
 ### Workload scope (critical)
 
-| Path | What is measured |
-|------|------------------|
-| EZKL full | Full ONNX graph inference proof |
-| EZKL head | Head-only ONNX (`hidden[8]` → `logit`) — comparable to Circom |
-| Circom | LoRA output-head subgraph only (`lora_output_head.circom`) |
+| Path | What is measured | Presentation |
+|------|------------------|--------------|
+| EZKL head | Head-only ONNX (`hidden[8]` → `logit`) | **Primary** fair bakeoff vs Circom |
+| Circom | LoRA output-head subgraph | **Primary** fair bakeoff vs EZKL head |
+| EZKL full | Full ONNX graph inference proof | **Secondary** system / oracle path |
+| Hybrid | EZKL full once + Circom head × N updates | Amortized cost figure |
 
-Constraint count and prove time **are not end-to-end equivalent**. The research question is whether the structured subgraph is cheaper than embedding the same algebra inside a compiler-generated full graph.
+Constraint count and prove time between **EZKL full** and Circom **are not end-to-end equivalent**. The research question on the primary table is whether structured LoRA algebra is cheaper than the same head compiled through EZKL.
 
 ## Limitations
 

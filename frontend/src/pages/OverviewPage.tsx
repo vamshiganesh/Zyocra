@@ -109,7 +109,7 @@ export function OverviewPage() {
             </ClippedCard>
 
             <ClippedCard>
-              <BenchmarkPlaceholderPanel />
+              <BenchmarkPlaceholderPanel compact />
             </ClippedCard>
 
             <ClippedCard>

@@ -169,21 +169,21 @@ export function OperatorPanel() {
           className={`operator-panel__toggle-btn${prover === "ezkl" ? " is-active" : ""}`}
           onClick={() => setProver("ezkl")}
         >
-          EZKL (full graph)
+          EZKL (full graph e2e)
         </button>
         <button
           type="button"
           className={`operator-panel__toggle-btn${prover === "circom" ? " is-active" : ""}`}
           onClick={() => setProver("circom")}
         >
-          Circom (head)
+          Circom (LoRA head e2e)
         </button>
       </div>
 
       <p className="operator-panel__note">
         {prover === "circom"
-          ? "Circom: e2e_circom.sh · deploy → contracts/deployments/anvil-circom-oracle-latest.json"
-          : "EZKL: e2e_phase1.sh · deploy → contracts/deployments/anvil-ezkl-latest.json"}
+          ? "Circom e2e: LoRA head subgraph through RiskOracle (matched-head research path). Fair benchmark vs EZKL is make head-benchmark, not this toggle."
+          : "EZKL e2e: full ONNX graph through RiskOracle (end-to-end score attestation). Matched head bakeoff lives on the Benchmarks page."}
         {" · "}
         {deployScript} / {submitScript}
       </p>

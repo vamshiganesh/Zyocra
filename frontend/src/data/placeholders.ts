@@ -14,12 +14,17 @@ export const faqItems: FaqItem[] = [
   {
     question: "What statement does Zyocra prove?",
     answer:
-      "That a published liquidation-risk score is the exact output of a declared quantized model with LoRA-adapted weights (W′ = W + AB), for specific public inputs, under either the EZKL-compiled ONNX graph or the Circom LoRA subgraph.",
+      "That a published liquidation-risk score is the exact output of a declared quantized model with LoRA-adapted weights (W′ = W + AB), for specific public inputs. EZKL can attest the full ONNX graph; Circom attests the LoRA output-head subgraph (hidden → logit_acc).",
   },
   {
     question: "Why benchmark EZKL against Circom?",
     answer:
-      "Compiler-generated zkML hides arithmetic structure. A hand-optimized low-rank circuit tests whether LoRA's algebra is cheaper to prove than a generic ONNX compile on identical inputs: constraint count, RAM, proof time, gas, and proof size.",
+      "LoRA updates live on the head. The fair circuit comparison is EZKL head-only vs hand Circom on the same hidden→logit statement. Full-graph EZKL is a different system workload (complete score attestation), not a matched race against Circom head.",
+  },
+  {
+    question: "Isn’t full EZKL vs Circom head unfair?",
+    answer:
+      "Yes if you treat that table as a kernel bakeoff. We lead with matched head metrics and label full-vs-head as asymmetric system workloads. Hybrid amortization models rare full proves plus frequent head updates.",
   },
   {
     question: "What is an epoch?",
