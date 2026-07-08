@@ -26,6 +26,7 @@ class Job:
     exit_code: int | None = None
     error: str | None = None
     logs: list[str] = field(default_factory=list)
+    process: asyncio.subprocess.Process | None = field(default=None, repr=False)
 
     def to_dict(self) -> dict:
         return {
@@ -71,6 +72,8 @@ class JobManager:
         async with self._lock:
             if self._running and job_type != JobType.SYNC_FRONTEND:
                 raise RuntimeError("another heavy job is already running")
+            if job_type != JobType.SYNC_FRONTEND:
+                self._running = True
 
         job_id = uuid.uuid4().hex[:12]
         job = Job(id=job_id, job_type=job_type, prover=prover)
@@ -81,11 +84,29 @@ class JobManager:
         asyncio.create_task(self._run_job(job))
         return job
 
-    async def _run_job(self, job: Job) -> None:
+    async def cancel_active(self) -> dict:
+        """Mark queued/running jobs failed and release the operator lock."""
+        cancelled: list[str] = []
         async with self._lock:
-            if job.job_type != JobType.SYNC_FRONTEND:
-                self._running = True
+            for job_id in self._order:
+                job = self._jobs.get(job_id)
+                if job is None:
+                    continue
+                if job.status not in (JobStatus.QUEUED, JobStatus.RUNNING):
+                    continue
+                if job.process is not None and job.process.returncode is None:
+                    job.process.kill()
+                job.status = JobStatus.FAILED
+                job.error = "cancelled by operator reset"
+                job.finished_at = time.time()
+                job.exit_code = job.exit_code if job.exit_code is not None else -1
+                cancelled.append(job_id)
+                await self._publish(job.id, "[operator] job cancelled — queue reset")
+                await self._publish(job.id, None)
+            self._running = False
+        return {"cancelled": cancelled, "count": len(cancelled)}
 
+    async def _run_job(self, job: Job) -> None:
         job.status = JobStatus.RUNNING
         job.started_at = time.time()
         await self._publish(job.id, f"[operator] starting {job.job_type.value} ({job.prover})")
@@ -111,6 +132,7 @@ class JobManager:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
             )
+            job.process = process
 
             assert process.stdout is not None
             while True:

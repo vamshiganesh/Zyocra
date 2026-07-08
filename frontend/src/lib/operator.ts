@@ -84,6 +84,10 @@ export async function fetchChainStatus() {
   return api<Record<string, unknown>>("/api/chain/status");
 }
 
+export async function resetOperatorJobs(): Promise<{ cancelled: string[]; count: number }> {
+  return api("/api/jobs/reset", { method: "POST" });
+}
+
 export async function fetchArtifactsSummary() {
   return api<Record<string, unknown>>("/api/artifacts/summary");
 }

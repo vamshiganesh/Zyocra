@@ -19,6 +19,12 @@ class CreateJobRequest(BaseModel):
     model_config = {"populate_by_name": True}
 
 
+@router.post("/reset")
+async def reset_jobs():
+    """Cancel stuck queued/running jobs and release the single-job lock."""
+    return await job_manager.cancel_active()
+
+
 @router.post("")
 async def create_job(body: CreateJobRequest):
     try:

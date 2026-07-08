@@ -51,6 +51,7 @@ export function OperatorPanel() {
     setProver,
     runJob,
     selectJob,
+    resetQueue,
     busy,
     activeJobId,
     lastStatus,
@@ -62,6 +63,7 @@ export function OperatorPanel() {
   }, initialProver);
 
   const logRef = useRef<HTMLPreElement>(null);
+  const autoRunRef = useRef(false);
   const [operatorRpc, setOperatorRpc] = useState<string | null>(null);
   const [operatorChain, setOperatorChain] = useState<string | null>(null);
   const walletChainId = useChainId();
@@ -75,7 +77,8 @@ export function OperatorPanel() {
   useEffect(() => {
     void fetchChainStatus()
       .then((status) => {
-        setOperatorRpc(String(status.rpcUrl ?? ""));
+        const label = status.rpcLabel ?? status.rpcUrl;
+        setOperatorRpc(label ? String(label) : null);
         setOperatorChain(String(status.chain ?? ""));
       })
       .catch(() => {
@@ -92,7 +95,14 @@ export function OperatorPanel() {
     const urlProver = parseProver(params.get("prover"));
     if (urlProver) setProver(urlProver);
 
-    if (params.get("run") === "epoch" && !busy) {
+    const shouldAutoRun = params.get("run") === "epoch";
+    if (!shouldAutoRun) {
+      autoRunRef.current = false;
+      return;
+    }
+
+    if (!busy && !autoRunRef.current) {
+      autoRunRef.current = true;
       void runJob("run_full_epoch");
       navigate("/operator", { replace: true });
     }
@@ -177,11 +187,16 @@ export function OperatorPanel() {
         <ClippedButton type="button" variant="ghost" size="md" onClick={() => void refreshChain()}>
           Chain status
         </ClippedButton>
+        {busy ? (
+          <ClippedButton type="button" variant="ghost" size="md" onClick={() => void resetQueue()}>
+            Clear stuck jobs
+          </ClippedButton>
+        ) : null}
       </div>
 
       {operatorRpc ? (
         <div className="operator-panel__chain mono-label">
-          Operator RPC: {operatorRpc}
+          Operator target: {operatorRpc}
           {operatorChain ? ` · ${operatorChain}` : ""}
           {walletOnSepolia && operatorOnAnvil
             ? " · wallet is Sepolia; deploy jobs broadcast to local Anvil"

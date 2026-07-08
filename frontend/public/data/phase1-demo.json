@@ -4,10 +4,10 @@
     "populated": true
   },
   "commitments": {
-    "adapterHash": "0x5c840159cf800e89cc2fc5ff33164ec8aee75b5a20c7e15cbdc612c31d47993c",
-    "adapterHashShort": "0x5c8401\u202647993c",
-    "modelHash": "0x2fe8f38e2a8992e0546762c67f073e737f12419ac3f13004598e08c7d978f627",
-    "modelHashShort": "0x2fe8f3\u202678f627"
+    "adapterHash": "0xea8aa91a74b29bf40ddd1e1fab2dd51c8bc0a8f9bd305bf9e2298cc2ca12ebf4",
+    "adapterHashShort": "0xea8aa9\u202612ebf4",
+    "modelHash": "0x1c9709565efc3c0b11fc1f529b94049b70f0ae671550808446564f8360c2160c",
+    "modelHashShort": "0x1c9709\u2026c2160c"
   },
   "consumer": {
     "borrowAllowed": true,
@@ -34,40 +34,35 @@
       "wallet_age_days"
     ],
     "sampleIndex": 0,
-    "values": [
-      0.26375776529312134,
-      0.09584087133407593,
-      0.503912091255188,
-      0.5070705413818359,
-      0.47515666484832764,
-      0.8217794299125671
-    ]
+    "values": []
   },
   "hasArtifacts": true,
   "hasOnChain": true,
   "proof": {
-    "artifactPath": "circuits-baseline/proofs/proof.json",
+    "artifactPath": "circuits-custom/proofs/proof.json",
     "ezklVersion": "23.0.5",
-    "hashPrefix": "0x2f326501\u20264e6b15c5",
-    "lengthBytes": 3648,
-    "offChainVerify": true,
-    "prover": "ezkl",
-    "status": "verified"
+    "hashPrefix": "\u2014",
+    "lengthBytes": 0,
+    "offChainVerify": false,
+    "prover": "circom",
+    "status": "pending"
   },
   "score": {
-    "bps": 1797,
+    "bps": 5002,
     "bucket": "LOW",
     "bucketRange": "0.00 \u2013 0.55",
-    "float": 0.1796875
+    "float": 0.5002,
+    "logitAcc": 29,
+    "publicInputCount": 10
   },
-  "syncedAt": "2026-07-07T19:15:02Z",
+  "syncedAt": "2026-07-07T20:10:09Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-    "halo2Verifier": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+    "consumer": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+    "halo2Verifier": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
     "onChain": true,
-    "oracle": "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
-    "result": "pass",
-    "verifierAdapter": "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE"
+    "oracle": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+    "result": "pending",
+    "verifierAdapter": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
   }
 }

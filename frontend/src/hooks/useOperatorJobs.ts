@@ -3,6 +3,7 @@ import {
   createJob,
   getJob,
   listJobs,
+  resetOperatorJobs,
   streamJobLogs,
   type JobStatus,
   type JobType,
@@ -18,6 +19,7 @@ type OperatorJobsState = {
   setProver: (prover: ProverKind) => void;
   runJob: (type: JobType) => Promise<void>;
   selectJob: (id: string) => Promise<void>;
+  resetQueue: () => Promise<void>;
   refreshJobs: () => Promise<OperatorJob[]>;
   busy: boolean;
   lastStatus: JobStatus | null;
@@ -143,6 +145,21 @@ export function useOperatorJobs(
     [prover, attachStream, detachStream],
   );
 
+  const resetQueue = useCallback(async () => {
+    setJobError(null);
+    try {
+      await resetOperatorJobs();
+      detachStream();
+      setActiveJobId(null);
+      setLogs(["[operator] queue reset — stale jobs cancelled"]);
+      setLastStatus(null);
+      await refreshJobs();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setJobError(message);
+    }
+  }, [detachStream, refreshJobs]);
+
   const busy = useMemo(
     () => jobs.some((job) => job.status === "queued" || job.status === "running"),
     [jobs],
@@ -156,6 +173,7 @@ export function useOperatorJobs(
     setProver,
     runJob,
     selectJob,
+    resetQueue,
     refreshJobs,
     busy,
     lastStatus,

@@ -9,6 +9,7 @@ from typing import Any
 from web3 import Web3
 
 from ..config import settings
+from ..util.rpc import redact_rpc_url, rpc_display_label
 
 DEMO_BORROWER = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
 
@@ -109,7 +110,8 @@ def artifacts_summary() -> dict[str, Any]:
 
     return {
         "chain": settings.deploy_chain,
-        "rpcUrl": settings.rpc_url,
+        "rpcUrl": redact_rpc_url(settings.rpc_url),
+        "rpcLabel": rpc_display_label(settings.rpc_url, settings.deploy_chain),
         "hasDeployment": bool(deploy.get("oracle")),
         "addresses": {
             "oracle": deploy.get("oracle"),
@@ -138,7 +140,11 @@ def chain_status() -> dict[str, Any]:
     try:
         w3 = Web3(Web3.HTTPProvider(settings.rpc_url, request_kwargs={"timeout": 10}))
         if not w3.is_connected():
-            return {**summary, "live": None, "error": f"cannot connect to {settings.rpc_url}"}
+            return {
+                **summary,
+                "live": None,
+                "error": f"cannot connect to {summary['rpcUrl']}",
+            }
 
         oracle = w3.eth.contract(address=Web3.to_checksum_address(oracle_addr), abi=ORACLE_ABI)
         live: dict[str, Any] = {
