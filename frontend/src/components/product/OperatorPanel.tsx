@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { OperatorJob, OperatorChainStatus } from "../../lib/operator";
-import { fetchChainStatus, formatOperatorChainStatus } from "../../lib/operator";
+import { fetchChainStatus } from "../../lib/operator";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAccount, useChainId } from "wagmi";
 import { useOperatorJobs } from "../../hooks/useOperatorJobs";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
 import { useBenchmarkData } from "../../hooks/useBenchmarkData";
 import { useChainStatus } from "../../hooks/useChainStatus";
-import { chainReadsEnabled, readLiveChainStatus } from "../../lib/chain";
+import { chainReadsEnabled, envConsumerAddress, envOracleAddress } from "../../lib/chain";
 import type { ProverKind } from "../../types/phase1";
 import { ClippedButton } from "../ui/ClippedButton";
+import { ClippedCard } from "../ui/ClippedCard";
 import { SectionHeader } from "../ui/SectionHeader";
 import "./OperatorPanel.css";
 
@@ -34,7 +35,7 @@ export function OperatorPanel() {
   const { reload: reloadBench } = useBenchmarkData();
   const jsonOracle = view?.raw.verification.oracle;
   const jsonConsumer = view?.raw.verification.consumer;
-  const { live, error: walletChainError, loading: walletChainLoading, enabled, refresh: refreshChain } = useChainStatus({
+  const { live, error: walletChainError, loading: walletChainLoading, refresh: refreshChain } = useChainStatus({
     oracle: jsonOracle,
     consumer: jsonConsumer,
   });
@@ -68,9 +69,9 @@ export function OperatorPanel() {
   const [operatorRpc, setOperatorRpc] = useState<string | null>(null);
   const [operatorChain, setOperatorChain] = useState<string | null>(null);
   const [operatorLive, setOperatorLive] = useState<OperatorChainStatus | null>(null);
-  const [chainInspectLog, setChainInspectLog] = useState<string[]>([]);
   const [chainLoading, setChainLoading] = useState(false);
   const [chainFetchError, setChainFetchError] = useState<string | null>(null);
+  const [chainRefreshedAt, setChainRefreshedAt] = useState<number | null>(null);
   const walletChainId = useChainId();
   const { isConnected } = useAccount();
   const deployJson = prover === "circom" ? "anvil-circom-oracle-latest.json" : "anvil-ezkl-latest.json";
@@ -99,39 +100,17 @@ export function OperatorPanel() {
   const handleChainStatus = async () => {
     setChainLoading(true);
     setChainFetchError(null);
-    const lines: string[] = ["[chain] refreshing operator + wallet RPC reads…"];
 
     try {
-      const status = await loadOperatorChainStatus();
-      lines.push(...formatOperatorChainStatus(status));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      lines.push(`[chain] operator API error: ${message}`);
-      setChainFetchError(message);
-    }
-
-    try {
+      await loadOperatorChainStatus();
       await refreshChain();
-      const walletEnabled = chainReadsEnabled({ oracle: jsonOracle, consumer: jsonConsumer });
-      if (walletEnabled) {
-        const walletLive = await readLiveChainStatus({ oracle: jsonOracle, consumer: jsonConsumer });
-        if (walletLive) {
-          lines.push(
-            `[chain] wallet RPC (Sepolia) · epoch ${walletLive.latestEpoch}` +
-              `${walletLive.scoreBps != null ? ` · score ${walletLive.scoreBps} bps` : ""}` +
-              `${walletLive.collateralFactorBps != null ? ` · collateral ${walletLive.collateralFactorBps} bps` : ""}`,
-          );
-        }
-      } else {
-        lines.push("[chain] wallet RPC · set VITE_RPC_URL + VITE_ORACLE_ADDRESS for live reads");
-      }
+      setChainRefreshedAt(Date.now());
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      lines.push(`[chain] wallet RPC error: ${message}`);
+      setChainFetchError(message);
+    } finally {
+      setChainLoading(false);
     }
-
-    setChainInspectLog(lines);
-    setChainLoading(false);
   };
 
   const operatorEpoch =
@@ -144,6 +123,13 @@ export function OperatorPanel() {
 
   const walletOnSepolia = isConnected && walletChainId === 11_155_111;
   const operatorOnAnvil = operatorChain === "anvil" || operatorRpc?.includes("127.0.0.1") === true;
+  const sepoliaEpoch = live?.latestEpoch ?? 0;
+  const sepoliaHasScores = sepoliaEpoch > 0;
+  const operatorOracle = operatorLive?.addresses?.oracle;
+  const operatorConsumer = operatorLive?.addresses?.consumer;
+  const sepoliaOracle = envOracleAddress ?? jsonOracle;
+  const sepoliaConsumer = envConsumerAddress ?? jsonConsumer;
+  const chainReadsOk = chainReadsEnabled({ oracle: jsonOracle, consumer: jsonConsumer });
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -255,59 +241,80 @@ export function OperatorPanel() {
         ) : null}
       </div>
 
-      {operatorRpc ? (
-        <div className="operator-panel__chain mono-label">
-          Operator target: {operatorRpc}
-          {operatorChain ? ` · ${operatorChain}` : ""}
-          {walletOnSepolia && operatorOnAnvil
-            ? " · wallet is Sepolia; deploy jobs broadcast to local Anvil"
-            : ""}
-        </div>
-      ) : null}
-
       {jobError ? (
         <p className="operator-panel__note operator-panel__note--error">{jobError}</p>
       ) : null}
 
-      {chainFetchError ? (
-        <p className="operator-panel__note operator-panel__note--error">{chainFetchError}</p>
-      ) : null}
+      <ClippedCard className="operator-panel__chain-card" tone="surface">
+        <div className="operator-panel__chain-summary">
+          <div className="operator-panel__chain-head mono-label">
+            Chain status
+            {chainRefreshedAt
+              ? ` · updated ${new Date(chainRefreshedAt).toLocaleTimeString()}`
+              : ""}
+            {chainLoading || walletChainLoading ? " · refreshing…" : ""}
+          </div>
 
-      {walletChainError ? (
-        <p className="operator-panel__note operator-panel__note--error">
-          Wallet RPC: {walletChainError}
-        </p>
-      ) : null}
+          {operatorRpc ? (
+            <p className="operator-panel__chain mono-label">
+              Operator (Anvil demo)
+              {operatorEpoch > 0
+                ? ` · epoch ${operatorEpoch}${operatorScoreBps != null ? ` · score ${operatorScoreBps} bps` : ""}${
+                    operatorCollateral != null ? ` · collateral ${operatorCollateral} bps` : ""
+                  }`
+                : " · no verified epochs — run full epoch"}
+              {operatorRpc ? ` · ${operatorRpc}` : ""}
+            </p>
+          ) : null}
 
-      {operatorLive ? (
-        <div className="operator-panel__chain mono-label">
-          Operator live
-          {operatorEpoch > 0
-            ? ` · epoch ${operatorEpoch}${operatorScoreBps != null ? ` · score ${operatorScoreBps} bps` : ""}${
-                operatorCollateral != null ? ` · collateral ${operatorCollateral} bps` : ""
-              }`
-            : " · no verified epochs on operator RPC"}
+          {operatorOracle || operatorConsumer ? (
+            <p className="operator-panel__chain mono-label operator-panel__chain--muted">
+              Anvil contracts
+              {operatorOracle ? ` · oracle ${operatorOracle}` : ""}
+              {operatorConsumer ? ` · consumer ${operatorConsumer}` : ""}
+            </p>
+          ) : null}
+
+          {chainReadsOk && live ? (
+            <p className="operator-panel__chain mono-label">
+              Sepolia (deployed testnet)
+              {sepoliaHasScores
+                ? ` · epoch ${sepoliaEpoch}${live.scoreBps != null ? ` · score ${live.scoreBps} bps` : ""}${
+                    live.collateralFactorBps != null ? ` · collateral ${live.collateralFactorBps} bps` : ""
+                  }`
+                : " · epoch 0 · contracts live, no score submitted yet (Operator jobs use Anvil)"}
+            </p>
+          ) : (
+            <p className="operator-panel__chain mono-label">
+              Sepolia: set VITE_RPC_URL + VITE_ORACLE_ADDRESS for testnet reads.
+            </p>
+          )}
+
+          {sepoliaOracle || sepoliaConsumer ? (
+            <p className="operator-panel__chain mono-label operator-panel__chain--muted">
+              Sepolia contracts
+              {sepoliaOracle ? ` · oracle ${sepoliaOracle}` : ""}
+              {sepoliaConsumer ? ` · consumer ${sepoliaConsumer}` : ""}
+            </p>
+          ) : null}
+
+          {walletOnSepolia && operatorOnAnvil ? (
+            <p className="operator-panel__chain mono-label operator-panel__chain--muted">
+              Wallet on Sepolia — reads testnet contracts; deploy/submit jobs broadcast to local Anvil.
+            </p>
+          ) : null}
+
+          {chainFetchError ? (
+            <p className="operator-panel__note operator-panel__note--error">{chainFetchError}</p>
+          ) : null}
+
+          {walletChainError ? (
+            <p className="operator-panel__note operator-panel__note--error">
+              Wallet RPC: {walletChainError}
+            </p>
+          ) : null}
         </div>
-      ) : null}
-
-      {enabled && live ? (
-        <div className="operator-panel__chain mono-label">
-          Wallet RPC (Sepolia) · epoch {live.latestEpoch}
-          {live.scoreBps !== undefined ? ` · score ${live.scoreBps} bps` : ""}
-          {live.collateralFactorBps !== undefined
-            ? ` · collateral ${live.collateralFactorBps} bps`
-            : ""}
-        </div>
-      ) : (
-        <div className="operator-panel__chain mono-label">
-          Wallet RPC: set VITE_RPC_URL + VITE_ORACLE_ADDRESS for Sepolia reads.
-          {jsonOracle ? ` JSON oracle ${jsonOracle.slice(0, 10)}…` : ""}
-        </div>
-      )}
-
-      {chainInspectLog.length > 0 ? (
-        <pre className="operator-panel__chain-log mono-label">{chainInspectLog.join("\n")}</pre>
-      ) : null}
+      </ClippedCard>
 
       <div className="operator-panel__queue">
         <h3 className="operator-panel__queue-title">Job queue</h3>
@@ -339,15 +346,17 @@ export function OperatorPanel() {
       </div>
 
       <div className="operator-panel__terminal-wrap">
-        <div className="operator-panel__terminal-head mono-label">
-          Logs {lastStatus ? `· ${lastStatus}` : busy ? "· running" : ""}
-          {!busy ? ` · ${deployJson}` : ""}
-        </div>
-        <pre ref={logRef} className="operator-panel__terminal" aria-live="polite">
-          {logs.length === 0
-            ? "Start a job to stream operator output…"
-            : logs.join("\n")}
-        </pre>
+        <ClippedCard tone="dark" padded={false} brackets={false}>
+          <div className="operator-panel__terminal-head mono-label">
+            Logs {lastStatus ? `· ${lastStatus}` : busy ? "· running" : ""}
+            {!busy ? ` · ${deployJson}` : ""}
+          </div>
+          <pre ref={logRef} className="operator-panel__terminal" aria-live="polite">
+            {logs.length === 0
+              ? "Start a job to stream operator output…"
+              : logs.join("\n")}
+          </pre>
+        </ClippedCard>
       </div>
     </div>
   );
