@@ -88,7 +88,8 @@ contract SubmitAndApply is Script {
     objectKey.serialize("borrowSpreadBps", policy.borrowSpreadBps);
     objectKey.serialize("borrowAllowed", policy.borrowAllowed);
     string memory json = objectKey.serialize("mitigationFlag", policy.mitigationFlag);
-    json.write("deployments/phase1-loop-latest.json");
+    string memory outfile = vm.envOr("RESULT_OUTFILE", string("deployments/phase1-loop-latest.json"));
+    json.write(outfile);
   }
 
   function _proofJsonPath() internal view returns (string memory) {

@@ -281,8 +281,8 @@ export function OperatorPanel() {
               {sepoliaHasScores
                 ? ` · epoch ${sepoliaEpoch}${live.scoreBps != null ? ` · score ${live.scoreBps} bps` : ""}${
                     live.collateralFactorBps != null ? ` · collateral ${live.collateralFactorBps} bps` : ""
-                  }`
-                : " · epoch 0 · contracts live, no score submitted yet (Operator jobs use Anvil)"}
+                  } · live testnet score (Operator demos still use Anvil)`
+                : " · epoch 0 · contracts live, no score submitted yet — run bash scripts/submit_testnet.sh"}
             </p>
           ) : (
             <p className="operator-panel__chain mono-label">
@@ -300,7 +300,7 @@ export function OperatorPanel() {
 
           {walletOnSepolia && operatorOnAnvil ? (
             <p className="operator-panel__chain mono-label operator-panel__chain--muted">
-              Wallet on Sepolia — reads testnet contracts; deploy/submit jobs broadcast to local Anvil.
+              Wallet on Sepolia — reads live testnet epoch/score; Operator deploy/submit still broadcast to local Anvil.
             </p>
           ) : null}
 
