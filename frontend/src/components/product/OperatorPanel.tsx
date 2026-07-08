@@ -3,9 +3,9 @@ import type {
   OperatorChainMode,
   OperatorJob,
   OperatorChainStatus,
-  WalletSubmitPayload,
 } from "../../lib/operator";
 import {
+  authorizeWallet,
   fetchChainMode,
   fetchChainStatus,
   fetchSubmitPayload,
@@ -18,7 +18,6 @@ import {
   usePublicClient,
   useSwitchChain,
   useWriteContract,
-  useWaitForTransactionReceipt,
 } from "wagmi";
 import { useOperatorJobs } from "../../hooks/useOperatorJobs";
 import { usePhase1Data } from "../../hooks/usePhase1Data";
@@ -46,9 +45,45 @@ const JOB_LABELS: Record<string, string> = {
   prove_circom_head: "Prove Circom head",
 };
 
+const WALLET_TX_LOG_KEY = "zyocra.operator.walletTxLog";
+const ETHERSCAN_TX = "https://sepolia.etherscan.io/tx/";
+
+type WalletTxEntry = {
+  id: string;
+  at: number;
+  step: string;
+  hash: `0x${string}`;
+  prover: ProverKind;
+  oracle?: string;
+  consumer?: string;
+  epoch?: number;
+  scoreBps?: number;
+  status: "pending" | "confirmed" | "failed";
+  error?: string;
+};
+
 function parseProver(value: string | null): ProverKind | null {
   if (value === "circom" || value === "ezkl") return value;
   return null;
+}
+
+function loadWalletTxLog(): WalletTxEntry[] {
+  try {
+    const raw = localStorage.getItem(WALLET_TX_LOG_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as WalletTxEntry[];
+    return Array.isArray(parsed) ? parsed.slice(0, 40) : [];
+  } catch {
+    return [];
+  }
+}
+
+function persistWalletTxLog(entries: WalletTxEntry[]) {
+  localStorage.setItem(WALLET_TX_LOG_KEY, JSON.stringify(entries.slice(0, 40)));
+}
+
+function shortHash(hash: string): string {
+  return `${hash.slice(0, 10)}…${hash.slice(-6)}`;
 }
 
 export function OperatorPanel() {
@@ -99,17 +134,42 @@ export function OperatorPanel() {
   const [chainRefreshedAt, setChainRefreshedAt] = useState<number | null>(null);
   const [walletNote, setWalletNote] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
-  const [pendingApply, setPendingApply] = useState<WalletSubmitPayload | null>(null);
-  const [submitHash, setSubmitHash] = useState<`0x${string}` | undefined>();
-  const [applyHash, setApplyHash] = useState<`0x${string}` | undefined>();
+  const [walletBusy, setWalletBusy] = useState(false);
+  const [walletTxLog, setWalletTxLog] = useState<WalletTxEntry[]>(() => loadWalletTxLog());
+  const walletFlowId = useRef(0);
 
   const walletChainId = useChainId();
   const { address, isConnected } = useAccount();
   const { switchChainAsync } = useSwitchChain();
   const publicClient = usePublicClient();
-  const { writeContractAsync, isPending: writePending } = useWriteContract();
-  const submitReceipt = useWaitForTransactionReceipt({ hash: submitHash });
-  const applyReceipt = useWaitForTransactionReceipt({ hash: applyHash });
+  const { writeContractAsync } = useWriteContract();
+
+  const pushWalletTx = useCallback((entry: Omit<WalletTxEntry, "id" | "at">) => {
+    const full: WalletTxEntry = {
+      ...entry,
+      id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      at: Date.now(),
+    };
+    setWalletTxLog((prev) => {
+      const next = [full, ...prev].slice(0, 40);
+      persistWalletTxLog(next);
+      return next;
+    });
+    return full.id;
+  }, []);
+
+  const patchWalletTx = useCallback((id: string, patch: Partial<WalletTxEntry>) => {
+    setWalletTxLog((prev) => {
+      const next = prev.map((e) => (e.id === id ? { ...e, ...patch } : e));
+      persistWalletTxLog(next);
+      return next;
+    });
+  }, []);
+
+  const clearWalletTxLog = () => {
+    setWalletTxLog([]);
+    localStorage.removeItem(WALLET_TX_LOG_KEY);
+  };
 
   const deployJson =
     operatorChain === "sepolia"
@@ -176,9 +236,6 @@ export function OperatorPanel() {
   const handleWalletSubmitApply = async () => {
     setWalletError(null);
     setWalletNote(null);
-    setSubmitHash(undefined);
-    setApplyHash(undefined);
-    setPendingApply(null);
 
     if (!isConnected || !address) {
       setWalletError("Connect a wallet first (top nav).");
@@ -188,17 +245,21 @@ export function OperatorPanel() {
       setWalletError("Switch Operator to Sepolia before wallet submit.");
       return;
     }
+    if (!publicClient) {
+      setWalletError("Public client unavailable — check VITE_RPC_URL.");
+      return;
+    }
 
+    setWalletBusy(true);
+    const flowId = ++walletFlowId.current;
     try {
       if (walletChainId !== 11_155_111) {
         await switchChainAsync({ chainId: 11_155_111 });
       }
+      if (flowId !== walletFlowId.current) return;
 
       const ready = await fetchSubmitPayload(prover);
-      if (!publicClient) {
-        setWalletError("Public client unavailable — check VITE_RPC_URL.");
-        return;
-      }
+      if (flowId !== walletFlowId.current) return;
 
       const authorized = await publicClient.readContract({
         address: ready.oracle as `0x${string}`,
@@ -207,16 +268,30 @@ export function OperatorPanel() {
         args: [address],
       });
       if (!authorized) {
-        setWalletError(
-          `Wallet ${address.slice(0, 6)}…${address.slice(-4)} is not authorizedProver on this oracle. Use the deployer wallet or call setAuthorizedProver.`,
+        setWalletNote(
+          `Wallet ${address.slice(0, 6)}…${address.slice(-4)} not yet authorized — granting prover+applicator via deployer…`,
         );
-        return;
+        const grant = await authorizeWallet(address, prover);
+        if (flowId !== walletFlowId.current) return;
+        for (const hash of grant.txHashes) {
+          pushWalletTx({
+            step: "setAuthorizedProver/Applicator",
+            hash: hash.startsWith("0x") ? (hash as `0x${string}`) : (`0x${hash}` as `0x${string}`),
+            prover,
+            oracle: grant.oracle,
+            consumer: grant.consumer,
+            status: "confirmed",
+          });
+        }
+        if (!grant.alreadyAuthorized && grant.txHashes.length > 0) {
+          setWalletNote(
+            `Authorized ${address.slice(0, 6)}… · ${grant.txHashes.length} tx(s) — submitting epoch…`,
+          );
+        }
       }
 
-      setWalletNote(`Submitting epoch ${ready.payload.epoch} (${prover})… confirm in wallet`);
-      setPendingApply(ready);
-
-      const hash = await writeContractAsync({
+      setWalletNote(`Submitting epoch ${ready.payload.epoch} (${prover})… confirm in MetaMask`);
+      const submitHash = await writeContractAsync({
         address: ready.oracle as `0x${string}`,
         abi: riskOracleAbi,
         functionName: "submitScore",
@@ -233,47 +308,78 @@ export function OperatorPanel() {
         ],
         chainId: 11_155_111,
       });
-      setSubmitHash(hash);
-      setWalletNote(`submitScore broadcast ${hash.slice(0, 10)}… — waiting for receipt`);
+      if (flowId !== walletFlowId.current) return;
+      const submitLogId = pushWalletTx({
+        step: "submitScore",
+        hash: submitHash,
+        prover,
+        oracle: ready.oracle,
+        consumer: ready.consumer,
+        epoch: ready.payload.epoch,
+        scoreBps: ready.payload.scoreBps,
+        status: "pending",
+      });
+      setWalletNote(`submitScore ${shortHash(submitHash)} — waiting for receipt…`);
+
+      const submitReceipt = await publicClient.waitForTransactionReceipt({
+        hash: submitHash,
+        confirmations: 1,
+        timeout: 180_000,
+      });
+      if (flowId !== walletFlowId.current) return;
+      if (submitReceipt.status !== "success") {
+        patchWalletTx(submitLogId, { status: "failed", error: "reverted on-chain" });
+        throw new Error(`submitScore reverted (${shortHash(submitHash)})`);
+      }
+      patchWalletTx(submitLogId, { status: "confirmed" });
+
+      setWalletNote("submitScore confirmed — applying consumer policy… confirm in MetaMask");
+      const applyHash = await writeContractAsync({
+        address: ready.consumer as `0x${string}`,
+        abi: riskConsumerAbi,
+        functionName: "applyVerifiedScore",
+        args: [ready.apply.borrower, BigInt(ready.apply.epoch)],
+        chainId: 11_155_111,
+      });
+      if (flowId !== walletFlowId.current) return;
+      const applyLogId = pushWalletTx({
+        step: "applyVerifiedScore",
+        hash: applyHash,
+        prover,
+        oracle: ready.oracle,
+        consumer: ready.consumer,
+        epoch: ready.apply.epoch,
+        scoreBps: ready.payload.scoreBps,
+        status: "pending",
+      });
+      setWalletNote(`applyVerifiedScore ${shortHash(applyHash)} — waiting for receipt…`);
+
+      const applyReceipt = await publicClient.waitForTransactionReceipt({
+        hash: applyHash,
+        confirmations: 1,
+        timeout: 180_000,
+      });
+      if (flowId !== walletFlowId.current) return;
+      if (applyReceipt.status !== "success") {
+        patchWalletTx(applyLogId, { status: "failed", error: "reverted on-chain" });
+        throw new Error(`applyVerifiedScore reverted (${shortHash(applyHash)})`);
+      }
+      patchWalletTx(applyLogId, { status: "confirmed" });
+
+      setWalletNote(
+        `Done · submit ${shortHash(submitHash)} · apply ${shortHash(applyHash)} — see On-chain tx log`,
+      );
+      await refreshChain();
+      await loadOperatorChainStatus();
+      setChainRefreshedAt(Date.now());
     } catch (err) {
+      if (flowId !== walletFlowId.current) return;
       const message = err instanceof Error ? err.message : String(err);
       setWalletError(message);
-      setPendingApply(null);
+    } finally {
+      if (flowId === walletFlowId.current) setWalletBusy(false);
     }
   };
-
-  useEffect(() => {
-    if (!submitReceipt.isSuccess || !pendingApply || applyHash) return;
-
-    void (async () => {
-      try {
-        setWalletNote("submitScore confirmed — applying consumer policy…");
-        const hash = await writeContractAsync({
-          address: pendingApply.consumer as `0x${string}`,
-          abi: riskConsumerAbi,
-          functionName: "applyVerifiedScore",
-          args: [pendingApply.apply.borrower, BigInt(pendingApply.apply.epoch)],
-          chainId: 11_155_111,
-        });
-        setApplyHash(hash);
-        setWalletNote(`applyVerifiedScore broadcast ${hash.slice(0, 10)}…`);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        setWalletError(message);
-      }
-    })();
-  }, [submitReceipt.isSuccess, pendingApply, applyHash, writeContractAsync]);
-
-  useEffect(() => {
-    if (!applyReceipt.isSuccess || !applyHash) return;
-    setWalletNote(
-      `Done. submit ${submitHash?.slice(0, 10)}… · apply ${applyHash.slice(0, 10)}… — wallet must be authorizedProver and authorizedApplicator`,
-    );
-    setPendingApply(null);
-    void refreshChain();
-    void loadOperatorChainStatus();
-  }, [applyReceipt.isSuccess, applyHash, submitHash, refreshChain, loadOperatorChainStatus]);
-
   const operatorEpoch =
     operatorLive?.live?.latestEpoch ?? operatorLive?.loop?.epoch ?? 0;
   const operatorScoreBps =
@@ -292,7 +398,6 @@ export function OperatorPanel() {
   const sepoliaOracle = envOracleAddress ?? jsonOracle;
   const sepoliaConsumer = envConsumerAddress ?? jsonConsumer;
   const chainReadsOk = chainReadsEnabled({ oracle: jsonOracle, consumer: jsonConsumer });
-  const walletTxBusy = writePending || Boolean(submitHash && !submitReceipt.isSuccess) || Boolean(applyHash && !applyReceipt.isSuccess);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -370,8 +475,8 @@ export function OperatorPanel() {
         {" · "}
         {deployScript} / {submitScript}
         {operatorOnSepolia
-          ? " · Sepolia: full epoch disabled — use Deploy only + Submit & apply, or shell scripts. Wallet can also sign submit/apply."
-          : ""}
+          ? " · Sepolia: full epoch disabled — use Deploy only + Submit & apply, or shell scripts. Wallet submit auto-grants ACL to your MetaMask via the deployer key."
+          : " · Anvil: Operator forge jobs hit local Anvil (auto-starts if needed). Wallet submit is Sepolia-only."}
       </p>
 
       <div className="operator-panel__actions">
@@ -424,7 +529,7 @@ export function OperatorPanel() {
           type="button"
           variant="accent"
           size="md"
-          disabled={walletTxBusy || !operatorOnSepolia}
+          disabled={walletBusy || !operatorOnSepolia}
           onClick={() => void handleWalletSubmitApply()}
           title={
             operatorOnSepolia
@@ -432,8 +537,22 @@ export function OperatorPanel() {
               : "Switch Operator to Sepolia first"
           }
         >
-          {walletTxBusy ? "Wallet tx…" : "Wallet submit (Sepolia)"}
+          {walletBusy ? "Wallet tx…" : "Wallet submit (Sepolia)"}
         </ClippedButton>
+        {walletBusy ? (
+          <ClippedButton
+            type="button"
+            variant="ghost"
+            size="md"
+            onClick={() => {
+              walletFlowId.current += 1;
+              setWalletBusy(false);
+              setWalletNote("Wallet flow cancelled — you can try again (check MetaMask pending txs).");
+            }}
+          >
+            Cancel wallet wait
+          </ClippedButton>
+        ) : null}
         {busy ? (
           <ClippedButton type="button" variant="ghost" size="md" onClick={() => void resetQueue()}>
             Clear stuck jobs
@@ -448,6 +567,47 @@ export function OperatorPanel() {
         <p className="operator-panel__note operator-panel__note--error">{walletError}</p>
       ) : null}
       {walletNote ? <p className="operator-panel__note">{walletNote}</p> : null}
+
+      {walletTxLog.length > 0 ? (
+        <ClippedCard className="operator-panel__tx-card" tone="surface">
+          <div className="operator-panel__chain-summary">
+            <div className="operator-panel__chain-head mono-label">
+              On-chain wallet tx log
+              <button
+                type="button"
+                className="operator-panel__tx-clear"
+                onClick={clearWalletTxLog}
+              >
+                Clear
+              </button>
+            </div>
+            <ul className="operator-panel__tx-list">
+              {walletTxLog.map((tx) => (
+                <li key={tx.id} className="operator-panel__tx-row mono-label">
+                  <span className={`operator-panel__tx-status operator-panel__tx-status--${tx.status}`}>
+                    {tx.status}
+                  </span>
+                  <span className="operator-panel__tx-step">{tx.step}</span>
+                  <span className="operator-panel__tx-meta">
+                    {tx.prover}
+                    {tx.epoch != null ? ` · epoch ${tx.epoch}` : ""}
+                    {tx.scoreBps != null ? ` · ${tx.scoreBps} bps` : ""}
+                    {` · ${new Date(tx.at).toLocaleTimeString()}`}
+                  </span>
+                  <a
+                    className="operator-panel__tx-link"
+                    href={`${ETHERSCAN_TX}${tx.hash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {shortHash(tx.hash)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </ClippedCard>
+      ) : null}
 
       <ClippedCard className="operator-panel__chain-card" tone="surface">
         <div className="operator-panel__chain-summary">

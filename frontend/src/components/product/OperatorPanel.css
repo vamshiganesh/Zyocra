@@ -90,6 +90,89 @@
   color: #b42318;
 }
 
+.operator-panel__tx-card .clip-card__panel--padded .clip-card__panel-fill {
+  padding: var(--space-5) var(--space-6);
+}
+
+.operator-panel__tx-clear {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-muted);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.operator-panel__chain-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.operator-panel__tx-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.operator-panel__tx-row {
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 1fr) minmax(10rem, 1.4fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  font-size: var(--text-xs);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.operator-panel__tx-row:last-child {
+  border-bottom: 0;
+}
+
+.operator-panel__tx-status {
+  text-transform: uppercase;
+}
+
+.operator-panel__tx-status--pending {
+  color: var(--color-accent);
+}
+
+.operator-panel__tx-status--confirmed {
+  color: #3d8b5f;
+}
+
+.operator-panel__tx-status--failed {
+  color: #b44a4a;
+}
+
+.operator-panel__tx-meta {
+  color: var(--color-ink-muted);
+}
+
+.operator-panel__tx-link {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 800px) {
+  .operator-panel__tx-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .operator-panel__tx-meta,
+  .operator-panel__tx-link {
+    grid-column: 1 / -1;
+  }
+}
+
 .operator-panel__jobs > li {
   list-style: none;
 }

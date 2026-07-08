@@ -46,6 +46,16 @@ ORACLE_ABI = [
         "outputs": [{"type": "bool"}],
     },
     {
+        "name": "setAuthorizedProver",
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "inputs": [
+            {"name": "prover", "type": "address"},
+            {"name": "authorized", "type": "bool"},
+        ],
+        "outputs": [],
+    },
+    {
         "name": "getLatestScore",
         "type": "function",
         "stateMutability": "view",
@@ -86,6 +96,23 @@ CONSUMER_ABI = [
                 ],
             }
         ],
+    },
+    {
+        "name": "authorizedApplicators",
+        "type": "function",
+        "stateMutability": "view",
+        "inputs": [{"name": "applicator", "type": "address"}],
+        "outputs": [{"type": "bool"}],
+    },
+    {
+        "name": "setAuthorizedApplicator",
+        "type": "function",
+        "stateMutability": "nonpayable",
+        "inputs": [
+            {"name": "applicator", "type": "address"},
+            {"name": "authorized", "type": "bool"},
+        ],
+        "outputs": [],
     },
 ]
 
@@ -322,6 +349,75 @@ def submit_payload(prover: ProverKind = "ezkl") -> dict[str, Any]:
             "Wallet must be an authorizedProver on RiskOracle (deployer/owner by default). "
             "Borrower binding limb stays the demo borrower unless proofs are regenerated."
         ),
+    }
+
+
+def authorize_wallet(wallet: str, prover: ProverKind = "ezkl") -> dict[str, Any]:
+    """Grant connected MetaMask wallet prover + applicator ACL using the deployer key.
+
+    Needed because Deploy* scripts only authorize the deployer; Wallet submit uses
+    whatever account is connected in the browser.
+    """
+    if settings.active_chain != "sepolia":
+        raise ValueError("authorize_wallet only runs when Operator is in Sepolia mode")
+    if not settings.deployer_private_key:
+        raise ValueError("DEPLOYER_PRIVATE_KEY is required to authorize wallets")
+
+    wallet_cs = Web3.to_checksum_address(wallet)
+    deploy = load_deployment(prover)
+    oracle_addr = deploy.get("oracle")
+    consumer_addr = deploy.get("consumer")
+    if not oracle_addr or not consumer_addr:
+        raise FileNotFoundError(
+            f"deployment missing for {prover} on sepolia ({settings.deploy_json_name_for(prover)})"
+        )
+
+    w3 = Web3(Web3.HTTPProvider(settings.effective_rpc_url, request_kwargs={"timeout": 30}))
+    if not w3.is_connected():
+        raise RuntimeError(f"cannot connect to {redact_rpc_url(settings.effective_rpc_url)}")
+
+    account = w3.eth.account.from_key(settings.effective_private_key)
+    oracle = w3.eth.contract(address=Web3.to_checksum_address(oracle_addr), abi=ORACLE_ABI)
+    consumer = w3.eth.contract(address=Web3.to_checksum_address(consumer_addr), abi=CONSUMER_ABI)
+
+    already_prover = bool(oracle.functions.authorizedProvers(wallet_cs).call())
+    already_applicator = bool(consumer.functions.authorizedApplicators(wallet_cs).call())
+    txs: list[str] = []
+
+    def _send(contract_fn: Any) -> str:
+        tx = contract_fn.build_transaction(
+            {
+                "from": account.address,
+                "nonce": w3.eth.get_transaction_count(account.address),
+                "chainId": w3.eth.chain_id,
+            }
+        )
+        signed = account.sign_transaction(tx)
+        raw = getattr(signed, "raw_transaction", None) or getattr(signed, "rawTransaction")
+        tx_hash = w3.eth.send_raw_transaction(raw)
+        receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=180)
+        hex_hash = tx_hash.hex()
+        if not hex_hash.startswith("0x"):
+            hex_hash = "0x" + hex_hash
+        if receipt.status != 1:
+            raise RuntimeError(f"authorization tx reverted: {hex_hash}")
+        return hex_hash
+
+    if not already_prover:
+        txs.append(_send(oracle.functions.setAuthorizedProver(wallet_cs, True)))
+    if not already_applicator:
+        txs.append(_send(consumer.functions.setAuthorizedApplicator(wallet_cs, True)))
+
+    return {
+        "wallet": wallet_cs,
+        "prover": prover,
+        "oracle": oracle_addr,
+        "consumer": consumer_addr,
+        "authorizedProver": True,
+        "authorizedApplicator": True,
+        "alreadyAuthorized": already_prover and already_applicator,
+        "txHashes": txs,
+        "deployer": account.address,
     }
 
 

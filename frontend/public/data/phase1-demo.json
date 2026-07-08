@@ -4,19 +4,19 @@
     "populated": true
   },
   "commitments": {
-    "adapterHash": "0x5c840159cf800e89cc2fc5ff33164ec8aee75b5a20c7e15cbdc612c31d47993c",
-    "adapterHashShort": "0x5c8401\u202647993c",
-    "modelHash": "0x2fe8f38e2a8992e0546762c67f073e737f12419ac3f13004598e08c7d978f627",
-    "modelHashShort": "0x2fe8f3\u202678f627"
+    "adapterHash": "0xea8aa91a74b29bf40ddd1e1fab2dd51c8bc0a8f9bd305bf9e2298cc2ca12ebf4",
+    "adapterHashShort": "0xea8aa9\u202612ebf4",
+    "modelHash": "0x1c9709565efc3c0b11fc1f529b94049b70f0ae671550808446564f8360c2160c",
+    "modelHashShort": "0x1c9709\u2026c2160c"
   },
   "consumer": {
-    "borrowAllowed": true,
-    "borrowSpreadBps": 0,
+    "borrowAllowed": false,
+    "borrowSpreadBps": 250,
     "borrower": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
     "borrowerShort": "0x709979\u2026dc79C8",
-    "bucket": "LOW",
-    "collateralFactor": 0.8,
-    "collateralFactorBps": 8000,
+    "bucket": "CRITICAL",
+    "collateralFactor": 0.5,
+    "collateralFactorBps": 5000,
     "lastEpoch": 2026041
   },
   "epoch": {
@@ -34,40 +34,35 @@
       "wallet_age_days"
     ],
     "sampleIndex": 0,
-    "values": [
-      0.26375776529312134,
-      0.09584087133407593,
-      0.503912091255188,
-      0.5070705413818359,
-      0.47515666484832764,
-      0.8217794299125671
-    ]
+    "values": []
   },
   "hasArtifacts": true,
   "hasOnChain": true,
   "proof": {
-    "artifactPath": "circuits-baseline/proofs/proof.json",
+    "artifactPath": "circuits-custom/proofs/proof.json",
     "ezklVersion": "23.0.5",
-    "hashPrefix": "0x104c062a\u202624c5a169",
-    "lengthBytes": 3648,
-    "offChainVerify": true,
-    "prover": "ezkl",
-    "status": "verified"
+    "hashPrefix": "\u2014",
+    "lengthBytes": 0,
+    "offChainVerify": false,
+    "prover": "circom",
+    "status": "pending"
   },
   "score": {
-    "bps": 1797,
-    "bucket": "LOW",
-    "bucketRange": "0.00 \u2013 0.55",
-    "float": 0.1796875
+    "bps": 10000,
+    "bucket": "CRITICAL",
+    "bucketRange": "0.92 \u2013 1.00",
+    "float": 1.0,
+    "logitAcc": 1678334,
+    "publicInputCount": 10
   },
-  "syncedAt": "2026-07-08T13:30:25Z",
+  "syncedAt": "2026-07-08T16:30:54Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    "halo2Verifier": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "consumer": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
+    "halo2Verifier": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
     "onChain": true,
-    "oracle": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    "result": "pass",
-    "verifierAdapter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    "oracle": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+    "result": "pending",
+    "verifierAdapter": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690"
   }
 }

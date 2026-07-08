@@ -5,10 +5,15 @@ from __future__ import annotations
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ..config import settings
-from ..services.chain import artifacts_summary, chain_status, submit_payload
+from ..services.chain import (
+    artifacts_summary,
+    authorize_wallet,
+    chain_status,
+    submit_payload,
+)
 from ..util.rpc import redact_rpc_url, rpc_display_label
 
 router = APIRouter(prefix="/api", tags=["chain"])
@@ -16,6 +21,11 @@ router = APIRouter(prefix="/api", tags=["chain"])
 
 class ChainModeRequest(BaseModel):
     mode: Literal["anvil", "sepolia"]
+
+
+class AuthorizeWalletRequest(BaseModel):
+    wallet: str = Field(min_length=42, max_length=42)
+    prover: Literal["ezkl", "circom"] = "ezkl"
 
 
 @router.get("/chain/status")
@@ -40,6 +50,19 @@ def set_chain_mode(body: ChainModeRequest):
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return get_chain_mode()
+
+
+@router.post("/chain/authorize-wallet")
+def post_authorize_wallet(body: AuthorizeWalletRequest):
+    """Grant MetaMask wallet prover+applicator ACL via deployer key (Sepolia only)."""
+    try:
+        return authorize_wallet(body.wallet, body.prover)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 @router.get("/artifacts/summary")

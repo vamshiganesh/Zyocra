@@ -199,6 +199,30 @@ export async function fetchSubmitPayload(prover: ProverKind = "ezkl"): Promise<W
   return api<WalletSubmitPayload>(`/api/artifacts/submit-payload?prover=${prover}`);
 }
 
+export type AuthorizeWalletResult = {
+  wallet: string;
+  prover: ProverKind;
+  oracle: string;
+  consumer: string;
+  authorizedProver: boolean;
+  authorizedApplicator: boolean;
+  alreadyAuthorized: boolean;
+  txHashes: string[];
+  deployer: string;
+};
+
+/** Deployer-signed ACL grant so MetaMask can call submitScore + applyVerifiedScore. */
+export async function authorizeWallet(
+  wallet: string,
+  prover: ProverKind = "ezkl",
+): Promise<AuthorizeWalletResult> {
+  return api<AuthorizeWalletResult>("/api/chain/authorize-wallet", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ wallet, prover }),
+  });
+}
+
 export async function resetOperatorJobs(): Promise<{ cancelled: string[]; count: number }> {
   return api("/api/jobs/reset", { method: "POST" });
 }

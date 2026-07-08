@@ -148,7 +148,25 @@
   border-right: 0;
 }
 
-.stats-grid > *:nth-last-child(-n + 3) {
+/* Row 2+ in a 3-column grid (handles incomplete last rows, e.g. 7 tiles). */
+.stats-grid > *:nth-child(n + 4) {
+  border-top: 1px solid rgba(20, 20, 20, 0.12);
+}
+
+/* Last row only — keep row dividers when the final row is partial (e.g. 7 tiles). */
+.stats-grid > *:last-child:nth-child(3n + 1) {
+  border-bottom: 0;
+}
+
+.stats-grid > *:last-child:nth-child(3n + 2),
+.stats-grid > *:nth-last-child(2):nth-child(3n + 1) {
+  border-bottom: 0;
+}
+
+/* Full last row only (6, 9, … tiles) — not when the final row is partial (7, 8, …). */
+.stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n + 1),
+.stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n + 2),
+.stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n) {
   border-bottom: 0;
 }
 
@@ -218,10 +236,23 @@
   .stats-grid > *,
   .layer-list__item {
     border-right: 0;
+    border-bottom: 0;
   }
 
-  .stats-grid > *:last-child,
-  .layer-list__item:last-child {
+  .stats-grid > *:nth-child(n + 4) {
+    border-top: 0;
+  }
+
+  .stats-grid > *:nth-child(n + 2) {
+    border-top: 1px solid rgba(20, 20, 20, 0.12);
+  }
+
+  .stats-grid > *:last-child:nth-child(3n + 1),
+  .stats-grid > *:last-child:nth-child(3n + 2),
+  .stats-grid > *:nth-last-child(2):nth-child(3n + 1),
+  .stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n + 1),
+  .stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n + 2),
+  .stats-grid:has(> :last-child:nth-child(3n)) > *:nth-last-child(-n + 3):nth-child(3n) {
     border-bottom: 0;
   }
 }

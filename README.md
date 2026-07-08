@@ -187,21 +187,21 @@ Point the frontend at Sepolia (restart `make dev` after editing `.env`):
 
 | Contract | Address |
 |----------|---------|
-| RiskOracle | [`0x623D3de19A2Ce108131F2c03433ACdBf4eca2252`](https://sepolia.etherscan.io/address/0x623D3de19A2Ce108131F2c03433ACdBf4eca2252) |
-| RiskConsumer | [`0x8a0b538D2e46DD9E03d453164F00a57531EE3C6D`](https://sepolia.etherscan.io/address/0x8a0b538D2e46DD9E03d453164F00a57531EE3C6D) |
-| EzklRiskScoreVerifier | [`0x16a1b555FEE645Efce99169b198A84f2d29E088D`](https://sepolia.etherscan.io/address/0x16a1b555FEE645Efce99169b198A84f2d29E088D) |
-| Halo2Verifier | [`0x6Dd062079edc8817732483119bAe2374F92D1c51`](https://sepolia.etherscan.io/address/0x6Dd062079edc8817732483119bAe2374F92D1c51) |
+| RiskOracle | [`0x95212e13B02C26bE0A4505e5671533C013e04357`](https://sepolia.etherscan.io/address/0x95212e13B02C26bE0A4505e5671533C013e04357) |
+| RiskConsumer | [`0xE7717a9a7b37177ce41140A475a53294Ab35a03c`](https://sepolia.etherscan.io/address/0xE7717a9a7b37177ce41140A475a53294Ab35a03c) |
+| EzklRiskScoreVerifier | [`0x448d840d97503c5b3C4bC4dfa8899168f052fBDA`](https://sepolia.etherscan.io/address/0x448d840d97503c5b3C4bC4dfa8899168f052fBDA) |
+| Halo2Verifier | [`0xC8ecEcc7E6Ca6761B117A96Da97F50d11438dC12`](https://sepolia.etherscan.io/address/0xC8ecEcc7E6Ca6761B117A96Da97F50d11438dC12) |
 
 Latest loop (`contracts/deployments/sepolia-loop-latest.json`): **epoch `2026041`**, **score `1797` bps**, borrower `0x7099…79C8`, collateral `8000` bps.
 
 | Step | Tx |
 |------|----|
-| `submitScore` | [`0xedc6b25d…088e7`](https://sepolia.etherscan.io/tx/0xedc6b25d32481ab859f11aa3cc513c5cba60e88a427372e2dbf45e32d60888e7) |
-| `applyVerifiedScore` | [`0x8c1bbf11…41f37`](https://sepolia.etherscan.io/tx/0x8c1bbf11db02deb92034b416f9a12f682b21ec84493d622651c8f192d3541f37) |
+| `submitScore` | [`0x54b58347…eee0`](https://sepolia.etherscan.io/tx/0x54b58347d9f56ed28e47fe28980240a7fb3a12738757b07c85d3ee854c09eee0) |
+| `applyVerifiedScore` | [`0xcf7470fb…9171`](https://sepolia.etherscan.io/tx/0xcf7470fb984e501903a29f910ac95555b6860d27a845e204cec83723efb59171) |
 
-**Demo line for recruiters:** “Oracle stack is deployed on Sepolia with a live verified score; the Operator UI runs the full zk epoch loop on Anvil for speed, or toggles to Sepolia for forge/wallet broadcasts. Connect a Sepolia wallet (authorized prover) for live `submitScore` / `applyVerifiedScore`, or read `latestEpoch` on Epoch / Operator.”
+**Demo line for recruiters:** “Oracle stack is deployed on Sepolia with a live verified score; the Operator UI runs the full zk epoch loop on Anvil for speed, or toggles to Sepolia for forge/wallet broadcasts. Connect a Sepolia wallet (authorized prover + applicator) for live `submitScore` / `applyVerifiedScore`, or read `latestEpoch` on Epoch / Operator.”
 
-Cost of the EZKL submit/apply run above was ~**0.0027 ETH** at ~2.2 gwei.
+Cost of the EZKL submit/apply run above was ~**0.0020 ETH** at ~2.2 gwei (deploy of the full stack was a separate ~0.012 ETH).
 
 #### Circom Sepolia
 
@@ -214,10 +214,10 @@ SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
 
 | Contract | Address |
 |----------|---------|
-| RiskOracle | [`0x385F9131f47019157e3cc34D25449b9096CF0915`](https://sepolia.etherscan.io/address/0x385F9131f47019157e3cc34D25449b9096CF0915) |
-| RiskConsumer | [`0x45AdCB08be2aB8c48Bbd6faF94Dd25e8DeB1E3b0`](https://sepolia.etherscan.io/address/0x45AdCB08be2aB8c48Bbd6faF94Dd25e8DeB1E3b0) |
-| CircomRiskScoreVerifier | [`0x0b7b21D80C034D1ED8255E6a086a7fE94d508389`](https://sepolia.etherscan.io/address/0x0b7b21D80C034D1ED8255E6a086a7fE94d508389) |
-| Groth16Verifier | [`0x07661775a09743E49E83e495E1925F142836a06f`](https://sepolia.etherscan.io/address/0x07661775a09743E49E83e495E1925F142836a06f) |
+| RiskOracle | [`0xdc5E502DC59a4d65e18E5F045711401710f309f1`](https://sepolia.etherscan.io/address/0xdc5E502DC59a4d65e18E5F045711401710f309f1) |
+| RiskConsumer | [`0x0E64bB23Af32307F1228e1379d77Bc7AD2739359`](https://sepolia.etherscan.io/address/0x0E64bB23Af32307F1228e1379d77Bc7AD2739359) |
+| CircomRiskScoreVerifier | [`0x3987E23ce8f089530Fd21D8bCa9D3f79b3403429`](https://sepolia.etherscan.io/address/0x3987E23ce8f089530Fd21D8bCa9D3f79b3403429) |
+| Groth16Verifier | [`0x346124ddBfBa8254Ad937702d07454C8293f4494`](https://sepolia.etherscan.io/address/0x346124ddBfBa8254Ad937702d07454C8293f4494) |
 
 Latest loop (`contracts/deployments/sepolia-circom-loop-latest.json`): **epoch `2026041`**, **score `10000` bps** (saturated demo logit after in-circuit borrower rebuild), borrower `0x7099…79C8`, collateral `5000` bps.
 
