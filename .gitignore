@@ -74,6 +74,8 @@ contracts/deployments/*
 !contracts/deployments/.gitkeep
 !contracts/deployments/sepolia-ezkl-latest.json
 !contracts/deployments/sepolia-loop-latest.json
+!contracts/deployments/sepolia-circom-oracle-latest.json
+!contracts/deployments/sepolia-circom-loop-latest.json
 !contracts/deployments/anvil-ezkl-latest.json
 !contracts/deployments/anvil-circom-oracle-latest.json
 *.pk

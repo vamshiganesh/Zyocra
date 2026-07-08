@@ -161,7 +161,7 @@ Open **Operator** in the UI (`/operator`) to run `e2e_phase1.sh` or `e2e_circom.
 
 ### Testnet (Ethereum Sepolia)
 
-**Split:** Operator demos stay on **local Anvil**. Contracts + one verified score live on **Sepolia** for portfolio / Etherscan links.
+**Split:** Operator defaults to **local Anvil**. Toggle **Operator → Sepolia** in the UI (or `POST /api/chain/mode`) to broadcast forge deploy/submit with `SEPOLIA_RPC_URL` + `DEPLOYER_PRIVATE_KEY`. Full epoch stays Anvil-only. Use **Wallet submit (Sepolia)** so MetaMask signs `submitScore` + `applyVerifiedScore` (wallet must be `authorizedProver`, usually the deployer).
 
 ```bash
 cp .env.example .env
@@ -172,11 +172,16 @@ bash scripts/deploy_testnet.sh          # prove + deploy + verify (once)
 
 bash scripts/submit_testnet.sh          # one-shot submitScore + applyVerifiedScore
 # Or reuse proof: SKIP_PROVE=1 bash scripts/submit_testnet.sh
+
+# Circom stack (separate oracle / commitments from EZKL):
+SKIP_PROVE=1 bash scripts/deploy_circom_testnet.sh
+SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
 ```
 
 Point the frontend at Sepolia (restart `make dev` after editing `.env`):
 
 - `VITE_ORACLE_ADDRESS`, `VITE_CONSUMER_ADDRESS`, `VITE_RPC_URL`
+- Circom and EZKL use **different** oracle addresses — set `VITE_*` to the stack you want to read.
 
 #### Current Sepolia EZKL deployment
 
@@ -194,10 +199,32 @@ Latest loop (`contracts/deployments/sepolia-loop-latest.json`): **epoch `2026041
 | `submitScore` | [`0xedc6b25d…088e7`](https://sepolia.etherscan.io/tx/0xedc6b25d32481ab859f11aa3cc513c5cba60e88a427372e2dbf45e32d60888e7) |
 | `applyVerifiedScore` | [`0x8c1bbf11…41f37`](https://sepolia.etherscan.io/tx/0x8c1bbf11db02deb92034b416f9a12f682b21ec84493d622651c8f192d3541f37) |
 
-**Demo line for recruiters:** “Oracle stack is deployed on Sepolia with a live verified score; the Operator UI runs the full zk epoch loop on Anvil for speed. Connect a Sepolia wallet and open Epoch / Operator → Chain status to read on-chain `latestEpoch` and policy.”
+**Demo line for recruiters:** “Oracle stack is deployed on Sepolia with a live verified score; the Operator UI runs the full zk epoch loop on Anvil for speed, or toggles to Sepolia for forge/wallet broadcasts. Connect a Sepolia wallet (authorized prover) for live `submitScore` / `applyVerifiedScore`, or read `latestEpoch` on Epoch / Operator.”
 
-Cost of the submit/apply run above was ~**0.0027 ETH** at ~2.2 gwei.
+Cost of the EZKL submit/apply run above was ~**0.0027 ETH** at ~2.2 gwei.
 
+#### Circom Sepolia
+
+Separate oracle (different model/adapter commitments and Groth16 verifier):
+
+```bash
+SKIP_PROVE=1 bash scripts/deploy_circom_testnet.sh
+SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
+```
+
+| Contract | Address |
+|----------|---------|
+| RiskOracle | [`0x7b9FdfF6223B5E3e5EE1E304852843C44c47EBE7`](https://sepolia.etherscan.io/address/0x7b9FdfF6223B5E3e5EE1E304852843C44c47EBE7) |
+| RiskConsumer | [`0x80e7FaD7b0a69ecAb687223174eC5564c6b7E577`](https://sepolia.etherscan.io/address/0x80e7FaD7b0a69ecAb687223174eC5564c6b7E577) |
+| CircomRiskScoreVerifier | [`0x76F01b9D1e65770Cb6615AbCc247775fc4e8296a`](https://sepolia.etherscan.io/address/0x76F01b9D1e65770Cb6615AbCc247775fc4e8296a) |
+| Groth16Verifier | [`0xFB3c5010311B237fb1C3A1A6048275f9D5dfbfc0`](https://sepolia.etherscan.io/address/0xFB3c5010311B237fb1C3A1A6048275f9D5dfbfc0) |
+
+Latest loop (`contracts/deployments/sepolia-circom-loop-latest.json`): **epoch `2026041`**, **score `5002` bps**, borrower `0x7099…79C8`, collateral `8000` bps.
+
+| Step | Tx |
+|------|----|
+| `submitScore` | [`0x8f8b4db0…8106c`](https://sepolia.etherscan.io/tx/0x8f8b4db052f976967dfacf3f383e3b1dd1144ec99462172d82635c9ed3e8106c) |
+| `applyVerifiedScore` | [`0x8132ad80…3641fe`](https://sepolia.etherscan.io/tx/0x8132ad8045d968d5fffe1d49cbf2d6b5456370d3d5766ccdffba6619903641fe) |
 ### Test commands
 
 | Command | What runs |
@@ -212,6 +239,8 @@ Cost of the submit/apply run above was ~**0.0027 ETH** at ~2.2 gwei.
 | `bash scripts/e2e_circom.sh` | Circom head → Anvil → oracle → consumer |
 | `bash scripts/deploy_testnet.sh` | Deploy EZKL stack to Sepolia |
 | `bash scripts/submit_testnet.sh` | Sepolia `submitScore` + `applyVerifiedScore` (EZKL) |
+| `bash scripts/deploy_circom_testnet.sh` | Deploy Circom stack to Sepolia |
+| `bash scripts/submit_circom_testnet.sh` | Sepolia Circom submit + apply |
 | `cd frontend && pnpm test` | TypeScript typecheck |
 
 Full install and run commands: [`docs/setup.md`](docs/setup.md).
@@ -239,7 +268,7 @@ MIT — see [`LICENSE`](LICENSE).
 - **Operator:** FastAPI service (`operator/`) wrapping e2e, deploy, submit, benchmark with SSE log streaming.
 - **UI:** `/operator` dashboard, Run epoch demo CTAs, job queue, EZKL/Circom prover toggle.
 - **Security:** borrower field on `ScoreRecord`, public input index 7 binding, consumer `BorrowerMismatch` guard.
-- **Testnet:** `scripts/deploy_testnet.sh`, `scripts/submit_testnet.sh`, Sepolia addresses + Etherscan txs in README.
+- **Testnet:** `scripts/deploy_testnet.sh`, `scripts/submit_testnet.sh`, `deploy_circom_testnet.sh`, `submit_circom_testnet.sh`; Operator Anvil/Sepolia toggle; wallet-signed Sepolia submit/apply; EZKL + Circom addresses in README.
 - **Frontend:** wagmi/viem live chain reads, wallet connect, epoch registry pre-flight.
 
 ### v0.4.0
