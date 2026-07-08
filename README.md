@@ -1,287 +1,607 @@
+<div align="center">
+
+<img src="gitAssets/Zyocra-GitHub-Logo.png" alt="Zyocra" width="420" />
+
 # Zyocra
 
-**A benchmark-driven zkML oracle for DeFi that compares compiler-generated and hand-optimized zero-knowledge circuits for LoRA-adapted risk inference, with on-chain verification and dynamic collateral-parameter updates in a mock lending protocol.**
+**Verifiable LoRA risk oracle for DeFi**
 
-Technical framing: **Verifiable LoRA Risk Oracle**.
+Benchmark compiler-generated EZKL against hand-optimized Circom on matched LoRA head workloads, with on-chain verification and collateral policy updates.
 
-## Problem statement
+<br />
 
-DeFi lending systems adjust collateralization and borrowing conditions using risk signals. zkML frameworks such as EZKL make verifiable inference practical, but compiler-generated circuits can hide inefficiencies in structured algebra—especially LoRA updates of the form \(W' = W + AB\).
+[![Network](https://img.shields.io/badge/network-Sepolia-EBA50E?style=for-the-badge&labelColor=141414)](https://sepolia.etherscan.io/)
+[![EZKL](https://img.shields.io/badge/prover-EZKL%20Halo2-5c574c?style=for-the-badge&labelColor=141414)](docs/ezkl.md)
+[![Circom](https://img.shields.io/badge/prover-Circom%20Groth16-5c574c?style=for-the-badge&labelColor=141414)](docs/circom.md)
+[![Live](https://img.shields.io/badge/status-Live%20on%20Sepolia-3d8b5f?style=for-the-badge&labelColor=141414)](https://zyocra.vercel.app/)
+[![CI](https://img.shields.io/github/actions/workflow/status/vamshiganesh/Zyocra/ci.yml?branch=main&style=for-the-badge&label=CI&labelColor=141414)](https://github.com/vamshiganesh/Zyocra/actions/workflows/ci.yml)
 
-Zyocra implements the **same risk model** on two proving paths — **matched on the LoRA output head**, **asymmetric on full inference by design**:
+<br />
 
-| Path | Pipeline | Role |
-|------|----------|------|
-| **EZKL full** | PyTorch → ONNX → EZKL → Halo2 verifier | End-to-end score attestation (oracle e2e) |
-| **EZKL head** | Head-only ONNX → EZKL | Fair bakeoff against Circom (`make head-benchmark`) |
-| **Circom head** | Hand Circom LoRA head → Groth16 | Structure-aware adapter proofs |
+**[Project homepage](https://vamshiganesh.github.io/Zyocra/)** ·
+**[Live app](https://zyocra.vercel.app/)** ·
+**[Watch demo](https://youtu.be/edvTJN3XJO0)** ·
+**[Circom submitScore tx](https://sepolia.etherscan.io/tx/0x6229ebe4151ddef5490766e8ea95b7280b6b4e252ccbbed3c1b0bde01c8da09b)** ·
+**[Wallet apply tx](https://sepolia.etherscan.io/tx/0x97829cb73ef3876e536eb26400b9f1449c5793b8f0c9febfbc4a0574eaa39962)** ·
+**[Source](https://github.com/vamshiganesh/Zyocra)**
 
-The consumer is a **mock lending-risk module** that updates collateral parameters by verified risk bucket—not a liquidation bot.
+<br />
 
-## Benchmark headline
+<sub>GitHub README links open in the same tab. Use <a href="https://vamshiganesh.github.io/Zyocra/">Project homepage</a> for external links in a new tab.</sub>
 
-*Primary claim = matched head. Full-graph row is a separate system workload — see [`docs/benchmarks.md`](docs/benchmarks.md).*
+</div>
 
-### Primary — fair circuit comparison (matched LoRA head)
+---
 
-| Metric | EZKL head | Circom head |
-|--------|-----------|-------------|
-| Constraint count | 106 (PLONK rows) | 89 (R1CS) |
-| Prover peak RAM | ~1.4 GB | ~185 MB |
-| Proof generation time | ~15.8 s (median) | ~2.0 s (median) |
-| Proof size | ~19 KB | ~806 B |
+## Table of contents
 
-```bash
-make head-benchmark   # includes ezkl_head + syncs frontend when you run sync-frontend-data.sh
+1. [Zyocra in one paragraph](#1-zyocra-in-one-paragraph)
+2. [Why it matters](#2-why-it-matters)
+3. [Architecture](#3-architecture)
+4. [Demo flow](#4-demo-flow)
+5. [The benchmark question](#5-the-benchmark-question)
+6. [Screenshots / UI](#6-screenshots--ui)
+7. [Benchmark headline table](#7-benchmark-headline-table)
+8. [Contracts overview](#8-contracts-overview)
+9. [ML, quantization, and EZKL flow](#9-ml-quantization-and-ezkl-flow)
+10. [Custom Circom benchmark path](#10-custom-circom-benchmark-path)
+11. [Threat model](#11-threat-model)
+12. [Local setup](#12-local-setup)
+13. [Project structure](#13-project-structure)
+14. [Roadmap](#14-roadmap)
+15. [Resume-ready bullet](#15-resume-ready-bullet)
+16. [Demo instructions](#16-demo-instructions)
+
+<br />
+
+<div align="center">
+
+<a href="https://vamshiganesh.github.io/Zyocra/">
+  <img src="gitAssets/Thumbnail.png" alt="Open Zyocra project homepage" width="720" />
+</a>
+
+<br /><br />
+
+<sub>Click thumbnail for the project homepage (live links, Sepolia txs, stack summary).</sub>
+
+</div>
+
+---
+
+## 1. Zyocra in one paragraph
+
+Zyocra is a **benchmark-driven zkML risk oracle** for DeFi lending demos. It trains a small quantized tabular MLP with LoRA adapters (\(W' = W + AB\)), exports ONNX, and proves inference on two paths: **EZKL** (compiler-generated Halo2 verifier) and **hand-written Circom** (Groth16 on the LoRA output head). Verified scores land on `RiskOracle`; `RiskConsumer` maps risk buckets to collateral factor and borrow spread without triggering liquidation. The repo ships a reproducible benchmark harness (`make head-benchmark`), Foundry integration tests, an Operator FastAPI service, a Vite UI with live Sepolia reads, and **live Sepolia deployments** with wallet-signed `submitScore` / `applyVerifiedScore`. Default workflow is **local-first on Ubuntu WSL**: PyTorch CPU, EZKL, Circom, Foundry, Anvil. No paid RPC or cloud prover required unless you opt in.
+
+---
+
+## 2. Why it matters
+
+DeFi protocols increasingly need **verifiable risk signals**, not opaque off-chain scores. zkML toolchains like EZKL make full-graph attestation practical, but compiler output can hide cost in structured algebra (especially low-rank updates). Zyocra asks a concrete engineering question:
+
+> **When the proof statement is held constant on the LoRA output head, how much efficiency does a hand-optimized Circom circuit buy versus an EZKL-compiled head ONNX graph?**
+
+That question matters to:
+
+| Audience | What Zyocra demonstrates |
+|----------|--------------------------|
+| **zk infra recruiters** | End-to-end prove, verify, deploy, benchmark, and UI wiring across two proof systems |
+| **Smart contract engineers** | Oracle admission, score binding, ACL on provers and applicators, consumer policy updates |
+| **Applied cryptography teams** | Quantization error budgets, public input layout, Groth16 vs Halo2 verifier gas |
+| **zkML researchers** | Fair head-to-head vs labeled asymmetric full-graph workload, hybrid amortization model |
+| **Hackathon judges** | Live Sepolia txs, reproducible metrics, threat model with explicit non-guarantees |
+
+Zyocra is **not** a production lending protocol. It is a serious reference implementation for comparing zkML approaches on a real DeFi-shaped oracle loop.
+
+---
+
+## 3. Architecture
+
+```mermaid
+flowchart TB
+  subgraph ML["ml-base"]
+    TRAIN[Train MLP + LoRA]
+    QUANT[Q8.8 quantize]
+    ONNX[ONNX export]
+    TRAIN --> QUANT --> ONNX
+  end
+
+  subgraph EZKL["circuits-baseline"]
+    FULL[Full graph EZKL]
+    HEAD[Head-only EZKL]
+    ONNX --> FULL
+    ONNX --> HEAD
+  end
+
+  subgraph CIRCOM["circuits-custom"]
+    HEAD_CIR[lora_output_head]
+    ONNX --> HEAD_CIR
+  end
+
+  subgraph CHAIN["contracts (Foundry)"]
+    ORACLE[RiskOracle]
+    CONSUMER[RiskConsumer]
+    V_EZKL[EzklRiskScoreVerifier]
+    V_CIR[CircomRiskScoreVerifier]
+  end
+
+  FULL --> V_EZKL --> ORACLE
+  HEAD --> V_EZKL
+  HEAD_CIR --> V_CIR --> ORACLE
+  ORACLE --> CONSUMER
+
+  subgraph BENCH["benchmarks"]
+    HARNESS[make benchmark / head-benchmark]
+  end
+
+  FULL --> HARNESS
+  HEAD --> HARNESS
+  HEAD_CIR --> HARNESS
+  CHAIN --> HARNESS
+
+  subgraph OPS["operator + frontend"]
+    API[FastAPI Operator :8787]
+    UI[Vite UI / wagmi]
+  end
+
+  API --> CHAIN
+  UI --> API
+  UI --> CHAIN
 ```
 
-### Secondary — system workloads (not equivalent)
+**Layer map**
+
+| Package | Role |
+|---------|------|
+| `ml-base/` | Tabular MLP, LoRA, Q8.8 quantization, ONNX, float reference eval |
+| `circuits-baseline/` | EZKL full graph + head-only ONNX compile, Halo2 verifier |
+| `circuits-custom/` | Circom `lora_output_head`, Groth16 verifier, fixtures |
+| `contracts/` | `RiskOracle`, `RiskConsumer`, verifier adapters, Foundry tests |
+| `benchmarks/` | Normalized JSON/CSV/MD, plots, gas harness |
+| `operator/` | Job queue for e2e, deploy, submit, benchmark (SSE logs) |
+| `frontend/` | Pipeline UI, Operator dashboard, live chain reads |
+
+Details: [`docs/architecture.md`](docs/architecture.md)
+
+---
+
+## 4. Demo flow
+
+```mermaid
+sequenceDiagram
+  participant ML as ml-base
+  participant Prover as EZKL or Circom
+  participant Oracle as RiskOracle
+  participant Consumer as RiskConsumer
+  participant UI as Frontend / Operator
+
+  ML->>Prover: quantized inference + witness
+  Prover->>Prover: prove (Groth16 or Halo2)
+  UI->>Oracle: submitScore(proof, publicInputs, commitments)
+  Oracle->>Oracle: verify + bind scoreBps + epoch
+  Oracle-->>UI: ScoreVerified event
+  UI->>Consumer: applyVerifiedScore(borrower, epoch)
+  Consumer->>Consumer: bucket → collateral factor, spread
+  Consumer-->>UI: policy updated
+```
+
+**Operator paths**
+
+| Mode | What runs |
+|------|-----------|
+| **Anvil (default)** | Full epoch loop via `e2e_phase1.sh` or `e2e_circom.sh` |
+| **Sepolia (Operator toggle)** | Forge deploy/submit with deployer key |
+| **Sepolia (wallet)** | MetaMask signs `submitScore` + `applyVerifiedScore` |
+
+Live app: [zyocra.vercel.app](https://zyocra.vercel.app/) · Demo video: [YouTube](https://youtu.be/edvTJN3XJO0)
+
+---
+
+## 5. The benchmark question
+
+**Read this in 30 seconds:**
+
+1. **Fair comparison:** EZKL head-only ONNX vs Circom `lora_output_head` on the same `hidden[8] → logit_acc` statement (`make head-benchmark`, `PROVE_RUNS=10`).
+2. **Asymmetric system row:** EZKL full graph (6→16→8→1 + sigmoid) vs Circom head. Different workloads. Not a kernel bakeoff.
+3. **Hybrid model:** One EZKL full prove per epoch + Circom head proves per adapter update (default 4 updates). Amortized prove cost ≈ **10.4 s/update** on the latest local run.
+
+```mermaid
+flowchart LR
+  subgraph PRIMARY["Primary: matched head"]
+    EH[EZKL head ONNX]
+    CH[Circom head R1CS]
+    EH --- CH
+  end
+
+  subgraph SECONDARY["Secondary: system workloads"]
+    EF[EZKL full graph]
+    CH2[Circom head only]
+    EF -.->|not equivalent| CH2
+  end
+
+  subgraph HYBRID["Hybrid amortization"]
+    E1[1x EZKL full / epoch]
+    C4[4x Circom head / updates]
+    E1 --> C4
+  end
+```
+
+Methodology and limitations: [`docs/benchmarks.md`](docs/benchmarks.md) · Raw artifact: `frontend/public/data/bench-latest.json` (synced from `benchmarks/raw-results/`)
+
+---
+
+## 6. Screenshots / UI
+
+Dispatch-inspired shell (dark canvas, cream panels, amber accent). Live data from `phase1-demo.json` and `bench-latest.json`.
+
+### Landing and pipeline
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Overview</strong><br />
+      <sub>Hero, pipeline strip, live demo snapshot, benchmark panel</sub><br /><br />
+      <a href="https://zyocra.vercel.app/">
+        <img src="gitAssets/UI_Screenshots/Overview.png" alt="Zyocra overview" width="100%" />
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <strong>Operator</strong><br />
+      <sub>Job queue, Anvil/Sepolia toggle, wallet submit, on-chain tx log</sub><br /><br />
+      <a href="https://zyocra.vercel.app/operator">
+        <img src="gitAssets/UI_Screenshots/Operator.png" alt="Zyocra operator" width="100%" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Epoch explorer</strong><br />
+      <sub>Commitments, inputs, prove/verify/score/impact screens</sub><br /><br />
+      <a href="https://zyocra.vercel.app/epoch">
+        <img src="gitAssets/UI_Screenshots/Epoch.png" alt="Zyocra epoch explorer" width="100%" />
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <strong>Benchmarks</strong><br />
+      <sub>Matched head table, asymmetric system row, hybrid amortization</sub><br /><br />
+      <a href="https://zyocra.vercel.app/benchmarks">
+        <img src="gitAssets/UI_Screenshots/Benchmarks.png" alt="Zyocra benchmarks" width="100%" />
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <strong>Threat model</strong><br />
+      <sub>Guarantees vs non-guarantees for reviewers</sub><br /><br />
+      <a href="https://zyocra.vercel.app/threat-model">
+        <img src="gitAssets/UI_Screenshots/ThreatModel.png" alt="Zyocra threat model" width="100%" />
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <strong>Updates</strong><br />
+      <sub>Changelog and release notes</sub><br /><br />
+      <a href="https://zyocra.vercel.app/updates">
+        <img src="gitAssets/UI_Screenshots/Updates.png" alt="Zyocra updates" width="100%" />
+      </a>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 7. Benchmark headline table
+
+*Source: `bench-latest.json` · UTC 2026-07-08 · median of 10 prove runs · Linux WSL2*
+
+### Primary: fair circuit comparison (matched LoRA head)
+
+| Metric | EZKL head | Circom head | Notes |
+|--------|-----------|-------------|-------|
+| Constraint count | **106** PLONK rows | **90** R1CS | Different proof systems |
+| Prover peak RAM | **~1.39 GB** | **~186 MB** | Linux `time -v` peak RSS |
+| Proof time (median) | **28.2 s** | **1.9 s** | `PROVE_RUNS=10` |
+| Proof size | **~18.2 KB** | **805 B** | Serialized proof bytes |
+| Standalone verify gas | n/a (head row) | **251,231** | `BenchmarkGas.t.sol` |
+
+```bash
+make head-benchmark
+bash scripts/sync-frontend-data.sh   # optional: refresh UI JSON
+```
+
+### Secondary: system workloads (not equivalent)
 
 | Metric | EZKL full graph | Circom head |
 |--------|-----------------|-------------|
-| Constraint count | 964 (PLONK rows) | 89 (R1CS) |
-| Prover peak RAM | ~1.7 GB | ~185 MB |
-| Proof generation time | ~23 s (median) | ~2.0 s (median) |
-| Verification gas (EVM) | 536,109 | 244,502 |
-| Proof size | ~21 KB | ~806 B |
+| Constraint count | 964 PLONK rows | 90 R1CS |
+| Prover peak RAM | ~1.68 GB | ~186 MB |
+| Proof time (median) | 34.0 s | 1.9 s |
+| Standalone verify gas | **536,176** | **251,231** |
+| Proof size | ~21.5 KB | 805 B |
 
-**Do not** read the secondary table as a kernel bakeoff. Full-graph EZKL proves features→score; Circom proves head-only `logit_acc`.
+**Do not** treat the secondary row as a fair race. Full-graph EZKL attests features→score; Circom attests head-only `logit_acc`.
 
 ### Hybrid amortized cost
 
-One EZKL full prove per epoch + Circom head proves per adapter update (default 4): see `workloads.hybrid` in `bench-latest.json` (~6.6 s amortized prove / update on the latest local run).
+| Input | Value |
+|-------|-------|
+| EZKL full prove / epoch | 34.0 s |
+| Circom head prove / update | 1.9 s |
+| Updates per epoch (default) | 4 |
+| **Amortized prove / update** | **~10.4 s** |
 
-## System architecture
+Quantization accuracy (EZKL full, test split): mean abs error **0.00137**, max abs error **0.00641** on score field.
 
-```text
-ml-base/                 train, LoRA (W'=W+AB), quantize, ONNX export
-        │
-        ├─► circuits-baseline/   EZKL full-graph prove + verifier
-        │
-        └─► circuits-custom/     Circom LoRA + dense subgraph prove + verifier
-                    │
-                    ▼
-              contracts/         oracle + mock lending consumer (Foundry)
-                    │
-                    ▼
-              benchmarks/        apples-to-apples metrics, plots, methodology
+---
+
+## 8. Contracts overview
+
+```mermaid
+classDiagram
+  class RiskOracle {
+    +submitScore(payload)
+    +setAuthorizedProver(addr, bool)
+    +setVerifier(addr)
+    +latestEpoch()
+  }
+  class RiskConsumer {
+    +applyVerifiedScore(borrower, epoch)
+    +setAuthorizedApplicator(addr, bool)
+    +getBorrowerPolicy(borrower)
+  }
+  class EzklRiskScoreVerifier {
+    +verify(proof, publicInputs)
+  }
+  class CircomRiskScoreVerifier {
+    +verify(proof, publicInputs)
+  }
+  RiskOracle --> EzklRiskScoreVerifier : EZKL path
+  RiskOracle --> CircomRiskScoreVerifier : Circom path
+  RiskConsumer --> RiskOracle : reads verified scores
 ```
 
-Details: [`docs/architecture.md`](docs/architecture.md).
+| Contract | Responsibility |
+|----------|----------------|
+| `RiskOracle` | Commitments, epoch monotonicity, proof verification, `ScoreVerified` |
+| `RiskConsumer` | Bucket → collateral factor, borrow spread, borrow gate |
+| `EzklRiskScoreVerifier` | Halo2 adapter for EZKL proofs |
+| `CircomRiskScoreVerifier` | Groth16 adapter for Circom head (10 public signals) |
 
-## End-to-end demo flow (target)
-
-1. Off-chain: run quantized, LoRA-adapted risk inference for an epoch.
-2. Prove via EZKL baseline and/or Circom custom path.
-3. Submit proof + public inputs to the oracle contract.
-4. On valid verification, consumer updates borrower risk bucket and collateral parameters.
-5. Record prove time, gas, proof size, and accuracy into `benchmarks/raw-results/`.
-
-## Repository layout
-
-```text
-Zyocra/
-├── ml-base/                 # training, quantization, lora, onnx-export
-├── circuits-baseline/       # ezkl, settings, proofs
-├── circuits-custom/         # circom, inputs, witnesses, proofs
-├── contracts/               # src, script, test (Foundry)
-├── benchmarks/              # scripts, raw-results, plots
-├── docs/                    # product, architecture, threat model, roadmap, setup
-├── scripts/                 # install, dev, test, lint, benchmark
-├── ci/                      # optional CI (later)
-├── Makefile
-└── README.md
-```
-
-## Status
-
-| Area | Status |
-|------|--------|
-| Monorepo layout + docs | Done |
-| Local toolchain (`make install`) | Done |
-| UI shell + design system | Done (live data binding) |
-| Milestone 1 — ML + quantization | Done (`ml-base/`, ONNX export, Q8.8 validation) |
-| Milestone 2 — EZKL baseline | Done (`circuits-baseline/`, Halo2 verifier, e2e) |
-| Milestone 3 — Custom Circom | Done (`lora_output_head`, Groth16 pipeline) |
-| Milestone 4 — Consumer integration | Done (`RiskOracle` + `RiskConsumer`, Foundry tests) |
-| Milestone 5 — Benchmarks + report | Done (`make benchmark`, `docs/technical-report.md`) |
-| CI (GitHub Actions) | Done (`.github/workflows/ci.yml`) |
-| Oracle hardening (score binding + prover ACL) | Done |
-| Demo UI + data binding | Done (live `phase1-demo.json`, `bench-latest.json`) |
-
-Roadmap: [`docs/roadmap.md`](docs/roadmap.md).
-
-## Trust model (summary)
-
-Zyocra separates **proof correctness** from **model quality** and **data honesty**.
-
-| Layer | What is trusted |
-|-------|-----------------|
-| **Proof** | Declared inference ran as specified (EZKL: full graph; Circom: LoRA head subgraph only). |
-| **Oracle** | Verifier soundness, deploy-time `modelHash`/`adapterHash`, monotonic epochs, valid `(proof, publicInputs)`. |
-| **Consumer** | Verified oracle scores; hard-coded bucket → collateral policy. |
-
-**Not attested:** feature feed honesty, borrower identity in proofs, economic optimality of the model, market manipulation resistance, benchmark cross-path equivalence (EZKL full graph vs Circom head).
-
-**Known Phase 1 gaps:** EZKL borrower binding still uses an appended public-input limb (Circom borrower is in-circuit); Circom score uses cubic Taylor sigmoid over dequantized `logit_acc` (not in-circuit); `setVerifier` is owner-controlled without timelock.
-
-Full write-up: [`docs/threat-model.md`](docs/threat-model.md).
-
-## Local-first / no paid infra
-
-Default workflow is **free and local** on Ubuntu WSL:
-
-- Python venv + PyTorch **CPU** + ONNX + EZKL (Python API)
-- Circom (custom path)
-- Foundry + Anvil (no paid RPC)
-- No Docker required for current milestones
-- No cloud provers or hosted services unless you explicitly add them
-
-Large artifacts and personal notes stay out of git (see `.gitignore`; local-only parent dir `~/projects/zyocra/`).
-
-## Quick start
-
-```bash
-# prerequisites: node, pnpm, python3, rustc, foundry (see docs/setup.md)
-make install
-source ml-base/.venv/bin/activate
-
-make check-tools
-make test          # Foundry + pytest (ml-base, circuits-custom, benchmarks) + frontend tsc
-make lint
-make benchmark     # EZKL vs Circom metrics → benchmarks/raw-results/
-
-# Operator dashboard (FastAPI + frontend)
-cp .env.example .env   # edit RPC_URL / keys as needed
-make operator          # API on :8787
-make dev               # operator + Vite frontend
-```
-
-Open **Operator** in the UI (`/operator`) to run `e2e_phase1.sh` or `e2e_circom.sh`, deploy, submit, and benchmark jobs with streaming logs.
-
-### Testnet (Ethereum Sepolia)
-
-**Split:** Operator defaults to **local Anvil**. Toggle **Operator → Sepolia** in the UI (or `POST /api/chain/mode`) to broadcast forge deploy/submit with `SEPOLIA_RPC_URL` + `DEPLOYER_PRIVATE_KEY`. Full epoch stays Anvil-only. Use **Wallet submit (Sepolia)** so MetaMask signs `submitScore` + `applyVerifiedScore` (wallet must be `authorizedProver`, usually the deployer).
-
-```bash
-cp .env.example .env
-# Set SEPOLIA_RPC_URL, DEPLOYER_PRIVATE_KEY, ETHERSCAN_API_KEY
-
-bash scripts/deploy_testnet.sh          # prove + deploy + verify (once)
-# Or skip reprove: SKIP_PROVE=1 bash scripts/deploy_testnet.sh
-
-bash scripts/submit_testnet.sh          # one-shot submitScore + applyVerifiedScore
-# Or reuse proof: SKIP_PROVE=1 bash scripts/submit_testnet.sh
-
-# Circom stack (separate oracle / commitments from EZKL):
-SKIP_PROVE=1 bash scripts/deploy_circom_testnet.sh
-SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
-```
-
-Point the frontend at Sepolia (restart `make dev` after editing `.env`):
-
-- `VITE_ORACLE_ADDRESS`, `VITE_CONSUMER_ADDRESS`, `VITE_RPC_URL`
-- Circom and EZKL use **different** oracle addresses — set `VITE_*` to the stack you want to read.
-
-#### Current Sepolia EZKL deployment
+**Sepolia EZKL stack (latest)**
 
 | Contract | Address |
 |----------|---------|
 | RiskOracle | [`0x95212e13B02C26bE0A4505e5671533C013e04357`](https://sepolia.etherscan.io/address/0x95212e13B02C26bE0A4505e5671533C013e04357) |
 | RiskConsumer | [`0xE7717a9a7b37177ce41140A475a53294Ab35a03c`](https://sepolia.etherscan.io/address/0xE7717a9a7b37177ce41140A475a53294Ab35a03c) |
-| EzklRiskScoreVerifier | [`0x448d840d97503c5b3C4bC4dfa8899168f052fBDA`](https://sepolia.etherscan.io/address/0x448d840d97503c5b3C4bC4dfa8899168f052fBDA) |
-| Halo2Verifier | [`0xC8ecEcc7E6Ca6761B117A96Da97F50d11438dC12`](https://sepolia.etherscan.io/address/0xC8ecEcc7E6Ca6761B117A96Da97F50d11438dC12) |
 
-Latest loop (`contracts/deployments/sepolia-loop-latest.json`): **epoch `2026041`**, **score `1797` bps**, borrower `0x7099…79C8`, collateral `8000` bps.
-
-| Step | Tx |
-|------|----|
-| `submitScore` | [`0x54b58347…eee0`](https://sepolia.etherscan.io/tx/0x54b58347d9f56ed28e47fe28980240a7fb3a12738757b07c85d3ee854c09eee0) |
-| `applyVerifiedScore` | [`0xcf7470fb…9171`](https://sepolia.etherscan.io/tx/0xcf7470fb984e501903a29f910ac95555b6860d27a845e204cec83723efb59171) |
-
-**Demo line for recruiters:** “Oracle stack is deployed on Sepolia with a live verified score; the Operator UI runs the full zk epoch loop on Anvil for speed, or toggles to Sepolia for forge/wallet broadcasts. Connect a Sepolia wallet (authorized prover + applicator) for live `submitScore` / `applyVerifiedScore`, or read `latestEpoch` on Epoch / Operator.”
-
-Cost of the EZKL submit/apply run above was ~**0.0020 ETH** at ~2.2 gwei (deploy of the full stack was a separate ~0.012 ETH).
-
-#### Circom Sepolia
-
-Separate oracle (different model/adapter commitments and Groth16 verifier):
-
-```bash
-SKIP_PROVE=1 bash scripts/deploy_circom_testnet.sh
-SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
-```
+**Sepolia Circom stack (latest)**
 
 | Contract | Address |
 |----------|---------|
 | RiskOracle | [`0xdc5E502DC59a4d65e18E5F045711401710f309f1`](https://sepolia.etherscan.io/address/0xdc5E502DC59a4d65e18E5F045711401710f309f1) |
-| RiskConsumer | [`0x0E64bB23Af32307F1228e1379d77Bc7AD2739359`](https://sepolia.etherscan.io/address/0x0E64bB23Af32307F1228e1379d77Bc7AD2739359) |
-| CircomRiskScoreVerifier | [`0x3987E23ce8f089530Fd21D8bCa9D3f79b3403429`](https://sepolia.etherscan.io/address/0x3987E23ce8f089530Fd21D8bCa9D3f79b3403429) |
-| Groth16Verifier | [`0x346124ddBfBa8254Ad937702d07454C8293f4494`](https://sepolia.etherscan.io/address/0x346124ddBfBa8254Ad937702d07454C8293f4494) |
+| RiskConsumer | [`0x0E64bB23Af32307F1228e1379d77Bc7AD2739359`](https://sepolia.etherscan.io/address/0x0E648B23AF32307F1228E1379D77BC7AD2739359) |
 
-Latest loop (`contracts/deployments/sepolia-circom-loop-latest.json`): **epoch `2026041`**, **score `10000` bps** (saturated demo logit after in-circuit borrower rebuild), borrower `0x7099…79C8`, collateral `5000` bps.
+**Live transactions (demo)**
 
 | Step | Tx |
-|------|----|
-| `submitScore` | [`0x51515f8f…f270`](https://sepolia.etherscan.io/tx/0x51515f8ffb6fd64794a67f224a13c0e496d1dcfe95deb77ad8c9132ac4d8f270) |
-| `applyVerifiedScore` | [`0x90025223…6a65`](https://sepolia.etherscan.io/tx/0x9002522356b870cdfc3e4ec25d2fedc837a60c86d60e6015fc550e5accbc6a65) |
-### Test commands
+|------|-----|
+| Circom `submitScore` | [`0x6229ebe4…a09b`](https://sepolia.etherscan.io/tx/0x6229ebe4151ddef5490766e8ea95b7280b6b4e252ccbbed3c1b0bde01c8da09b) |
+| Wallet `applyVerifiedScore` | [`0x97829cb7…9962`](https://sepolia.etherscan.io/tx/0x97829cb73ef3876e536eb26400b9f1449c5793b8f0c9febfbc4a0574eaa39962) |
 
-| Command | What runs |
-|---------|-----------|
-| `make test` | All suites: `forge test`, `ml-base` pytest, `circuits-custom` (if circom installed), `benchmarks` pytest, `frontend` `tsc` |
-| `cd contracts && forge test` | Solidity only |
-| `cd ml-base && pytest -q` | ML pipeline unit tests |
-| `bash circuits-custom/tests/test_prove_verify.sh` | Full Circom Groth16 loop |
-| `make operator` | FastAPI operator service (`:8787`) |
-| `make dev` | Operator + frontend dev servers |
-| `bash scripts/e2e_phase1.sh` | EZKL → Anvil → oracle → consumer |
-| `bash scripts/e2e_circom.sh` | Circom head → Anvil → oracle → consumer |
-| `bash scripts/deploy_testnet.sh` | Deploy EZKL stack to Sepolia |
-| `bash scripts/submit_testnet.sh` | Sepolia `submitScore` + `applyVerifiedScore` (EZKL) |
-| `bash scripts/deploy_circom_testnet.sh` | Deploy Circom stack to Sepolia |
-| `bash scripts/submit_circom_testnet.sh` | Sepolia Circom submit + apply |
-| `cd frontend && pnpm test` | TypeScript typecheck |
+Contract docs: [`docs/contracts.md`](docs/contracts.md)
 
-Full install and run commands: [`docs/setup.md`](docs/setup.md).
+---
 
-## Documentation
+## 9. ML, quantization, and EZKL flow
 
-| Doc | Contents |
-|-----|----------|
-| [`docs/product.md`](docs/product.md) | Positioning, goals, non-goals |
-| [`docs/architecture.md`](docs/architecture.md) | Layers, proof statements, package map |
-| [`docs/threat-model.md`](docs/threat-model.md) | Guarantees and non-guarantees |
-| [`docs/roadmap.md`](docs/roadmap.md) | Milestones 1–5 |
-| [`docs/setup.md`](docs/setup.md) | Ubuntu WSL toolchain |
-| [`docs/ui-reference.md`](docs/ui-reference.md) | Optional Dispatch-inspired UI (yellow accents) |
-| [`docs/benchmarks.md`](docs/benchmarks.md) | EZKL vs Circom harness and limitations |
+```mermaid
+flowchart LR
+  A[Raw tabular features] --> B[engineer_features.py]
+  B --> C[train.py + LoRA]
+  C --> D[export_onnx.py]
+  D --> E[quantize_model.py Q8.8]
+  E --> F[EZKL compile]
+  F --> G[setup / prove]
+  G --> H[Halo2Verifier.sol]
+```
 
-## License
+| Stage | Output |
+|-------|--------|
+| Training | `ml-base/artifacts/models/` (gitignored locally) |
+| ONNX | `zyocra-risk-mlp-v1.onnx` static batch=1 |
+| Quantization | `input_scale=7`, `param_scale=7` (Q8.8 alignment) |
+| EZKL | `circuits-baseline/settings/network.ezkl`, `proofs/proof.json` |
+| On-chain | `submitScore` with 7 EZKL public inputs + borrower limb (index 7) |
 
-MIT — see [`LICENSE`](LICENSE).
+EZKL proves the **full exported graph**. Public inputs bind features and `scoreBps`. Borrower binding for EZKL uses an appended limb (Circom binds borrower in-circuit).
 
-## Changelog
+Docs: [`docs/ml.md`](docs/ml.md) · [`docs/quantization.md`](docs/quantization.md) · [`docs/ezkl.md`](docs/ezkl.md)
 
-### v0.5.0
+---
 
-- **Operator:** FastAPI service (`operator/`) wrapping e2e, deploy, submit, benchmark with SSE log streaming.
-- **UI:** `/operator` dashboard, Run epoch demo CTAs, job queue, EZKL/Circom prover toggle.
-- **Security:** borrower field on `ScoreRecord`, public input index 7 binding, consumer `BorrowerMismatch` guard.
-- **Testnet:** `scripts/deploy_testnet.sh`, `scripts/submit_testnet.sh`, `deploy_circom_testnet.sh`, `submit_circom_testnet.sh`; Operator Anvil/Sepolia toggle; wallet-signed Sepolia submit/apply; EZKL + Circom addresses in README.
-- **Security:** Circom in-circuit borrower; `RiskConsumer.authorizedApplicators`; cubic Taylor Circom score encoding (Python↔Solidity).
-- **Benchmarks:** `PROVE_RUNS=10` head bakeoff artifacts under `benchmarks/raw-results/`.
+## 10. Custom Circom benchmark path
 
-- **Frontend:** wagmi/viem live chain reads, wallet connect, epoch registry pre-flight.
+```mermaid
+flowchart TB
+  H[hidden 8 public] --> LORA[LoRA delta W + AB]
+  WB[weight_base private] --> LORA
+  LA[lora_a private] --> LORA
+  LB[lora_b private] --> LORA
+  LORA --> LOGIT[logit_acc public]
+  BOR[borrower public in-circuit] --> LOGIT
+  LOGIT --> G16[Groth16 prove]
+  G16 --> ADAPTER[CircomRiskScoreVerifier]
+```
 
-### v0.4.0
+| Property | Value |
+|----------|-------|
+| Circuit | `circuits-custom/circuits/lora_output_head.circom` |
+| Public signals | 10 (`logit_acc`, `hidden[8]`, `borrower`) |
+| R1CS constraints | 90 (snarkjs) |
+| Fixture | `circuits-custom/fixtures/head-v1.json` (committed) |
+| Trusted setup | Local pot12 (demo only, not production-grade) |
 
-- **Security:** `RiskOracle` binds `scoreBps` to EZKL public output limb; `authorizedProvers` ACL on `submitScore`.
-- **Benchmarks:** primary table = matched EZKL head vs Circom head; secondary = asymmetric full-vs-head; hybrid amortized cost; `make head-benchmark` syncs frontend.
-- **Contracts:** `CircomRiskScoreVerifier`, `CircomProofJsonLib`, `DeployCircom.s.sol`.
-- **CI:** GitHub Actions (Foundry, pytest, frontend tsc).
-- **Docs:** filled `docs/technical-report.md`.
+Circom score on-chain uses cubic Taylor sigmoid over dequantized `logit_acc` (Python and Solidity aligned). Scope is **adapter head only**, not full MLP inference.
 
-### v0.3.0
+Docs: [`docs/circom.md`](docs/circom.md)
 
-- Frontend live data binding, benchmark harness, threat model polish.
+---
+
+## 11. Threat model
+
+Zyocra separates **proof correctness** from **model quality** and **data honesty**.
+
+| Layer | What is trusted |
+|-------|-----------------|
+| **Proof** | Declared inference ran as specified (EZKL: full graph; Circom: head subgraph) |
+| **Oracle** | Verifier soundness, `modelHash` / `adapterHash`, monotonic epochs, valid `(proof, publicInputs)` |
+| **Consumer** | Verified oracle scores; hard-coded bucket policy |
+
+**Not attested:** feature feed honesty, economic optimality of the model, market manipulation resistance, cross-path benchmark equivalence (EZKL full vs Circom head).
+
+**Phase 1 gaps (documented):** EZKL borrower uses appended public limb; `setVerifier` is owner-controlled without timelock; Circom trusted setup is local pot12.
+
+Full write-up: [`docs/threat-model.md`](docs/threat-model.md)
+
+---
+
+## 12. Local setup
+
+**Prerequisites:** Node.js + pnpm, Python 3.11+, Rust, Foundry, Circom (for custom path). Ubuntu WSL is the reference environment.
+
+```bash
+git clone https://github.com/vamshiganesh/Zyocra.git
+cd Zyocra
+make install
+source ml-base/.venv/bin/activate
+
+make check-tools
+make test          # forge + pytest + frontend tsc
+make benchmark     # full benchmark harness
+make head-benchmark   # matched head row only
+
+cp .env.example .env
+make dev           # Operator :8787 + Vite :5173
+```
+
+| Property | Default |
+|----------|---------|
+| ML runtime | PyTorch CPU in `ml-base/.venv` |
+| Chain (dev) | Anvil via Operator |
+| Chain (demo) | Sepolia (optional, free public RPC) |
+| Docker | Not required |
+| Cloud prover | Not required |
+
+Full toolchain: [`docs/setup.md`](docs/setup.md)
+
+---
+
+## 13. Project structure
+
+```text
+Zyocra/
+├── ml-base/                 # train, LoRA, quantize, ONNX export
+├── circuits-baseline/       # EZKL full + head pipelines
+├── circuits-custom/         # Circom lora_output_head + Groth16
+├── contracts/               # RiskOracle, RiskConsumer, verifiers, tests
+├── benchmarks/              # harness, raw-results, plots
+├── operator/                # FastAPI job runner (SSE logs)
+├── frontend/                # Vite + React pipeline UI
+├── scripts/                 # e2e, testnet deploy/submit, sync-frontend-data
+├── docs/                    # architecture, threat model, benchmarks, setup
+├── gitAssets/               # README branding + UI screenshots
+├── Makefile
+└── README.md
+```
+
+---
+
+## 14. Roadmap
+
+| Milestone | Status |
+|-----------|--------|
+| 1. ML + quantization (`ml-base/`) | Done |
+| 2. EZKL baseline + Halo2 verifier | Done |
+| 3. Custom Circom LoRA head | Done |
+| 4. Consumer integration + Foundry tests | Done |
+| 5. Benchmarks + technical report | Done |
+| Operator + live UI + Sepolia deploy | Done |
+| CI (Foundry, pytest, tsc, Circom smoke) | Done |
+
+Future (non-blocking): production trusted setup, timelocked verifier upgrades, additional borrower binding modes.
+
+Details: [`docs/roadmap.md`](docs/roadmap.md)
+
+---
+
+## 15. Resume-ready bullet
+
+> Built **Zyocra**, a verifiable zkML DeFi risk oracle that proves LoRA-adapted quantized inference off-chain and verifies scores on Ethereum (Sepolia). Benchmarked **EZKL-compiled** circuits against a **hand-optimized Circom** LoRA head on a matched `hidden→logit` statement across constraint count, prove time, RAM, proof size, and EVM verify gas (~**14x** faster median prove for Circom head vs EZKL head on local WSL2). Shipped Foundry oracle/consumer contracts with ACL, FastAPI Operator, wallet-signed testnet txs, and a live Vite dashboard.
+
+---
+
+## 16. Demo instructions
+
+### A. Fast path (UI only, ~2 min)
+
+1. Open **[zyocra.vercel.app](https://zyocra.vercel.app/)**
+2. Click **Run epoch demo** or go to **Operator**
+3. Toggle **Circom** or **EZKL**, run **Chain status**
+4. On Sepolia: connect wallet, **Wallet submit (Sepolia)** for live txs
+
+### B. Local full loop (~15 to 45 min first run)
+
+```bash
+make install && source ml-base/.venv/bin/activate
+bash scripts/e2e_phase1.sh      # EZKL → Anvil → oracle → consumer
+# or
+bash scripts/e2e_circom.sh      # Circom head path
+bash scripts/sync-frontend-data.sh
+make dev
+```
+
+### C. Sepolia (live chain)
+
+```bash
+cp .env.example .env
+# SEPOLIA_RPC_URL, DEPLOYER_PRIVATE_KEY, ETHERSCAN_API_KEY
+
+bash scripts/deploy_testnet.sh           # EZKL stack
+bash scripts/submit_testnet.sh           # submitScore + applyVerifiedScore
+
+SKIP_PROVE=1 bash scripts/deploy_circom_testnet.sh
+SKIP_PROVE=1 bash scripts/submit_circom_testnet.sh
+```
+
+Set `VITE_ORACLE_ADDRESS`, `VITE_CONSUMER_ADDRESS`, `VITE_RPC_URL` in `.env` for the stack you want the UI to read. EZKL and Circom use **different** oracle addresses.
+
+### D. What to show reviewers
+
+| Asset | Link |
+|-------|------|
+| Live app | [zyocra.vercel.app](https://zyocra.vercel.app/) |
+| Video walkthrough | [YouTube demo](https://youtu.be/edvTJN3XJO0) |
+| Project homepage | [vamshiganesh.github.io/Zyocra](https://vamshiganesh.github.io/Zyocra/) |
+| Circom on-chain proof | [submitScore tx](https://sepolia.etherscan.io/tx/0x6229ebe4151ddef5490766e8ea95b7280b6b4e252ccbbed3c1b0bde01c8da09b) |
+| Wallet policy apply | [applyVerifiedScore tx](https://sepolia.etherscan.io/tx/0x97829cb73ef3876e536eb26400b9f1449c5793b8f0c9febfbc4a0574eaa39962) |
+| Benchmark JSON | `frontend/public/data/bench-latest.json` |
+| Threat model | [`docs/threat-model.md`](docs/threat-model.md) |
+
+---
+
+<div align="center">
+
+<br />
+
+**Documentation**
+
+[`docs/product.md`](docs/product.md) ·
+[`docs/architecture.md`](docs/architecture.md) ·
+[`docs/benchmarks.md`](docs/benchmarks.md) ·
+[`docs/threat-model.md`](docs/threat-model.md) ·
+[`docs/setup.md`](docs/setup.md) ·
+[`docs/technical-report.md`](docs/technical-report.md)
+
+<br />
+
+MIT License · [`LICENSE`](LICENSE)
+
+</div>

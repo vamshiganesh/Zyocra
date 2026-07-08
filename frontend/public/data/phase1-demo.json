@@ -55,14 +55,14 @@
     "logitAcc": 1678334,
     "publicInputCount": 10
   },
-  "syncedAt": "2026-07-08T16:30:54Z",
+  "syncedAt": "2026-07-08T18:20:17Z",
   "verification": {
     "chainId": 31337,
-    "consumer": "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",
-    "halo2Verifier": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+    "consumer": "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
+    "halo2Verifier": "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
     "onChain": true,
-    "oracle": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
+    "oracle": "0x7969c5eD335650692Bc04293B07F5BF2e7A673C0",
     "result": "pending",
-    "verifierAdapter": "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690"
+    "verifierAdapter": "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3"
   }
 }
